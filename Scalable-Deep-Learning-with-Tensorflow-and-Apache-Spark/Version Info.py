@@ -7,21 +7,11 @@
 
 # COMMAND ----------
 
-# MAGIC %md # Install Datasets
+# MAGIC %md # Project Information
 # MAGIC 
-# MAGIC We need to "install" the datasets this course uses by copying them from its current location in the cloud to your local filesystem.
-# MAGIC 
-# MAGIC All that is required is to run the following cell. By default, the **`Classroom-Setup`** script will not reinstall the datasets upon <br/>subsequent invocation but this behavior can be adjusted by modifying the parameters below.
-# MAGIC 
-# MAGIC Feel free to leave this notebook running and proceed with the course while the install completes in the background.
-
-# COMMAND ----------
-
-# MAGIC %run "./Includes/Classroom-Setup"  $reinstall = "false"
-
-# COMMAND ----------
-
-display(dbutils.fs.ls(datasets_dir))
+# MAGIC * Name: **Scalable Deep Learning with Tensorflow and Apache Spark**
+# MAGIC * Version:  **4.0.0**
+# MAGIC * Built On: **Nov 5, 2021 at 23:32:20 UTC**
 
 # COMMAND ----------
 

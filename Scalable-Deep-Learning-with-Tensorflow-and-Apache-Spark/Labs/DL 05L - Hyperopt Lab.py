@@ -1,5 +1,4 @@
 # Databricks notebook source
-# MAGIC 
 # MAGIC %md-sandbox
 # MAGIC 
 # MAGIC <div style="text-align: center; line-height: 0; padding-top: 9px;">
@@ -8,7 +7,7 @@
 
 # COMMAND ----------
 
-# MAGIC %md
+# MAGIC %md 
 # MAGIC # Hyperopt Lab
 # MAGIC 
 # MAGIC ## ![Spark Logo Tiny](https://files.training.databricks.com/images/105/logo_spark_tiny.png) In this lesson you:<br>
@@ -64,38 +63,37 @@ from tensorflow.keras.models import Sequential
 tf.random.set_seed(42)
 
 def create_model(hpo):
-  model = Sequential()
-  model.add(Dense(int(hpo["dense_l1"]), input_dim=11, activation="relu")) # You can change the activation functions too!
-  model.add(Dense(int(hpo["dense_l2"]), activation="relu"))
-  model.add(Dense(1, activation="linear"))
-  return model
+    model = Sequential()
+    model.add(Dense(int(hpo["dense_l1"]), input_dim=11, activation="relu")) # You can change the activation functions too!
+    model.add(Dense(int(hpo["dense_l2"]), activation="relu"))
+    model.add(Dense(1, activation="linear"))
+    return model
 
 # COMMAND ----------
 
 from hyperopt import fmin, hp, tpe, SparkTrials
 
 def run_nn(hpo):
-  model = create_model(hpo)
+    model = create_model(hpo)
 
-  # Select Optimizer
-  optimizer_call = getattr(tf.keras.optimizers, hpo["optimizer"])
-  optimizer = optimizer_call(hpo["learning_rate"])
+    # Select Optimizer
+    optimizer_call = getattr(tf.keras.optimizers, hpo["optimizer"])
+    optimizer = optimizer_call(hpo["learning_rate"])
 
-  # Compile model
-  model.compile(loss="mse",
-                optimizer=optimizer,
-                metrics=["mse"])
+    # Compile model
+    model.compile(loss="mse",
+                  optimizer=optimizer,
+                  metrics=["mse"])
 
-  history = model.fit(X_train, y_train, validation_split=.2, batch_size=32, epochs=10, verbose=2)
+    history = model.fit(X_train, y_train, validation_split=.2, batch_size=32, epochs=10, verbose=2)
 
-  # Evaluate our model
-  obj_metric = history.history["val_loss"][-1] 
-  return obj_metric
+    # Evaluate our model
+    obj_metric = history.history["val_loss"][-1] 
+    return obj_metric
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC Now try experimenting with different hyperparameters + values!
+# MAGIC %md Now try experimenting with different hyperparameters + values!
 
 # COMMAND ----------
 
@@ -110,9 +108,7 @@ space = {"dense_l1": <FILL_IN>,
 spark_trials = SparkTrials(parallelism=<FILL_IN>)
 
 best_hyperparams = fmin(run_nn, space, algo=tpe.suggest, max_evals=30, trials=spark_trials)
-  
 best_hyperparams
-
 
 # COMMAND ----------
 

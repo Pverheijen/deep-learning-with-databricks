@@ -1,5 +1,4 @@
 # Databricks notebook source
-# MAGIC 
 # MAGIC %md-sandbox
 # MAGIC 
 # MAGIC <div style="text-align: center; line-height: 0; padding-top: 9px;">
@@ -8,8 +7,7 @@
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC # Spark Review
+# MAGIC %md # Spark Review
 # MAGIC 
 # MAGIC Before we get started with Machine Learning and Deep Learning, let's make sure we all understand how to use Databricks and Spark.
 # MAGIC 
@@ -26,13 +24,11 @@
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC Let's start off with running some code on our driver, such as `x = 1`. Insert a new cell below.
+# MAGIC %md Let's start off with running some code on our driver, such as `x = 1`. Insert a new cell below.
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC ## Spark DataFrame
+# MAGIC %md ## Spark DataFrame
 # MAGIC 
 # MAGIC Great! Now let's start with a distributed Spark DataFrame.
 
@@ -41,13 +37,12 @@
 from pyspark.sql.functions import col, rand
 
 df = (spark.range(1, 1000000)
-      .withColumn('id', (col('id') / 1000).cast('integer'))
-      .withColumn('v', rand(seed=1)))
+      .withColumn("id", (col("id") / 1000).cast("integer"))
+      .withColumn("v", rand(seed=1)))
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC Why were no Spark jobs kicked off above? Well, we didn't have to actually "touch" our data, so Spark didn't need to execute anything across the cluster.
+# MAGIC %md Why were no Spark jobs kicked off above? Well, we didn't have to actually "touch" our data, so Spark didn't need to execute anything across the cluster.
 
 # COMMAND ----------
 
@@ -55,8 +50,7 @@ display(df.sample(.001))
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC ## Count
+# MAGIC %md ## Count
 # MAGIC 
 # MAGIC Let's see how many records we have.
 
@@ -66,8 +60,7 @@ df.count()
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC ## Spark UI
+# MAGIC %md ## Spark UI
 # MAGIC 
 # MAGIC Open up the Spark UI - what are the shuffle read and shuffle write fields? The command below should give you a clue.
 
@@ -77,8 +70,7 @@ df.rdd.getNumPartitions()
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC ## Cache
+# MAGIC %md ## Cache
 # MAGIC 
 # MAGIC For repeated access, it will be much faster if we cache our data.
 
@@ -88,8 +80,7 @@ df.cache().count()
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC ## Re-run Count
+# MAGIC %md ## Re-run Count
 # MAGIC 
 # MAGIC Wow! Look at how much faster it is now!
 
@@ -99,8 +90,7 @@ df.count()
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC ## Pandas
+# MAGIC %md ## Pandas
 # MAGIC 
 # MAGIC Let's convert our Spark DataFrame to a Pandas DataFrame.
 
@@ -110,8 +100,7 @@ df.toPandas()
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC ## Wrap-up
+# MAGIC %md ## Wrap-up
 # MAGIC 
 # MAGIC Alright! Now that you know the basics of Spark, let's get started!
 

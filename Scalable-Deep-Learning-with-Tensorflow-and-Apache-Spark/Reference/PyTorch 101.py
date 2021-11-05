@@ -1,5 +1,4 @@
 # Databricks notebook source
-# MAGIC 
 # MAGIC %md-sandbox
 # MAGIC 
 # MAGIC <div style="text-align: center; line-height: 0; padding-top: 9px;">
@@ -22,8 +21,7 @@
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC ### Tensors
+# MAGIC %md ### Tensors
 # MAGIC 
 # MAGIC Before we create a PyTorch model, look at a PyTorch tensor. Tensors are a core datatype in PyTorch. Any data used with a PyTorch model and all of the model weights must be of this type. 
 # MAGIC 
@@ -31,12 +29,11 @@
 
 # COMMAND ----------
 
-# MAGIC %run "./Includes/Classroom-Setup"
+# MAGIC %run "../Includes/Classroom-Setup"
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC Create a tensor from a list.
+# MAGIC %md Create a tensor from a list.
 
 # COMMAND ----------
 
@@ -49,8 +46,7 @@ example_tensor
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC Create a tensor from a numpy array.
+# MAGIC %md Create a tensor from a numpy array.
 
 # COMMAND ----------
 
@@ -60,8 +56,7 @@ example_tensor_from_numpy
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC Check the shape and type of the tensors.
+# MAGIC %md Check the shape and type of the tensors.
 
 # COMMAND ----------
 
@@ -70,8 +65,7 @@ print(example_tensor.dtype)
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC ## Gradients in PyTorch
+# MAGIC %md ## Gradients in PyTorch
 # MAGIC 
 # MAGIC In deep learning it is crucial to be able to calculate the gradient of the loss function for backpropagation during training. In order to provide this functionality, PyTorch's `torch.autograd` dynamically constructs a DAG of tensors and functions. 
 # MAGIC 
@@ -88,7 +82,7 @@ tensor_x
 
 # COMMAND ----------
 
-# MAGIC %md
+# MAGIC %md 
 # MAGIC 
 # MAGIC Right now our DAG looks like this: 
 # MAGIC 
@@ -106,8 +100,7 @@ tensor_y
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC Now the DAG looks like this:
+# MAGIC %md Now the DAG looks like this:
 # MAGIC   
 # MAGIC ![Tensor 1](http://files.training.databricks.com/images/mlpupdates/tensor2b.png)
 # MAGIC 
@@ -119,8 +112,7 @@ print(tensor_x.grad)
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC Tensors have a `.backward()` method that populates this gradient field.
+# MAGIC %md Tensors have a `.backward()` method that populates this gradient field. 
 # MAGIC 
 # MAGIC When the tensor at the end of this computational graph, `tensor_y` in our case, calls `.backward()`, `torch.autograd()` will go backwards using the dynamic DAG and chain rule to populate the gradient fields.
 # MAGIC 
@@ -136,13 +128,11 @@ print(tensor_x.grad)
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC We can see here that `tensor_x.grad` is now 2 as expected.
+# MAGIC %md We can see here that `tensor_x.grad` is now 2 as expected. 
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC ## Dataset Loading
+# MAGIC %md ## Dataset Loading
 # MAGIC 
 # MAGIC Now that we understand basic data structures in PyTorch, we'll go through an example of training a regression model on the Wine Quality dataset. 
 # MAGIC 
@@ -162,28 +152,27 @@ from torch.utils.data import random_split
 
 class MyDataset(Dataset):
   
-  def __init__(self, data):
-    y = pd.DataFrame(data.target)
-    X = pd.DataFrame(data.data)
-    X = X.apply(lambda x: (x - x.mean()) / x.std()) # Standardize the dataset
-    self.X = torch.from_numpy(X.values.astype("float32"))
-    self.y = torch.from_numpy(pd.DataFrame(y).values.astype("float32"))
-    
-  def __len__(self):
-    return len(self.X)
-  
-  def __getitem__(self, idx):
-    return [self.X[idx], self.y[idx]]
-  
-  def get_splits(self, n_test=0.2):
-    test_size = round(n_test * len(self.X))
-    train_size = len(self.X) - test_size
-    return random_split(self, [train_size, test_size])
+    def __init__(self, data):
+        y = pd.DataFrame(data.target)
+        X = pd.DataFrame(data.data)
+        X = X.apply(lambda x: (x - x.mean()) / x.std()) # Standardize the dataset
+        self.X = torch.from_numpy(X.values.astype("float32"))
+        self.y = torch.from_numpy(pd.DataFrame(y).values.astype("float32"))
+
+    def __len__(self):
+        return len(self.X)
+
+    def __getitem__(self, idx):
+        return [self.X[idx], self.y[idx]]
+
+    def get_splits(self, n_test=0.2):
+        test_size = round(n_test * len(self.X))
+        train_size = len(self.X) - test_size
+        return random_split(self, [train_size, test_size])
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC For more details:<br><br>
+# MAGIC %md For more details:<br><br>
 # MAGIC 
 # MAGIC * `__init__`: Load in our dataset from the path, drop the index column, separate the features and label, and standardize the features. Then save a class attribute X and y with the features and label respectively. 
 # MAGIC * `__len__`: Return the length of the dataset by returning the number of rows in the dataframe.
@@ -202,8 +191,7 @@ train_data, test_data = dataset.get_splits()
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC Now we have our dataset train/test splits. However, we will want to do a batch model training. In order to do this, we need to create a PyTorch `Dataloader` object with our training set.
+# MAGIC %md Now we have our dataset train/test splits. However, we will want to do a batch model training. In order to do this, we need to create a PyTorch `Dataloader` object with our training set. 
 # MAGIC 
 # MAGIC Pass in the batch size and a shuffle parameter to indicate whether we want the batches to be shuffled across epochs.
 
@@ -215,8 +203,7 @@ train_dl = DataLoader(train_data, batch_size=64, shuffle=True)
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC ## Create a PyTorch Model
+# MAGIC %md ## Create a PyTorch Model
 # MAGIC 
 # MAGIC There are multiple ways to create PyTorch neural networks. 
 # MAGIC 
@@ -236,8 +223,7 @@ print(model)
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC We also initialize our model weights with the xavier uniform distribution to prevent gradient explosion and/or vanishing.
+# MAGIC %md We also initialize our model weights with the xavier uniform distribution to prevent gradient explosion and/or vanishing.
 
 # COMMAND ----------
 
@@ -249,8 +235,7 @@ torch.nn.init.xavier_uniform_(model[2].weight)
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC ## Training and Inference
+# MAGIC %md ## Training and Inference
 # MAGIC 
 # MAGIC Now train our model. In PyTorch, there is no `.fit()` method to train your model. 
 # MAGIC 
@@ -271,61 +256,58 @@ loss_fn = nn.MSELoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01, betas=[0.9, 0.999], eps=1e-8)
 
 def train(dataloader, model, loss_fn, optimizer):
-  size = len(dataloader.dataset)
-  model.train() # switch to training mode
+    size = len(dataloader.dataset)
+    model.train() # switch to training mode
 
-  # Step 2: Enumerate over the dataloader object to loop over the batches
-  for batch, (X, y) in enumerate(dataloader):
+    # Step 2: Enumerate over the dataloader object to loop over the batches
+    for batch, (X, y) in enumerate(dataloader):
 
-    # Step 3.1: Get the output of the model on the batch and calculate the loss
-    pred = model(X)
-    loss = loss_fn(pred, y)
+        # Step 3.1: Get the output of the model on the batch and calculate the loss
+        pred = model(X)
+        loss = loss_fn(pred, y)
 
-    # Step 3.2: clears the gradients learned from the previous training step
-    optimizer.zero_grad() 
+        # Step 3.2: clears the gradients learned from the previous training step
+        optimizer.zero_grad() 
 
-    # Step 3.3: go backwards through the DAG to populate the gradients of the tensors
-    loss.backward()
+        # Step 3.3: go backwards through the DAG to populate the gradients of the tensors
+        loss.backward()
 
-    # Step 3.4: take one training step where we update the weights using the gradients
-    optimizer.step()  
+        # Step 3.4: take one training step where we update the weights using the gradients
+        optimizer.step()  
 
-  loss = loss.item()
-  print(f"Train loss: {round(loss, 2)}")
+    loss = loss.item()
+    print(f"Train loss: {round(loss, 2)}")
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC Define our test function. This loops over each batch in the test `Dataloader` and average the loss over the batches.
+# MAGIC %md Define our test function. This loops over each batch in the test `Dataloader` and average the loss over the batches. 
 # MAGIC 
 # MAGIC **Note:** When performing inference, it is a best practice to call `model.eval()` and `torch.no_grad()`. Some layers and parts of the model behave differently during inference vs. training. Calling `model.eval()` sets these correctly. `torch.no_grad()` turns off gradient computation which isn't needed during inference.
 
 # COMMAND ----------
 
 def test(data, model, loss_fn):
-  model.eval() # switch to inference mode
-  with torch.no_grad(): # Don't need gradients for inference
-    pred = model(data.dataset.X)
-    loss = loss_fn(pred, data.dataset.y)
+    model.eval() # switch to inference mode
+    with torch.no_grad(): # Don't need gradients for inference
+        pred = model(data.dataset.X)
+        loss = loss_fn(pred, data.dataset.y)
 
-  print(f"Test loss: {round(loss.item(), 2)} \n")
+    print(f"Test loss: {round(loss.item(), 2)} \n")
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC Now train the model and evaluate the results.
+# MAGIC %md Now train the model and evaluate the results.
 
 # COMMAND ----------
 
 epochs = 20
 
 for t in range(epochs):
-  print(f"Epoch {t+1}\n-------------------------------")
-  train(train_dl, model, loss_fn, optimizer)
-  test(test_data, model, loss_fn)
+    print(f"Epoch {t+1}\n-------------------------------")
+    train(train_dl, model, loss_fn, optimizer)
+    test(test_data, model, loss_fn)
     
 print("Done!")
-
 
 # COMMAND ----------
 

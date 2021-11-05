@@ -1,5 +1,4 @@
 # Databricks notebook source
-# MAGIC 
 # MAGIC %md-sandbox
 # MAGIC 
 # MAGIC <div style="text-align: center; line-height: 0; padding-top: 9px;">
@@ -8,8 +7,7 @@
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC # Advanced Keras Lab
+# MAGIC %md # Advanced Keras Lab
 # MAGIC 
 # MAGIC Now we are going to take the following objectives we learned in the past lab, and apply them here! You will further improve upon your first model with the wine quality dataset.
 # MAGIC 
@@ -99,9 +97,9 @@ from tensorflow.keras.models import Sequential
 tf.random.set_seed(42)
 
 def build_model():
-  return Sequential([Dense(50, input_dim=11, activation="relu"),
-                     Dense(20, activation="relu"),
-                     Dense(1, activation="linear")])
+    return Sequential([Dense(50, input_dim=11, activation="relu"),
+                       Dense(20, activation="relu"),
+                       Dense(1, activation="linear")])
   
 model = build_model()
 model.summary()
@@ -124,15 +122,14 @@ model.compile(optimizer="adam", loss="mse", metrics=["mse"])
 # ANSWER 
 from tensorflow.keras.callbacks import ModelCheckpoint, EarlyStopping
 
-filepath = f"{working_dir}/keras_checkpoint_weights_lab.ckpt"
+filepath = f"{working_dir}/keras_checkpoint_weights_lab.ckpt".replace("dbfs:/", "/dbfs/")
 
-checkpointer = ModelCheckpoint(filepath=filepath, verbose=1, save_best_only=True, restore_best_weights=True)
-early_stopping = EarlyStopping(monitor="val_loss", min_delta=0.0001, patience=2)
+checkpointer = ModelCheckpoint(filepath=filepath, verbose=1, save_best_only=True)
+early_stopping = EarlyStopping(monitor="val_loss", min_delta=0.0001, patience=2, restore_best_weights=True)
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC ## 4. Fit Model
+# MAGIC %md ## 4. Fit Model
 # MAGIC 
 # MAGIC Now let's put everything together! Fit the model to the training and validation data `(X_val, y_val)` with `epochs`=30, `batch_size`=32, and the 2 callbacks we defined above: `checkpointer` and `early_stopping`.
 # MAGIC 
@@ -148,7 +145,7 @@ history = model.fit(X_train, y_train, validation_data=(X_val, y_val), epochs=30,
 # MAGIC %md
 # MAGIC ## 5. Load Model
 # MAGIC 
-# MAGIC Load in the weights saved from this model via checkpointing to a new variable called `newModel`, and make predictions for our test data. Then compute the RMSE. See if you can do this without re-compiling the model!
+# MAGIC Load in the weights saved from this model via checkpointing to a new variable called `saved_model`, and make predictions for our test data. Then compute the RMSE. See if you can do this without re-compiling the model!
 
 # COMMAND ----------
 
@@ -156,12 +153,11 @@ history = model.fit(X_train, y_train, validation_data=(X_val, y_val), epochs=30,
 from tensorflow.keras.models import load_model
 from sklearn.metrics import mean_squared_error
 
-newModel = load_model(filepath)
-y_pred = newModel.predict(X_test)
+saved_model = load_model(filepath)
+y_pred = saved_model.predict(X_test)
 
 rmse = mean_squared_error(y_test, y_pred, squared=False)
 print(rmse)
-
 
 # COMMAND ----------
 

@@ -1,5 +1,4 @@
 # Databricks notebook source
-# MAGIC 
 # MAGIC %md-sandbox
 # MAGIC 
 # MAGIC <div style="text-align: center; line-height: 0; padding-top: 9px;">
@@ -8,8 +7,7 @@
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC # Linear Regression
+# MAGIC %md # Linear Regression
 # MAGIC 
 # MAGIC Before you attempt to throw a neural network at a problem, you want to establish a __baseline model__. Often, this will be a simple model, such as linear regression. Once we establish a baseline, then we can get started with Deep Learning.
 # MAGIC 
@@ -19,6 +17,10 @@
 # MAGIC  - Build a linear regression model using scikit-learn and reimplement it in Keras 
 # MAGIC  - Modify # of epochs
 # MAGIC  - Visualize loss
+
+# COMMAND ----------
+
+# MAGIC %run ./Includes/Classroom-Setup
 
 # COMMAND ----------
 
@@ -100,8 +102,7 @@ plt.show()
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC # 1. Define a N-Layer Network
+# MAGIC %md # 1. Define a N-Layer Network
 # MAGIC 
 # MAGIC Here, we need to specify the dimensions of our input and output layers. When we say something is an N-layer neural network, we count all of the layers except the input layer. 
 # MAGIC 
@@ -132,8 +133,7 @@ model.summary()
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC # 2. Compile a Network
+# MAGIC %md # 2. Compile a Network
 # MAGIC 
 # MAGIC To [compile](https://www.tensorflow.org/api_docs/python/tf/keras/Sequential#compile) the network, we need to specify the loss function and which optimizer to use. We'll talk more about optimizers and loss metrics in the next lab.
 # MAGIC 
@@ -145,8 +145,7 @@ model.compile(loss="mse", optimizer="adam")
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC # 3. Fit a Network
+# MAGIC %md # 3. Fit a Network
 # MAGIC 
 # MAGIC Let's [fit](https://www.tensorflow.org/api_docs/python/tf/keras/Sequential#fit) our model on X and y.
 
@@ -167,16 +166,16 @@ keras_pred
 # COMMAND ----------
 
 def keras_pred_plot(keras_pred):
-  plt.clf()
-  plt.plot(X, y, "ro", label="True y")
-  plt.plot(X, keras_pred, label="Pred y")
-  
-  plt.title("X vs True Y and Pred Y (Keras)")
-  plt.xlabel("X")
-  plt.ylabel("y")
-  plt.legend(numpoints=1)
-  plt.show()
-  
+    plt.clf()
+    plt.plot(X, y, "ro", label="True y")
+    plt.plot(X, keras_pred, label="Pred y")
+
+    plt.title("X vs True Y and Pred Y (Keras)")
+    plt.xlabel("X")
+    plt.ylabel("y")
+    plt.legend(numpoints=1)
+    plt.show()
+
 keras_pred_plot(keras_pred)
 
 # COMMAND ----------
@@ -195,14 +194,13 @@ history = model.fit(X, y, epochs=20)
 # COMMAND ----------
 
 def view_model_loss():
-  plt.clf()
-  plt.plot(history.history["loss"])
-  
-  plt.title("Model Loss")
-  plt.ylabel("Loss")
-  plt.xlabel("Epoch")
-  plt.show()
-  
+    plt.clf()
+    plt.plot(history.history["loss"])
+    plt.title("Model Loss")
+    plt.ylabel("Loss")
+    plt.xlabel("Epoch")
+    plt.show()
+
 view_model_loss()
 
 # COMMAND ----------
@@ -239,8 +237,7 @@ print(f"predicted_b: {predicted_b}")
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC # 4. Evaluate Network
+# MAGIC %md # 4. Evaluate Network
 # MAGIC 
 # MAGIC As mentioned previously, we want to make sure our neural network can beat our benchmark. 
 
@@ -250,8 +247,7 @@ model.evaluate(X, y) # Prints loss value & metrics values for the model in test 
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC # 5. Make Predictions
+# MAGIC %md # 5. Make Predictions
 
 # COMMAND ----------
 

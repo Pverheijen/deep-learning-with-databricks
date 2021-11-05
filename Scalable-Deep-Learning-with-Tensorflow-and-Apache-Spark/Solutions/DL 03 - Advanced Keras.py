@@ -1,5 +1,4 @@
 # Databricks notebook source
-# MAGIC 
 # MAGIC %md-sandbox
 # MAGIC 
 # MAGIC <div style="text-align: center; line-height: 0; padding-top: 9px;">
@@ -8,8 +7,7 @@
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC # Advanced Keras
+# MAGIC %md # Advanced Keras
 # MAGIC 
 # MAGIC Congrats on building your first neural network! In this notebook, we will cover even more topics to improve your model building. After you learn the concepts here, you will apply them to the neural network you just created.
 # MAGIC 
@@ -84,9 +82,9 @@ from tensorflow.keras.layers import Dense
 tf.random.set_seed(42)
 
 model = Sequential([
-  Dense(20, input_dim=8, activation="relu"),
-  Dense(20, activation="relu"),
-  Dense(1, activation="linear")
+    Dense(20, input_dim=8, activation="relu"),
+    Dense(20, activation="relu"),
+    Dense(1, activation="linear")
 ])
 
 # COMMAND ----------
@@ -125,14 +123,13 @@ history = model.fit(X_train, y_train, validation_split=.2, epochs=10, batch_size
 
 from tensorflow.keras.callbacks import ModelCheckpoint
 
-filepath = f"{working_dir}/keras_checkpoint_weights.ckpt"
+filepath = f"{working_dir}/keras_checkpoint_weights.ckpt".replace("dbfs:/", "/dbfs/")
 
 model_checkpoint = ModelCheckpoint(filepath=filepath, verbose=1, save_best_only=True)
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC ## 4. Tensorboard
+# MAGIC %md ## 4. Tensorboard
 # MAGIC 
 # MAGIC Tensorboard provides a nice UI to visualize the training process of your neural network and can help with debugging! We can define it as a callback.
 # MAGIC 
@@ -146,13 +143,11 @@ model_checkpoint = ModelCheckpoint(filepath=filepath, verbose=1, save_best_only=
 
 # COMMAND ----------
 
-# TEMPORARILY DISABLED
-# %load_ext tensorboard
+# MAGIC %load_ext tensorboard
 
 # COMMAND ----------
 
-log_dir = f"{working_dir}/_tb.dir"
-dbutils.fs.rm(log_dir, recurse=True)
+log_dir = f"/tmp/{username}"
 
 # COMMAND ----------
 
@@ -161,13 +156,11 @@ dbutils.fs.rm(log_dir, recurse=True)
 
 # COMMAND ----------
 
-# TEMPORARILY DISABLED
-# %tensorboard --logdir $log_dir
+# MAGIC %tensorboard --logdir $log_dir
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC Now let's add in our model checkpoint and Tensorboard callbacks to our `.fit()` command.
+# MAGIC %md Now let's add in our model checkpoint and Tensorboard callbacks to our `.fit()` command.
 # MAGIC 
 # MAGIC Click the refresh button on Tensorboard to view the Tensorboard output when the training has completed.
 
@@ -196,9 +189,9 @@ model.evaluate(X_test, y_test)
 # MAGIC 
 # MAGIC ```
 # MAGIC model = Sequential([
-# MAGIC   Dense(20, input_dim=8, activation="relu", kernel_initializer="<insert_different_weight_initialization_methods_here>"),
-# MAGIC   Dense(20, activation="relu"),
-# MAGIC   Dense(1, activation="linear")
+# MAGIC     Dense(20, input_dim=8, activation="relu", kernel_initializer="<insert_different_weight_initialization_methods_here>"),
+# MAGIC     Dense(20, activation="relu"),
+# MAGIC     Dense(1, activation="linear")
 # MAGIC ])
 # MAGIC ```
 # MAGIC 

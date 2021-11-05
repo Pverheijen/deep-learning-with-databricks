@@ -1,5 +1,4 @@
 # Databricks notebook source
-
 def get_cloud():
   with open("/databricks/common/conf/deploy.conf") as f:
     for line in f:
@@ -61,14 +60,7 @@ def getUsername() -> str:
 # Get the user's userhome
 def getUserhome() -> str:
   username = getUsername()
-  cloud = get_cloud()
-  
-  if cloud == "GCP":
-    return f"file:///dbacademy/{username}"
-  else:
-    return f"file:///dbfs/Users/{username}/dbacademy"
-  
-  return 
+  return f"dbfs:/user/{username}/dbacademy"
 
 def getModuleName() -> str: 
   # This will/should fail if module-name is not defined in the Classroom-Setup notebook
@@ -92,49 +84,6 @@ def getWorkingDir() -> str:
   return workingDir.replace("__", "_").replace("__", "_").replace("__", "_").replace("__", "_")
 
 
-#############################################
-# VERSION ASSERTION FUNCTIONS
-#############################################
-
-# When migrating DBR versions this should be one
-# of the only two places that needs to be updated
-latestDbrMajor = 8
-latestDbrMinor = 3
-
-  # Assert an appropriate Databricks Runtime version
-def assertDbrVersion(expected:str, latestMajor:int=latestDbrMajor, latestMinor:int=latestDbrMinor, display:bool = True):
-  
-  expMajor = latestMajor
-  expMinor = latestMinor
-  
-  if expected and expected != "{{dbr}}":
-    expMajor = int(expected.split(".")[0])
-    expMinor = int(expected.split(".")[1])
-
-  (major, minor) = getDbrMajorAndMinorVersions()
-
-  if (major < expMajor) or (major == expMajor and minor < expMinor):
-    msg = f"This notebook must be run on DBR {expMajor}.{expMinor} or newer. Your cluster is using {major}.{minor}. You must update your cluster configuration before proceeding."
-
-    raise AssertionError(msg)
-    
-  if major != expMajor or minor != expMinor:
-    html = f"""
-      <div style="color:red; font-weight:bold">WARNING: This notebook was tested on DBR {expMajor}.{expMinor}, but we found DBR {major}.{minor}.</div>
-      <div style="font-weight:bold">Using an untested DBR may yield unexpected results and/or various errors</div>
-      <div style="font-weight:bold">Please update your cluster configuration and/or <a href="https://academy.databricks.com/" target="_blank">download a newer version of this course</a> before proceeding.</div>
-    """
-
-  else:
-    html = f"Running on <b>DBR {major}.{minor}</b>"
-  
-  if display:
-    displayHTML(html)
-  else:
-    print(html)
-  
-  return f"{major}.{minor}"
-    
 ############################################
 # USER DATABASE FUNCTIONS
 ############################################
@@ -159,7 +108,7 @@ def createUserDatabase(courseType:str, username:str, moduleName:str, lessonName:
 
     
 #############################################
-# LEGACY TESTING FUNCTIONS
+# Legacy testing functions
 #############################################
 
 # Test results dict to store results

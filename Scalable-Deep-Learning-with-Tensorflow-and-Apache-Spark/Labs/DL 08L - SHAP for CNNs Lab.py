@@ -1,5 +1,4 @@
 # Databricks notebook source
-# MAGIC 
 # MAGIC %md-sandbox
 # MAGIC 
 # MAGIC <div style="text-align: center; line-height: 0; padding-top: 9px;">
@@ -8,8 +7,7 @@
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC # SHAP for CNNs
+# MAGIC %md # SHAP for CNNs
 # MAGIC 
 # MAGIC ## ![Spark Logo Tiny](https://files.training.databricks.com/images/105/logo_spark_tiny.png) In this lesson you:<br>
 # MAGIC  - Use SHAP to generate explanation behind a model's predictions
@@ -53,12 +51,12 @@ plt.xlabel(class_names[y_train[0]])
 # COMMAND ----------
 
 for i in range(9):
-  plt.subplot(3, 3, i+1)
-  plt.xticks([])
-  plt.yticks([])
-  plt.grid(False)
-  plt.imshow(X_test[i])
-  plt.xlabel(class_names[y_test[i]])
+    plt.subplot(3, 3, i+1)
+    plt.xticks([])
+    plt.yticks([])
+    plt.grid(False)
+    plt.imshow(X_test[i])
+    plt.xlabel(class_names[y_test[i]])
 
 # COMMAND ----------
 
@@ -98,11 +96,11 @@ y_test = tf.keras.utils.to_categorical(y_test, num_classes)
 # COMMAND ----------
 
 model = tf.keras.models.Sequential([
-  layers.Conv2D(32, kernel_size=(3, 3), activation="relu", input_shape=input_shape),
-  layers.MaxPooling2D(pool_size=(2, 2)),
-  layers.Flatten(),
-  layers.Dense(128, activation="relu"),
-  layers.Dense(num_classes, activation="softmax")
+    layers.Conv2D(32, kernel_size=(3, 3), activation="relu", input_shape=input_shape),
+    layers.MaxPooling2D(pool_size=(2, 2)),
+    layers.Flatten(),
+    layers.Dense(128, activation="relu"),
+    layers.Dense(num_classes, activation="softmax")
 ])
 
 model.compile(loss=tf.keras.losses.categorical_crossentropy,
@@ -211,15 +209,6 @@ shap.image_plot(<FILL_IN>, -X_test_sample, index_names)
 # MAGIC Note that for the first (row 1) and the last picture (row 9), mostly "blank" outer background is important for the model to generate a "ankle boot" and "sandal" prediction respectively. 
 # MAGIC 
 # MAGIC What else do you see? How can you explain the misclassification of the 7th picture (row 7) using this SHAP-generated image?
-
-# COMMAND ----------
-
-# MAGIC %md
-# MAGIC // INSTUCTOR_ONLY
-# MAGIC 
-# MAGIC On the 8th picture (row 8), it's important that the model detects the body and also the collars (column 7) for it classify the image as a shirt. 
-# MAGIC 
-# MAGIC On the other hand, the picture in row 7 is supposed to be a coat, rather than a shirt. However, we can see that in column 5, there is blue signal around the shoulder area that suggest it's not a coat. In column 7, there's densely concentrated red signal around the upper arm area that misled the model to classify the picture as a shirt. 
 
 # COMMAND ----------
 

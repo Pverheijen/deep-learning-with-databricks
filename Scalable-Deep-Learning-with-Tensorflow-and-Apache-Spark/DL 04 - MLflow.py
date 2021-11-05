@@ -1,5 +1,4 @@
 # Databricks notebook source
-# MAGIC 
 # MAGIC %md-sandbox
 # MAGIC 
 # MAGIC <div style="text-align: center; line-height: 0; padding-top: 9px;">
@@ -61,34 +60,32 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense
 
 def build_model():
-  return Sequential([Dense(20, input_dim=8, activation="relu"),
-                     Dense(20, activation="relu"),
-                     Dense(1, activation="linear")]) # Keep the last layer as linear because this is a regression problem
+    return Sequential([Dense(20, input_dim=8, activation="relu"),
+                       Dense(20, activation="relu"),
+                       Dense(1, activation="linear")]) # Keep the last layer as linear because this is a regression problem
 
 # COMMAND ----------
 
-# MAGIC %md-sandbox
-# MAGIC ### Start Using MLflow in a Notebook
+# MAGIC %md-sandbox ### Start Using MLflow in a Notebook
 # MAGIC 
 # MAGIC <div><img src="https://files.training.databricks.com/images/eLearning/ML-Part-4/mlflow-tracking.png" style="height: 300px; margin: 20px"/></div>
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC Helper method to plot our training loss using matplotlib.
+# MAGIC %md Helper method to plot our training loss using matplotlib.
 
 # COMMAND ----------
 
 import matplotlib.pyplot as plt
 
 def view_model_loss(history):
-  plt.clf()
-  plt.plot(history.history["loss"], label="train_loss")
-  plt.title("Model Loss")
-  plt.ylabel("Loss")
-  plt.xlabel("Epoch")
-  plt.legend()
-  return plt
+    plt.clf()
+    plt.plot(history.history["loss"], label="train_loss")
+    plt.title("Model Loss")
+    plt.ylabel("Loss")
+    plt.xlabel("Epoch")
+    plt.legend()
+    return plt
 
 # COMMAND ----------
 
@@ -104,45 +101,45 @@ import mlflow
 
 # Note issue with **kwargs https://github.com/keras-team/keras/issues/9805
 def track_experiments(run_name, model, compile_kwargs, fit_kwargs, optional_params={}):
-  """
-  This is a wrapper function for tracking experiments with MLflow
-    
-  Parameters
-  ----------
-  model: Keras model
-    The model to track
-    
-  compile_kwargs: dict
-    Keyword arguments to compile model with
-  
-  fit_kwargs: dict
-    Keyword arguments to fit model with
-  """
-  import time
-  
-  with mlflow.start_run(run_name=run_name) as run:
-    model = model()
-    model.compile(**compile_kwargs)
-    history = model.fit(**fit_kwargs)
-    
-    for param_key, param_value in {**compile_kwargs, **fit_kwargs, **optional_params}.items():
-      if param_key not in ["x", "y"]:
-        mlflow.log_param(param_key, param_value)
-    
-    for key, values in history.history.items():
-      for i, v in enumerate(values):
-        mlflow.log_metric(key, v, step=i)
+    """
+    This is a wrapper function for tracking experiments with MLflow
 
-    for i, layer in enumerate(model.layers):
-      mlflow.log_param(f"hidden_layer_{i}_units", layer.output_shape[1])
-      
-    log_model(model, "model")
-    
-    plt = view_model_loss(history)
-    fig = plt.gcf()
-    mlflow.log_figure(fig, "train-validation-loss.png")
+    Parameters
+    ----------
+    model: Keras model
+      The model to track
 
-    return run
+    compile_kwargs: dict
+      Keyword arguments to compile model with
+
+    fit_kwargs: dict
+      Keyword arguments to fit model with
+    """
+    import time
+
+    with mlflow.start_run(run_name=run_name) as run:
+        model = model()
+        model.compile(**compile_kwargs)
+        history = model.fit(**fit_kwargs)
+
+        for param_key, param_value in {**compile_kwargs, **fit_kwargs, **optional_params}.items():
+            if param_key not in ["x", "y"]:
+                mlflow.log_param(param_key, param_value)
+
+        for key, values in history.history.items():
+            for i, v in enumerate(values):
+                mlflow.log_metric(key, v, step=i)
+
+        for i, layer in enumerate(model.layers):
+            mlflow.log_param(f"hidden_layer_{i}_units", layer.output_shape[1])
+
+        log_model(model, "model")
+
+        plt = view_model_loss(history)
+        fig = plt.gcf()
+        mlflow.log_figure(fig, "train-validation-loss.png")
+
+        return run
 
 # COMMAND ----------
 
@@ -152,17 +149,17 @@ def track_experiments(run_name, model, compile_kwargs, fit_kwargs, optional_para
 # COMMAND ----------
 
 compile_kwargs = {
-  "optimizer": "adam",
-  "loss": "mse",
-  "metrics": ["mse", "mae"]
+    "optimizer": "adam",
+    "loss": "mse",
+    "metrics": ["mse", "mae"]
 }
 
 fit_kwargs = {
-  "x": X_train, 
-  "y": y_train,
-  "epochs": 10,
-  "verbose": 2,
-  "batch_size": 64
+    "x": X_train, 
+    "y": y_train,
+    "epochs": 10,
+    "verbose": 2,
+    "batch_size": 64
 }
 
 run_name = "ADAM"
@@ -185,7 +182,7 @@ fit_kwargs["x"] = X_train_scaled
 fit_kwargs["validation_split"] = 0.2
 
 optional_params = {
-  "standardize_data": "true"
+    "standardize_data": "true"
 }
 
 run_name = "StandardizedValidation"
@@ -193,8 +190,7 @@ run = track_experiments(run_name, build_model, compile_kwargs, fit_kwargs, optio
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC ### Querying Past Runs
+# MAGIC %md ### Querying Past Runs
 # MAGIC 
 # MAGIC You can query past runs programatically in order to use this data back in Python.  The pathway to doing this is an `MlflowClient` object. 
 
@@ -208,8 +204,7 @@ client.list_experiments()
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC You can also use [search_runs](https://mlflow.org/docs/latest/search-syntax.html) to find all runs for a given experiment.
+# MAGIC %md You can also use [search_runs](https://mlflow.org/docs/latest/search-syntax.html) to find all runs for a given experiment.
 
 # COMMAND ----------
 
@@ -219,8 +214,7 @@ display(runs_df)
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC Pull the last run and look at metrics.
+# MAGIC %md Pull the last run and look at metrics. 
 
 # COMMAND ----------
 
@@ -229,8 +223,7 @@ runs[0].data.metrics
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC ## User Defined Function
+# MAGIC %md ## User Defined Function
 # MAGIC 
 # MAGIC Let's now register our Keras model as a Spark UDF to apply to rows in parallel.
 
@@ -247,8 +240,7 @@ display(X_test_df.withColumn("prediction", predict(*cal_housing.feature_names)))
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC Register the Vectorized UDF `predict` into the SQL namespace.
+# MAGIC %md Register the Vectorized UDF `predict` into the SQL namespace.
 
 # COMMAND ----------
 
@@ -257,8 +249,13 @@ X_test_df.createOrReplaceGlobalTempView("X_test_df")
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC Now, go back and add MLflow to your experiments from the Wine Quality Dataset!
+# MAGIC %sql 
+# MAGIC SELECT *, predictUDF(MedInc, HouseAge, AveRooms, AveBedrms, Population, AveOccup, Latitude, Longitude) AS prediction 
+# MAGIC FROM global_temp.X_test_df
+
+# COMMAND ----------
+
+# MAGIC %md Now, go back and add MLflow to your experiments from the Wine Quality Dataset!
 
 # COMMAND ----------
 

@@ -1,5 +1,4 @@
 # Databricks notebook source
-# MAGIC 
 # MAGIC %md-sandbox
 # MAGIC 
 # MAGIC <div style="text-align: center; line-height: 0; padding-top: 9px;">
@@ -8,7 +7,7 @@
 
 # COMMAND ----------
 
-# MAGIC %md
+# MAGIC %md 
 # MAGIC # Hyperopt
 # MAGIC 
 # MAGIC The [Hyperopt library](https://github.com/hyperopt/hyperopt) allows for parallel hyperparameter tuning using either random search or Tree of Parzen Estimators (TPE). With MLflow, we can record the hyperparameters and corresponding metrics for each hyperparameter combination. You can read more on [SparkTrials w/ Hyperopt](https://github.com/hyperopt/hyperopt/blob/master/docs/templates/scaleout/spark.md).
@@ -63,48 +62,47 @@ from tensorflow.keras.models import Sequential
 tf.random.set_seed(42)
 
 def create_model(hpo):
-  model = Sequential()
-  model.add(Dense(int(hpo["dense_l1"]), input_dim=8, activation="relu"))
-  model.add(Dense(int(hpo["dense_l2"]), activation="relu"))
-  model.add(Dense(1, activation="linear"))
-  return model
+    model = Sequential()
+    model.add(Dense(int(hpo["dense_l1"]), input_dim=8, activation="relu"))
+    model.add(Dense(int(hpo["dense_l2"]), activation="relu"))
+    model.add(Dense(1, activation="linear"))
+    return model
 
 # COMMAND ----------
 
 from hyperopt import fmin, hp, tpe, SparkTrials
 
 def run_nn(hpo):
-  model = create_model(hpo)
+    model = create_model(hpo)
 
-  # Select Optimizer
-  optimizer_call = getattr(tf.keras.optimizers, hpo["optimizer"])
-  optimizer = optimizer_call(learning_rate=hpo["learning_rate"])
+    # Select Optimizer
+    optimizer_call = getattr(tf.keras.optimizers, hpo["optimizer"])
+    optimizer = optimizer_call(learning_rate=hpo["learning_rate"])
 
-  # Compile model
-  model.compile(loss="mse",
-                optimizer=optimizer,
-                metrics=["mse"])
+    # Compile model
+    model.compile(loss="mse",
+                  optimizer=optimizer,
+                  metrics=["mse"])
 
-  history = model.fit(X_train, y_train, validation_split=.2, batch_size=64, epochs=10, verbose=2)
+    history = model.fit(X_train, y_train, validation_split=.2, batch_size=64, epochs=10, verbose=2)
 
-  # Evaluate our model
-  obj_metric = history.history["val_loss"][-1]
-  return obj_metric
+    # Evaluate our model
+    obj_metric = history.history["val_loss"][-1]
+    return obj_metric
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC ### Setup hyperparameter space and training
+# MAGIC %md ### Setup hyperparameter space and training
 # MAGIC 
 # MAGIC We need to create a search space for HyperOpt and set up SparkTrials to allow HyperOpt to run in parallel using Spark worker nodes. MLflow will automatically track the results of HyperOpt's tuning trials.
 
 # COMMAND ----------
 
 space = {
-  "dense_l1": hp.quniform("dense_l1", 10, 30, 1),
-  "dense_l2": hp.quniform("dense_l2", 10, 30, 1),
-  "learning_rate": hp.loguniform("learning_rate", -5, 0),
-  "optimizer": hp.choice("optimizer", ["Adadelta", "Adam"])
+    "dense_l1": hp.quniform("dense_l1", 10, 30, 1),
+    "dense_l2": hp.quniform("dense_l2", 10, 30, 1),
+    "learning_rate": hp.loguniform("learning_rate", -5, 0),
+    "optimizer": hp.choice("optimizer", ["Adadelta", "Adam"])
  }
 
 spark_trials = SparkTrials(parallelism=4)

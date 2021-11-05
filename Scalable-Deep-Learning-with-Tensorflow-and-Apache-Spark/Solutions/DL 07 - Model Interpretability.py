@@ -1,5 +1,4 @@
 # Databricks notebook source
-# MAGIC 
 # MAGIC %md-sandbox
 # MAGIC 
 # MAGIC <div style="text-align: center; line-height: 0; padding-top: 9px;">
@@ -34,25 +33,16 @@
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC Don't forget you need to scale your data because the model was trained on scaled data!
-
-# COMMAND ----------
-
 import tensorflow_datasets as tfds
-import pandas as pd
-
-# Import Dataset
-wine_quality_tfds = tfds.load("wine_quality", split="train", shuffle_files=False)
-wine_quality_pdf = tfds.as_dataframe(wine_quality_tfds)
-wine_quality_pdf.columns = wine_quality_pdf.columns.str.replace("features/","")
-wine_quality_pdf.head(5)
-
-# COMMAND ----------
-
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 
+# Load dataset
+wine_quality_tfds = tfds.load("wine_quality", split="train", shuffle_files=False)
+wine_quality_pdf = tfds.as_dataframe(wine_quality_tfds)
+wine_quality_pdf.columns = wine_quality_pdf.columns.str.replace("features/", "")
+
+# Split and scale dataset
 X_train, X_test, y_train, y_test = train_test_split(wine_quality_pdf.drop("quality", axis=1),
                                                     wine_quality_pdf["quality"],
                                                     test_size=0.2,
@@ -64,8 +54,7 @@ X_test = scaler.transform(X_test)
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC ### Build Model
+# MAGIC %md Build Model
 
 # COMMAND ----------
 
@@ -108,13 +97,13 @@ help(LimeTabularExplainer)
 # COMMAND ----------
 
 def model_predict(input):
-  """
-  Convert keras prediction output to LIME compatible form. (Needs to output a 1 dimensional array)
-  """
-  return model.predict(input).flatten()
+    """
+    Convert keras prediction output to LIME compatible form. (Needs to output a 1 dimensional array)
+    """
+    return model.predict(input).flatten()
 
-explainer = LimeTabularExplainer(X_train, feature_names=wine_quality_pdf.drop("quality", axis=1).columns, class_names=["quality"], mode="regression")
 # NOTE: In order to pass in categorical_features, they all need to be ints
+explainer = LimeTabularExplainer(X_train, feature_names=wine_quality_pdf.drop("quality", axis=1).columns, class_names=["quality"], mode="regression")
 
 # COMMAND ----------
 
@@ -124,8 +113,7 @@ print(f"Local predicted value: {exp.predicted_value}")
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC ## Which features are most important?
+# MAGIC %md ## Which features are most important?
 
 # COMMAND ----------
 
@@ -133,21 +121,22 @@ displayHTML(exp.as_html())
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC Positive correlation: 
+# MAGIC %md 
+# MAGIC Positive impact: 
 # MAGIC 0. `pH` 
 # MAGIC 0. `sulphates` 
 # MAGIC 0. `total sulfur dioxide` 
 # MAGIC 0. `chlorides`     
 # MAGIC 0. `volatile acidity`   
 # MAGIC 
-# MAGIC Negative correlation:
+# MAGIC Negative impact:
 # MAGIC 0. `density` 
 # MAGIC 0. `residual sugar` 
 # MAGIC 0. `free sulfur dioxide`
 # MAGIC 0. `citric acid`  
 # MAGIC 0. `alcohol`
 # MAGIC 0. `fixed acidity`
+# MAGIC 
 # MAGIC Do these make sense?
 
 # COMMAND ----------
@@ -156,8 +145,7 @@ display(exp.as_pyplot_figure().tight_layout())
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC Let's get those values as a list.
+# MAGIC %md Let's get those values as a list.
 
 # COMMAND ----------
 
@@ -165,8 +153,7 @@ exp.as_list()
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC ## SHAP
+# MAGIC %md ## SHAP
 # MAGIC 
 # MAGIC SHAP ([SHapley Additive exPlanations](https://github.com/slundberg/shap)) is another approach to explain the output of a machine learning model. See the [SHAP NIPS](http://papers.nips.cc/paper/7062-a-unified-approach-to-interpreting-model-predictions) paper for details, and Christoph Molnar's book chapter on [Shapley Values](https://christophm.github.io/interpretable-ml-book/shapley.html).
 # MAGIC 
@@ -202,8 +189,7 @@ shap.save_html(file_path, shap.force_plot(base_value,
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC ## Visualize
+# MAGIC %md ## Visualize
 # MAGIC 
 # MAGIC * Red pixels increase the model's output while blue pixels decrease the output.
 # MAGIC 
@@ -225,8 +211,7 @@ displayHTML(f.read())
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC The values on the bottom show the true values of `X_test[0]`.
+# MAGIC %md The values on the bottom show the true values of `X_test[0]`.
 
 # COMMAND ----------
 
@@ -259,8 +244,7 @@ shap.summary_plot(shap_explainer.shap_values(X_train[0:200]),
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC **Question**: How similar are the LIME predictions to the SHAP predictions?
+# MAGIC %md **Question**: How similar are the LIME predictions to the SHAP predictions?
 
 # COMMAND ----------
 

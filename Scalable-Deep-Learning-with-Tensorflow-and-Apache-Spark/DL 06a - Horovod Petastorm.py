@@ -1,5 +1,4 @@
 # Databricks notebook source
-# MAGIC 
 # MAGIC %md-sandbox
 # MAGIC 
 # MAGIC <div style="text-align: center; line-height: 0; padding-top: 9px;">
@@ -22,8 +21,7 @@
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC ## Load data
+# MAGIC %md ## Load data
 
 # COMMAND ----------
 
@@ -46,8 +44,7 @@ X_test = scaler.transform(X_test)
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC ## Spark DataFrame
+# MAGIC %md ## Spark DataFrame
 # MAGIC 
 # MAGIC Let's concatenate our features and label, then create a Spark DataFrame from our Pandas DataFrame.
 
@@ -59,8 +56,7 @@ display(train_df)
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC ## Create Dense Vectors for Features
+# MAGIC %md ## Create Dense Vectors for Features
 
 # COMMAND ----------
 
@@ -72,7 +68,7 @@ display(vec_train_df)
 
 # COMMAND ----------
 
-# MAGIC %md
+# MAGIC %md 
 # MAGIC ## Convert the Spark DataFrame to a TensorFlow Dataset
 # MAGIC In order to convert Spark DataFrames to a TensorFlow datasets, we need to do it in two steps:
 # MAGIC <br><br>
@@ -88,7 +84,7 @@ display(vec_train_df)
 from petastorm.spark import SparkDatasetConverter, make_spark_converter
 
 # Define directory the underlying files are copied to
-path_to_cache = f"{working_dir}/petastorm/"
+path_to_cache = f"file:///{working_dir}/petastorm/"
 dbutils.fs.rm(path_to_cache, recurse=True)
 dbutils.fs.mkdirs(path_to_cache)
 
@@ -99,8 +95,7 @@ converter_train = make_spark_converter(vec_train_df)
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC ## Define Model
+# MAGIC %md ## Define Model
 
 # COMMAND ----------
 
@@ -110,16 +105,15 @@ from tensorflow.keras import models, layers
 tf.random.set_seed(42)
 
 def build_model():
-  model = models.Sequential()
-  model.add(layers.Dense(20, input_dim=8, activation="relu"))
-  model.add(layers.Dense(20, activation="relu"))
-  model.add(layers.Dense(1, activation="linear"))
-  return model
+    model = models.Sequential()
+    model.add(layers.Dense(20, input_dim=8, activation="relu"))
+    model.add(layers.Dense(20, activation="relu"))
+    model.add(layers.Dense(1, activation="linear"))
+    return model
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC ## Single Node
+# MAGIC %md ## Single Node
 # MAGIC 
 # MAGIC Define shape of the input tensor and output tensor and fit the model on the driver. We need to use Petastorm's [make_tf_dataset](https://petastorm.readthedocs.io/en/latest/api.html#petastorm.spark.spark_dataset_converter.SparkDatasetConverter.make_tf_dataset) to read batches of data.<br><br>
 # MAGIC 
@@ -133,18 +127,16 @@ NUM_EPOCH = 10
 INITIAL_LR = 0.001
 
 with converter_train.make_tf_dataset(workers_count=4, batch_size=BATCH_SIZE, num_epochs=None) as train_dataset:
-  dataset = train_dataset.map(lambda x: (x.features, x.label))
-  
-  # Number of steps required to go through one epoch
-  steps_per_epoch = len(converter_train) // BATCH_SIZE
-  model = build_model()
-  optimizer = keras.optimizers.Adam(lr=INITIAL_LR)
-  model.compile(optimizer=optimizer,
-                loss="mse",
-                metrics=["mae"])
-  # Do not specify the batch_size if your data is in the form of a dataset (since they generate batches)
-  # Instead, use steps_per_epoch
-  model.fit(dataset, steps_per_epoch=steps_per_epoch, epochs=NUM_EPOCH, verbose=2)
+    dataset = train_dataset.map(lambda x: (x.features, x.label))
+
+    # Number of steps required to go through one epoch
+    steps_per_epoch = len(converter_train) // BATCH_SIZE
+    model = build_model()
+    optimizer = keras.optimizers.Adam(lr=INITIAL_LR)
+    model.compile(optimizer=optimizer, loss="mse", metrics=["mae"])
+    # Do not specify the batch_size if your data is in the form of a dataset (since they generate batches)
+    # Instead, use steps_per_epoch
+    model.fit(dataset, steps_per_epoch=steps_per_epoch, epochs=NUM_EPOCH, verbose=2)
 
 # COMMAND ----------
 
@@ -160,34 +152,32 @@ import horovod.tensorflow.keras as hvd
 dbutils.fs.rm(f"{working_dir}/petastorm_checkpoint_weights.ckpt", True)
 
 def run_training_horovod():
-  # Horovod: initialize Horovod.
-  hvd.init()
-  with converter_train.make_tf_dataset(batch_size=BATCH_SIZE, num_epochs=None, cur_shard=hvd.rank(), shard_count=hvd.size()) as train_dataset:
-    dataset = train_dataset.map(lambda x: (x.features, x.label))
-    model = build_model()
-    steps_per_epoch = len(converter_train) // (BATCH_SIZE*hvd.size())
-    
-    # Adding in Distributed Optimizer
-    optimizer = tf.keras.optimizers.Adam(lr=INITIAL_LR*hvd.size())
-    optimizer = hvd.DistributedOptimizer(optimizer)
-    
-    model.compile(optimizer=optimizer,
-                  loss="mse",
-                  metrics=["mae"])
-    
-    # Adding in callbacks
-    checkpoint_dir = f"{working_dir}/petastorm_checkpoint_weights.ckpt"
-    callbacks = [
-      hvd.callbacks.BroadcastGlobalVariablesCallback(0),
-      hvd.callbacks.MetricAverageCallback(),
-      hvd.callbacks.LearningRateWarmupCallback(initial_lr=INITIAL_LR, warmup_epochs=5, verbose=2),
-      tf.keras.callbacks.ReduceLROnPlateau(monitor="loss", patience=10, verbose=2)
-    ]
+    # Horovod: initialize Horovod.
+    hvd.init()
+    with converter_train.make_tf_dataset(batch_size=BATCH_SIZE, num_epochs=None, cur_shard=hvd.rank(), shard_count=hvd.size()) as train_dataset:
+        dataset = train_dataset.map(lambda x: (x.features, x.label))
+        model = build_model()
+        steps_per_epoch = len(converter_train) // (BATCH_SIZE*hvd.size())
 
-    if hvd.rank() == 0:
-      callbacks.append(tf.keras.callbacks.ModelCheckpoint(checkpoint_dir, save_weights_only=True))
-  
-    history = model.fit(dataset, steps_per_epoch=steps_per_epoch, epochs=NUM_EPOCH, callbacks=callbacks, verbose=2)
+        # Adding in Distributed Optimizer
+        optimizer = tf.keras.optimizers.Adam(lr=INITIAL_LR*hvd.size())
+        optimizer = hvd.DistributedOptimizer(optimizer)
+
+        model.compile(optimizer=optimizer, loss="mse", metrics=["mae"])
+
+        # Adding in callbacks
+        checkpoint_dir = f"{working_dir}/petastorm_checkpoint_weights.ckpt"
+        callbacks = [
+            hvd.callbacks.BroadcastGlobalVariablesCallback(0),
+            hvd.callbacks.MetricAverageCallback(),
+            hvd.callbacks.LearningRateWarmupCallback(initial_lr=INITIAL_LR, warmup_epochs=5, verbose=2),
+            tf.keras.callbacks.ReduceLROnPlateau(monitor="loss", patience=10, verbose=2)
+        ]
+
+        if hvd.rank() == 0:
+            callbacks.append(tf.keras.callbacks.ModelCheckpoint(checkpoint_dir, save_weights_only=True))
+
+        history = model.fit(dataset, steps_per_epoch=steps_per_epoch, epochs=NUM_EPOCH, callbacks=callbacks, verbose=2)
 
 # COMMAND ----------
 
@@ -208,13 +198,11 @@ hr.run(run_training_horovod)
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC Let's [delete](https://petastorm.readthedocs.io/en/latest/api.html#petastorm.spark.spark_dataset_converter.SparkDatasetConverter.delete) the cached files
+# MAGIC %md Let's [delete](https://petastorm.readthedocs.io/en/latest/api.html#petastorm.spark.spark_dataset_converter.SparkDatasetConverter.delete) the cached files
 
 # COMMAND ----------
 
 converter_train.delete()
-
 
 # COMMAND ----------
 

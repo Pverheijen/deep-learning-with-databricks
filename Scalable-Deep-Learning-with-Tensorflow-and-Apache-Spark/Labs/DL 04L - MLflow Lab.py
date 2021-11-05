@@ -1,5 +1,4 @@
 # Databricks notebook source
-# MAGIC 
 # MAGIC %md-sandbox
 # MAGIC 
 # MAGIC <div style="text-align: center; line-height: 0; padding-top: 9px;">
@@ -8,8 +7,7 @@
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC # MLflow Lab
+# MAGIC %md # MLflow Lab
 # MAGIC 
 # MAGIC 
 # MAGIC ## ![Spark Logo Tiny](https://files.training.databricks.com/images/105/logo_spark_tiny.png) In this lesson you:<br>
@@ -30,8 +28,7 @@
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC ## Load & Prepare Data
+# MAGIC %md ## Load & Prepare Data
 
 # COMMAND ----------
 
@@ -68,8 +65,7 @@ X_train_split, X_val, y_train_split, y_val = train_test_split(X_train,
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC ## Build_model
+# MAGIC %md ## Build_model
 # MAGIC Create a `build_model()` function. Because Keras models are stateful, we want to get a fresh model every time we are trying out a new experiment.
 
 # COMMAND ----------
@@ -80,9 +76,9 @@ from tensorflow.keras.layers import Dense
 tf.random.set_seed(42)
 
 def build_model():
-  return Sequential([Dense(50, input_dim=11, activation="relu"),
-                     Dense(20, activation="relu"),
-                     Dense(1, activation="linear")])
+    return Sequential([Dense(50, input_dim=11, activation="relu"),
+                       Dense(20, activation="relu"),
+                       Dense(1, activation="linear")])
 
 # COMMAND ----------
 
@@ -96,14 +92,13 @@ def build_model():
 # TODO
 from tensorflow.keras.callbacks import ModelCheckpoint, EarlyStopping
 
-filepath = f"{working_dir}/keras_mlflow.ckpt"
+filepath = f"{working_dir}/keras_mlflow.ckpt".replace("dbfs:/", "/dbfs/")
 checkpointer = ModelCheckpoint(filepath=filepath, verbose=1, save_best_only=True)
 early_stopping = EarlyStopping(monitor="val_loss", min_delta=0.0001, patience=2, mode="auto")
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC ### Track Experiments!
+# MAGIC %md ### Track Experiments!
 # MAGIC 
 # MAGIC Now let's use MLflow to automatically track experiments with [mlflow.tensorflow.autolog()](https://www.mlflow.org/docs/latest/python_api/mlflow.tensorflow.html#mlflow.tensorflow.autolog). Try changing your hyperparameters, such as `epochs` or `batch_size` and compare what gives you the best result.
 # MAGIC 
@@ -116,21 +111,20 @@ early_stopping = EarlyStopping(monitor="val_loss", min_delta=0.0001, patience=2,
 # Add autologging
 
 with mlflow.start_run() as run:
-  model = build_model()
-  model.compile(optimizer="adam", loss="mse", metrics=["mae", "mse"])
+    model = build_model()
+    model.compile(optimizer="adam", loss="mse", metrics=["mae", "mse"])
 
-  model.fit(X_train_split, 
-            y_train_split, 
-            validation_data=(X_val, y_val), 
-            epochs=30, 
-            batch_size=32, 
-            callbacks=[checkpointer, early_stopping], 
-            verbose=2)
+    model.fit(X_train_split, 
+              y_train_split, 
+              validation_data=(X_val, y_val), 
+              epochs=30, 
+              batch_size=32, 
+              callbacks=[checkpointer, early_stopping], 
+              verbose=2)
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC ## User Defined Function
+# MAGIC %md ## User Defined Function
 # MAGIC 
 # MAGIC Let's now register our Keras model as a Spark UDF to apply to rows in parallel.
 
@@ -145,7 +139,6 @@ X_test_df = spark.createDataFrame(pd.concat([pd.DataFrame(X_test, columns=wine_q
                                              pd.DataFrame(y_test, columns=["label"])], axis=1))
 
 display(X_test_df.withColumn("prediction", predict(*wine_quality_pdf.drop("quality", axis=1).columns)))
-
 
 # COMMAND ----------
 

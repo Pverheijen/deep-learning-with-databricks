@@ -1,5 +1,4 @@
 # Databricks notebook source
-# MAGIC 
 # MAGIC %md-sandbox
 # MAGIC 
 # MAGIC <div style="text-align: center; line-height: 0; padding-top: 9px;">
@@ -8,8 +7,7 @@
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC # Keras Lab: Wine Quality Dataset
+# MAGIC %md # Keras Lab: Wine Quality Dataset
 # MAGIC Let's build a Keras model to predict the quality rating on the [Wine Quality Dataset](https://www.tensorflow.org/datasets/catalog/wine_quality).
 # MAGIC 
 # MAGIC This dataset contains features based on the physicochemical tests of a wine, and the label you will try to predict is the `quality`, the rating of the wine out of 10. 
@@ -63,8 +61,7 @@ X_train.describe()
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC # 1. Define a Network
+# MAGIC %md # 1. Define a Network
 # MAGIC 
 # MAGIC We need to specify our [dense layers](https://www.tensorflow.org/api_docs/python/tf/keras/layers/Dense).
 # MAGIC 
@@ -77,7 +74,7 @@ import tensorflow as tf
 from tensorflow.keras.layers import Dense
 from tensorflow.keras.models import Sequential
 tf.random.set_seed(42)
-
+ 
 model = <FILL_IN>
 
 # COMMAND ----------
@@ -95,8 +92,7 @@ model = <FILL_IN>
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC # 2. Compile a Network
+# MAGIC %md # 2. Compile a Network
 # MAGIC 
 # MAGIC To [compile](https://www.tensorflow.org/api_docs/python/tf/keras/Model#compile) the network, we need to specify the loss function, which optimizer to use, and a metric to evaluate how well the model is performing.
 # MAGIC 
@@ -108,8 +104,7 @@ model = <FILL_IN>
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC # 3. Fit a Network
+# MAGIC %md # 3. Fit a Network
 # MAGIC 
 # MAGIC Now we are going to [fit](https://www.tensorflow.org/api_docs/python/tf/keras/Model#fit) our model to our training data. Set `epochs` to 30 and `batch_size` to 32, `verbose` to 2.
 
@@ -128,18 +123,17 @@ history = <FILL_IN>
 import matplotlib.pyplot as plt
 
 def view_model_loss():
-  plt.clf()
-  plt.plot(history.history["loss"])
-  plt.title("model loss")
-  plt.ylabel("loss")
-  plt.xlabel("epoch")
-  plt.show()
+    plt.clf()
+    plt.plot(history.history["loss"])
+    plt.title("model loss")
+    plt.ylabel("loss")
+    plt.xlabel("epoch")
+    plt.show()
 view_model_loss()
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC # 4. Evaluate Network
+# MAGIC %md # 4. Evaluate Network
 
 # COMMAND ----------
 
@@ -147,8 +141,7 @@ view_model_loss()
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC # 5. Make Predictions
+# MAGIC %md # 5. Make Predictions
 
 # COMMAND ----------
 
@@ -161,8 +154,7 @@ view_model_loss()
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC ## BONUS:
+# MAGIC %md ## BONUS:
 # MAGIC Try around with changing some hyperparameters. See what happens if you increase the number of layers, or change the optimizer, etc. What about standardizing the data??
 # MAGIC 
 # MAGIC If you have time, how about building a baseline model to compare against?

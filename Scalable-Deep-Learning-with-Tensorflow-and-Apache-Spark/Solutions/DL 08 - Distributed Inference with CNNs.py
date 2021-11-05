@@ -1,5 +1,4 @@
 # Databricks notebook source
-# MAGIC 
 # MAGIC %md-sandbox
 # MAGIC 
 # MAGIC <div style="text-align: center; line-height: 0; padding-top: 9px;">
@@ -8,10 +7,9 @@
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC #Convolutional Neural Networks
+# MAGIC %md # Distributed Inference with Convolutional Neural Networks
 # MAGIC 
-# MAGIC We will use pre-trained Convolutional Neural Networks (CNNs), trained with the image dataset from [ImageNet](http://www.image-net.org/), to demonstrate two aspects. First, how to explore and classify images. And second, how to use transfer learning with existing trained models (next lab).
+# MAGIC We will use pre-trained Convolutional Neural Networks (CNNs), trained with the image dataset from [ImageNet](http://www.image-net.org/), to make scalable predictions with Pandas Scalar Iterator UDFs.
 # MAGIC 
 # MAGIC 
 # MAGIC ## ![Spark Logo Tiny](https://files.training.databricks.com/images/105/logo_spark_tiny.png) In this lesson you:<br>
@@ -83,8 +81,7 @@ inception_model = InceptionV3()
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC Take a look at the architecture noted where batch normalization is performed.
+# MAGIC %md Take a look at the architecture noted where batch normalization is performed.
 
 # COMMAND ----------
 
@@ -92,8 +89,7 @@ inception_model.summary()
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC Looking for more reference architectures?  Check out [`tf.keras.applications` for what's available out of the box.](https://www.tensorflow.org/api_docs/python/tf/keras/applications)
+# MAGIC %md Looking for more reference architectures?  Check out [`tf.keras.applications` for what's available out of the box.](https://www.tensorflow.org/api_docs/python/tf/keras/applications)
 
 # COMMAND ----------
 
@@ -107,21 +103,20 @@ inception_model.summary()
 # COMMAND ----------
 
 def predict_images(images, model):
-  for i in images:
-    print(f"Processing image: {i}")
-    img = image.load_img(i, target_size=(224, 224))
-    # Convert to numpy array for Keras image format processing
-    x = image.img_to_array(img)
-    x = np.expand_dims(x, axis=0)
-    x = preprocess_input(x)
-    preds = model.predict(x)
-    # Decode the results into a list of tuples (class, description, probability)
-    print(f"Predicted: {decode_predictions(preds, top=3)[0]}\n")
+    for i in images:
+        print(f"Processing image: {i}")
+        img = image.load_img(i, target_size=(224, 224))
+        # Convert to numpy array for Keras image format processing
+        x = image.img_to_array(img)
+        x = np.expand_dims(x, axis=0)
+        x = preprocess_input(x)
+        preds = model.predict(x)
+        # Decode the results into a list of tuples (class, description, probability)
+        print(f"Predicted: {decode_predictions(preds, top=3)[0]}\n")
 
 # COMMAND ----------
 
-# MAGIC %md-sandbox
-# MAGIC ## Images
+# MAGIC %md-sandbox ## Images
 # MAGIC <div style="text-align: left; line-height: 0; padding-top: 9px;">
 # MAGIC   <img src="https://files.training.databricks.com/images/pug.jpg" height="150" width="150" alt="Databricks Nerds!" style=>
 # MAGIC   <img src="https://files.training.databricks.com/images/strawberries.jpg" height="150" width="150" alt="Databricks Nerds!" style=>
@@ -134,9 +129,9 @@ def predict_images(images, model):
 # COMMAND ----------
 
 img_paths = [
-  f"{datasets_dir}/dl/img/pug.jpg".replace("file:///", "/"), 
-  f"{datasets_dir}/dl/img/strawberries.jpg".replace("file:///", "/"), 
-  f"{datasets_dir}/dl/img/rose.jpg".replace("file:///", "/")
+    f"{datasets_dir}/dl/img/pug.jpg".replace("dbfs:/", "/dbfs/"), 
+    f"{datasets_dir}/dl/img/strawberries.jpg".replace("dbfs:/", "/dbfs/"), 
+    f"{datasets_dir}/dl/img/rose.jpg".replace("dbfs:/", "/dbfs/")
 ]
 
 predict_images(img_paths, vgg16_model)
@@ -157,8 +152,7 @@ predict_images(img_paths, vgg16_model)
 
 # COMMAND ----------
 
-# MAGIC %md-sandbox
-# MAGIC ## Classify Co-Founders of Databricks
+# MAGIC %md-sandbox ## Classify Co-Founders of Databricks
 # MAGIC <div style="text-align: left; line-height: 0; padding-top: 9px;">
 # MAGIC   <img src="https://files.training.databricks.com/images/Ali-Ghodsi-4.jpg" height="150" width="150" alt="Databricks Nerds!" style=>
 # MAGIC   <img src="https://files.training.databricks.com/images/andy-konwinski-1.jpg" height="150" width="150" alt="Databricks Nerds!" style=>
@@ -170,8 +164,7 @@ predict_images(img_paths, vgg16_model)
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC Load these images into a DataFrame.
+# MAGIC %md Load these images into a DataFrame.
 
 # COMMAND ----------
 
@@ -180,8 +173,7 @@ display(df)
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC Let's wrap the prediction code inside a UDF so we can apply this model in parallel on each row of the DataFrame.
+# MAGIC %md Let's wrap the prediction code inside a UDF so we can apply this model in parallel on each row of the DataFrame.
 
 # COMMAND ----------
 
@@ -189,24 +181,23 @@ from pyspark.sql.types import StringType, ArrayType
 
 @udf(ArrayType(StringType()))
 def vgg16_predict_udf(path):
-  img = image.load_img(path.replace("file:/", "/"), target_size=(224, 224))
-  x = image.img_to_array(img)
-  x = np.expand_dims(x, axis=0)
-  x = preprocess_input(x)
-  
-  model = VGG16(weights="imagenet")
-  preds = model.predict(x)
+    img = image.load_img(path.replace("dbfs:/", "/dbfs/"), target_size=(224, 224))
+    x = image.img_to_array(img)
+    x = np.expand_dims(x, axis=0)
+    x = preprocess_input(x)
 
-  # Decode the results into a list of strings (class, description, probability)  
-  return [f"{label}: {prob:.3f}" for _, label, prob in decode_predictions(preds, top=3)[0]]
+    model = VGG16(weights="imagenet")
+    preds = model.predict(x)
+
+    # Decode the results into a list of strings (class, description, probability)  
+    return [f"{label}: {prob:.3f}" for _, label, prob in decode_predictions(preds, top=3)[0]]
 
 results_df = df.withColumn("predictions", vgg16_predict_udf("path"))
 display(results_df)
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC ### Pandas/Vectorized UDF
+# MAGIC %md ### Pandas/Vectorized UDF
 # MAGIC 
 # MAGIC Pandas/Vectorized UDFs are available in Python to help speed up the computation by leveraging Apache Arrow. [Apache Arrow](https://arrow.apache.org/) is an in-memory columnar data format that is used in Spark to efficiently transfer data between JVM and Python processes with near-zero (de)serialization cost. See more [here](https://spark.apache.org/docs/latest/sql-pyspark-pandas-with-arrow.html).
 # MAGIC 
@@ -217,22 +208,22 @@ display(results_df)
 
 # COMMAND ----------
 
-# MAGIC %md-sandbox
+# MAGIC %md 
 # MAGIC ### Pandas Scalar Iterator UDF
 # MAGIC 
 # MAGIC If you define your own UDF to apply a model to each record of your DataFrame in Python, opt for pandas/vectorized UDFs for optimized serialization and deserialization. However, if your model is very large, then there is high overhead for the pandas UDF to repeatedly load the same model for every batch in the same Python worker process. In Spark 3.0, pandas UDFs can accept an iterator of pandas.Series or pandas.DataFrame so that you can load the model only once instead of loading it for every series in the iterator.
 # MAGIC 
-# MAGIC This way the cost of any set-up needed (like loading the VGG16 model in our case) will be incurred fewer times. When the number of images you’re working with is greater than `spark.conf.get('spark.sql.execution.arrow.maxRecordsPerBatch')`, which is 10,000 by default, you'll see significant speed ups over a pandas scalar UDF because it iterates through batches of pd.Series.
+# MAGIC This way the cost of any set-up needed (like loading the VGG16 model in our case) will be incurred fewer times. When the number of images you’re working with is greater than `spark.conf.get("spark.sql.execution.arrow.maxRecordsPerBatch")`, which is 10,000 by default, you'll see significant speed ups over a pandas scalar UDF because it iterates through batches of pd.Series.
 # MAGIC 
 # MAGIC It has the general syntax of: 
 # MAGIC ```@pandas_udf(...)
 # MAGIC def predict(iterator):
-# MAGIC   model = ... # load model
-# MAGIC   for features in iterator:
-# MAGIC     yield model.predict(features)```
+# MAGIC     model = ... # load model
+# MAGIC     for features in iterator:
+# MAGIC         yield model.predict(features)```
 # MAGIC 
 # MAGIC 
-# MAGIC <img alt="Side Note" title="Side Note" style="vertical-align: text-bottom; position: relative; height:1.75em; top:0.05em; transform:rotate(15deg)" src="https://files.training.databricks.com/static/images/icon-note.webp"/> If the workers cached the model weights after loading it for the first time, subsequent calls of the same UDF with the same model loading will become significantly faster. 
+# MAGIC <img src="https://files.training.databricks.com/images/icon_note_24.png"/> If the workers cached the model weights after loading it for the first time, subsequent calls of the same UDF with the same model loading will become significantly faster. 
 
 # COMMAND ----------
 
@@ -241,25 +232,25 @@ import pandas as pd
 from typing import Iterator
 
 def preprocess(image_path):
-  path = image_path.replace("file:/", "/")
-  img = image.load_img(path, target_size=(224, 224))
-  x = image.img_to_array(img)
-  x = preprocess_input(x)
-  return x
+    path = image_path.replace("dbfs:/", "/dbfs/")
+    img = image.load_img(path, target_size=(224, 224))
+    x = image.img_to_array(img)
+    x = preprocess_input(x)
+    return x
 
 @pandas_udf(ArrayType(StringType()))
 def vgg16_predict_pandas_udf(image_data_iter: Iterator[pd.DataFrame]) -> Iterator[pd.DataFrame]:
-  # Load model outside of for loop
-  model = VGG16(weights="imagenet") 
-  for image_data_series in image_data_iter:
-    # Apply functions to entire series at once
-    x = image_data_series.map(preprocess) 
-    x = np.stack(list(x.values))
-    preds = model.predict(x)
-    top_3s = decode_predictions(preds, top=3)
+    # Load model outside of for loop
+    model = VGG16(weights="imagenet") 
+    for image_data_series in image_data_iter:
+        # Apply functions to entire series at once
+        x = image_data_series.map(preprocess) 
+        x = np.stack(list(x.values))
+        preds = model.predict(x)
+        top_3s = decode_predictions(preds, top=3)
 
-    yield pd.Series([[f"{label}: {prob:.3f}" for _, label, prob in top_3] for top_3 in top_3s])
-    
+        yield pd.Series([[f"{label}: {prob:.3f}" for _, label, prob in top_3] for top_3 in top_3s])
+
 display(df.withColumn("predictions", vgg16_predict_pandas_udf("path")))
 
 # COMMAND ----------
@@ -276,17 +267,17 @@ display(df.withColumn("predictions", vgg16_predict_pandas_udf("path")))
 # COMMAND ----------
 
 def map_pandas_predict(image_data_iter: Iterator[pd.DataFrame]) -> Iterator[pd.DataFrame]:
-  model = VGG16(weights="imagenet") 
-  for image_data_series in image_data_iter:
-    image_path_series = image_data_series["path"]
-    x = image_path_series.map(preprocess) 
-    x = np.stack(list(x.values))
-    preds = model.predict(x)
-    top_3s = decode_predictions(preds, top=3)
-    
-    results = [[f"{label}: {prob:.3f}" for _, label, prob in top_3] for top_3 in top_3s]
-    yield pd.concat([image_path_series, pd.Series(results, name="prediction")], axis=1)
-  
+    model = VGG16(weights="imagenet") 
+    for image_data_series in image_data_iter:
+        image_path_series = image_data_series["path"]
+        x = image_path_series.map(preprocess) 
+        x = np.stack(list(x.values))
+        preds = model.predict(x)
+        top_3s = decode_predictions(preds, top=3)
+
+        results = [[f"{label}: {prob:.3f}" for _, label, prob in top_3] for top_3 in top_3s]
+        yield pd.concat([image_path_series, pd.Series(results, name="prediction")], axis=1)
+
 display(df.select("path").mapInPandas(map_pandas_predict, schema="path:STRING, prediction:ARRAY<STRING>"))
 
 # COMMAND ----------

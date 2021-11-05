@@ -1,5 +1,4 @@
 # Databricks notebook source
-# MAGIC 
 # MAGIC %md-sandbox
 # MAGIC 
 # MAGIC <div style="text-align: center; line-height: 0; padding-top: 9px;">
@@ -8,8 +7,7 @@
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC # Transfer Learning
+# MAGIC %md # Transfer Learning
 # MAGIC 
 # MAGIC The idea behind transfer learning is to take knowledge from one model doing some task, and transfer it to build another model doing a similar task.
 # MAGIC 
@@ -20,12 +18,11 @@
 
 # COMMAND ----------
 
-# MAGIC %run "./Includes/Classroom-Setup"
+# MAGIC %run "../Includes/Classroom-Setup"
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC ### Why Transfer Learning
+# MAGIC %md ### Why Transfer Learning
 # MAGIC 
 # MAGIC In 2016, Andrew Ng claimed that transfer learning will be the next driver of commercial machine learning success after supervised learning.  Why?<br><br>
 # MAGIC 
@@ -42,8 +39,7 @@
 
 # COMMAND ----------
 
-# MAGIC %md-sandbox
-# MAGIC ### Common Pre-Trained Models
+# MAGIC %md ### Common Pre-Trained Models
 # MAGIC 
 # MAGIC Keras exposes a number of deep learning models (architectures) along with pre-trained weights.  They are available in the `tensorflow.keras.applications` package and [the full list is available here.](https://www.tensorflow.org/api_docs/python/tf/keras/applications)  
 # MAGIC 
@@ -68,12 +64,11 @@
 # MAGIC | [MobileNet](https://arxiv.org/pdf/1704.04861.pdf) | 2017 | 89.5% | 4.24M |
 # MAGIC | [EfficientNet B5](https://arxiv.org/pdf/1905.11946.pdf) | 2019 | 96.7% | 30M | 
 # MAGIC 
-# MAGIC <img alt="Side Note" title="Side Note" style="vertical-align: text-bottom; position: relative; height:1.75em; top:0.05em; transform:rotate(15deg)" src="https://files.training.databricks.com/static/images/icon-note.webp"/> See this [website](https://paperswithcode.com/sota/image-classification-on-imagenet) that compiles metrics on a variety of deep learning architectures.
+# MAGIC <img src="https://files.training.databricks.com/images/icon_note_24.png"/> See this [website](https://paperswithcode.com/sota/image-classification-on-imagenet) that compiles metrics on a variety of deep learning architectures.
 
 # COMMAND ----------
 
-# MAGIC %md-sandbox
-# MAGIC ### The Implementation Details
+# MAGIC %md ### The Implementation Details
 # MAGIC 
 # MAGIC We want to make a classifier that distinguishes between cats and dogs. To do this, we'll use VGG16, but instead of predicting 1000 classes, we will predict 2 classes (cat or dog).  We have 3 options:<br><br>
 # MAGIC 
@@ -83,7 +78,7 @@
 # MAGIC 
 # MAGIC Since our dataset is small and similar to the task VGG16 was trained on, we'll choose option 3.
 # MAGIC 
-# MAGIC <img alt="Best Practice" title="Best Practice" style="vertical-align: text-bottom; position: relative; height:1.75em; top:0.3em" src="https://files.training.databricks.com/static/images/icon-blue-ribbon.svg"/> Would you want to use a high or low learning rate for transfer learning? Or different learning rates for different layers?
+# MAGIC <img src="https://files.training.databricks.com/images/icon_best_24.png"/> Would you want to use a high or low learning rate for transfer learning? Or different learning rates for different layers?
 
 # COMMAND ----------
 
@@ -101,8 +96,7 @@ display(df_cats)
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC Do a custom train/test split to make sure there are stratified samples.
+# MAGIC %md Do a custom train/test split to make sure there are stratified samples.
 
 # COMMAND ----------
 
@@ -110,10 +104,10 @@ cat_data = df_cats.toPandas()
 dog_data = df_dogs.toPandas()
 
 train_data = cat_data.iloc[:5].append(dog_data.iloc[:5])
-train_data["path"] = train_data["path"].apply(lambda x: x.replace("file:/", "/"))
+train_data["path"] = train_data["path"].apply(lambda x: x.replace("dbfs:/", "/dbfs/"))
 
 test_data = cat_data.iloc[5:].append(dog_data.iloc[5:])
-test_data["path"] = test_data["path"].apply(lambda x: x.replace("file:/", "/"))
+test_data["path"] = test_data["path"].apply(lambda x: x.replace("dbfs:/", "/dbfs/"))
 
 print(f"Train data samples: {len(train_data)} \tTest data samples: {len(test_data)}")
 
@@ -184,8 +178,7 @@ model.fit(train_generator, epochs=10, steps_per_epoch=step_size, verbose=2)
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC ## Evaluate the Accuracy
+# MAGIC %md ## Evaluate the Accuracy
 
 # COMMAND ----------
 
@@ -196,14 +189,14 @@ test_datagen = ImageDataGenerator(preprocessing_function=applications.vgg16.prep
 batch_size = 6
 
 test_generator = test_datagen.flow_from_dataframe(
-  dataframe=test_data, 
-  directory=None, 
-  x_col="path", 
-  y_col="label", 
-  class_mode="binary", 
-  target_size=(img_height, img_width),
-  shuffle=False,
-  batch_size=batch_size
+    dataframe=test_data, 
+    directory=None, 
+    x_col="path", 
+    y_col="label", 
+    class_mode="binary", 
+    target_size=(img_height, img_width),
+    shuffle=False,
+    batch_size=batch_size
 )
 
 step_size = test_generator.n//test_generator.batch_size
@@ -213,24 +206,22 @@ print(f"Loss: {eval_results[0]}. Accuracy: {eval_results[1]}")
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC ## Visualize the Results
+# MAGIC %md ## Visualize the Results
 # MAGIC 
 # MAGIC Since we used sigmoid + binary crossentropy, it computes the probability of class 0 (which is cats) being `True`, by analzying the single probability output. 
 
 # COMMAND ----------
 
 predictions = pd.DataFrame({
-  "Prediction": ((model.predict(test_generator) >= 0.5)+0).ravel(),
-  "True": test_generator.classes,
-  "Path": test_data["path"].apply(lambda x: f"file:{x}")
+    "Prediction": ((model.predict(test_generator) >= 0.5)+0).ravel(),
+    "True": test_generator.classes,
+    "Path": test_data["path"].apply(lambda x: f"file:{x}")
 }).replace({v: k for k, v in train_generator.class_indices.items()})
 
 all_images_df = df_cats.union(df_dogs).drop("label")
 predictions_df = spark.createDataFrame(predictions)
 
 display(all_images_df.join(predictions_df, predictions_df.Path==all_images_df.path))
-
 
 # COMMAND ----------
 

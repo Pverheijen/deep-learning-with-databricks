@@ -1,5 +1,4 @@
 # Databricks notebook source
-# MAGIC 
 # MAGIC %md-sandbox
 # MAGIC 
 # MAGIC <div style="text-align: center; line-height: 0; padding-top: 9px;">
@@ -30,8 +29,7 @@
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC ## Build Model
+# MAGIC %md ## Build Model
 
 # COMMAND ----------
 
@@ -42,9 +40,9 @@ from tensorflow.keras.layers import Dense
 tf.random.set_seed(42)
 
 def build_model():
-  return Sequential([Dense(20, input_dim=8, activation="relu"),
-                     Dense(20, activation="relu"),
-                     Dense(1, activation="linear")]) # Keep the output layer as linear because this is a regression problem
+    return Sequential([Dense(20, input_dim=8, activation="relu"),
+                       Dense(20, activation="relu"),
+                       Dense(1, activation="linear")]) # Keep the output layer as linear because this is a regression problem
 
 # COMMAND ----------
 
@@ -70,23 +68,22 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 
 def get_dataset(rank=0, size=1):
-  scaler = StandardScaler()
-  cal_housing = fetch_california_housing(data_home=f"{working_dir}/{rank}/")
-  X_train, X_test, y_train, y_test = train_test_split(cal_housing.data,
-                                                      cal_housing.target,
-                                                      test_size=0.2,
-                                                      random_state=1)
-  scaler.fit(X_train)
-  X_train = scaler.transform(X_train[rank::size])
-  y_train = y_train[rank::size]
-  X_test = scaler.transform(X_test[rank::size])
-  y_test = y_test[rank::size]
-  return (X_train, y_train), (X_test, y_test)
+    scaler = StandardScaler()
+    cal_housing = fetch_california_housing(data_home=f"{working_dir}/{rank}/")
+    X_train, X_test, y_train, y_test = train_test_split(cal_housing.data,
+                                                        cal_housing.target,
+                                                        test_size=0.2,
+                                                        random_state=1)
+    scaler.fit(X_train)
+    X_train = scaler.transform(X_train[rank::size])
+    y_train = y_train[rank::size]
+    X_test = scaler.transform(X_test[rank::size])
+    y_test = y_test[rank::size]
+    return (X_train, y_train), (X_test, y_test)
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC ## Horovod
+# MAGIC %md ## Horovod
 
 # COMMAND ----------
 
@@ -94,37 +91,36 @@ import horovod.tensorflow.keras as hvd
 from tensorflow.keras import optimizers
 
 def run_training_horovod():
-  # Horovod: initialize Horovod
-  hvd.init()
-#     # If using GPU: pin GPU to be used to process local rank (one GPU per process)
-#   gpus = tf.config.experimental.list_physical_devices('GPU')
-#   print(gpus)
-#   for gpu in gpus:
-#       tf.config.experimental.set_memory_growth(gpu, True)
-#   if gpus:
-#       tf.config.experimental.set_visible_devices(gpus[hvd.local_rank()], 'GPU')
-  
-  print(f"Rank is: {hvd.rank()}")
-  print(f"Size is: {hvd.size()}")
-  
-  (X_train, y_train), (X_test, y_test) = get_dataset(hvd.rank(), hvd.size())
-  
-  model = build_model()
-  
-  # Horovod: adjust learning rate based on number of GPUs/CPUs
-  optimizer = optimizers.Adam(lr=0.001*hvd.size())
-  
-  # Horovod: add Horovod Distributed Optimizer
-  optimizer = hvd.DistributedOptimizer(optimizer)
-  
-  model.compile(optimizer=optimizer, loss="mse", metrics=["mse"])
-  
-  history = model.fit(X_train, y_train, validation_split=.2, epochs=10, batch_size=64, verbose=2)
+    # Horovod: initialize Horovod
+    hvd.init()
+    #     # If using GPU: pin GPU to be used to process local rank (one GPU per process)
+    #   gpus = tf.config.experimental.list_physical_devices('GPU')
+    #   print(gpus)
+    #   for gpu in gpus:
+    #       tf.config.experimental.set_memory_growth(gpu, True)
+    #   if gpus:
+    #       tf.config.experimental.set_visible_devices(gpus[hvd.local_rank()], 'GPU')
+
+    print(f"Rank is: {hvd.rank()}")
+    print(f"Size is: {hvd.size()}")
+
+    (X_train, y_train), (X_test, y_test) = get_dataset(hvd.rank(), hvd.size())
+
+    model = build_model()
+
+    # Horovod: adjust learning rate based on number of GPUs/CPUs
+    optimizer = optimizers.Adam(lr=0.001*hvd.size())
+
+    # Horovod: add Horovod Distributed Optimizer
+    optimizer = hvd.DistributedOptimizer(optimizer)
+
+    model.compile(optimizer=optimizer, loss="mse", metrics=["mse"])
+
+    history = model.fit(X_train, y_train, validation_split=.2, epochs=10, batch_size=64, verbose=2)
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC Test it out on just the driver.
+# MAGIC %md Test it out on just the driver.
 
 # COMMAND ----------
 
@@ -144,65 +140,64 @@ from tensorflow.keras import optimizers
 from tensorflow.keras.callbacks import *
 
 def run_training_horovod():
-  # Horovod: initialize Horovod.
-  hvd.init()
-  
- # If using GPU: pin GPU to be used to process local rank (one GPU per process)
-#   gpus = tf.config.experimental.list_physical_devices('GPU')
-#   for gpu in gpus:
-#       tf.config.experimental.set_memory_growth(gpu, True)
-#   if gpus:
-#       tf.config.experimental.set_visible_devices(gpus[hvd.local_rank()], 'GPU')
+    # Horovod: initialize Horovod.
+    hvd.init()
+
+    # If using GPU: pin GPU to be used to process local rank (one GPU per process)
+    #   gpus = tf.config.experimental.list_physical_devices('GPU')
+    #   for gpu in gpus:
+    #       tf.config.experimental.set_memory_growth(gpu, True)
+    #   if gpus:
+    #       tf.config.experimental.set_visible_devices(gpus[hvd.local_rank()], 'GPU')
 
 
-  print(f"Rank is: {hvd.rank()}")
-  print(f"Size is: {hvd.size()}")
-  
-  (X_train, y_train), (X_test, y_test) = get_dataset(hvd.rank(), hvd.size())
-  
-  model = build_model()
-  
-  # Horovod: adjust learning rate based on number of GPUs.
-  optimizer = optimizers.Adam(lr=0.001*hvd.size())
-  
-  # Horovod: add Horovod Distributed Optimizer.
-  optimizer = hvd.DistributedOptimizer(optimizer)
+    print(f"Rank is: {hvd.rank()}")
+    print(f"Size is: {hvd.size()}")
 
-  model.compile(optimizer=optimizer, loss="mse", metrics=["mse"])
+    (X_train, y_train), (X_test, y_test) = get_dataset(hvd.rank(), hvd.size())
 
-  # Use the optimized FUSE Mount
-  checkpoint_dir = f"{working_dir}/horovod_checkpoint_weights.ckpt"
-  
-  callbacks = [
-    # Horovod: broadcast initial variable states from rank 0 to all other processes.
-    # This is necessary to ensure consistent initialization of all workers when
-    # training is started with random weights or restored from a checkpoint.
-    hvd.callbacks.BroadcastGlobalVariablesCallback(0),
+    model = build_model()
 
-    # Horovod: average metrics among workers at the end of every epoch.
-    # Note: This callback must be in the list before the ReduceLROnPlateau,
-    # TensorBoard or other metrics-based callbacks.
-    hvd.callbacks.MetricAverageCallback(),
+    # Horovod: adjust learning rate based on number of GPUs.
+    optimizer = optimizers.Adam(lr=0.001*hvd.size())
 
-    # Horovod: using `lr = 1.0 * hvd.size()` from the very beginning leads to worse final
-    # accuracy. Scale the learning rate `lr = 1.0` ---> `lr = 1.0 * hvd.size()` during
-    # the first five epochs. See https://arxiv.org/abs/1706.02677 for details.
-    hvd.callbacks.LearningRateWarmupCallback(initial_lr=0.001, warmup_epochs=5, verbose=1),
-    
-    # Reduce the learning rate if training plateaus.
-    ReduceLROnPlateau(patience=10, verbose=1)
-  ]
-  
-  # Horovod: save checkpoints only on worker 0 to prevent other workers from corrupting them.
-  if hvd.rank() == 0:
-    callbacks.append(ModelCheckpoint(checkpoint_dir, save_weights_only=True))
-  
-  history = model.fit(X_train, y_train, validation_split=.2, epochs=10, batch_size=64, verbose=2, callbacks=callbacks)
+    # Horovod: add Horovod Distributed Optimizer.
+    optimizer = hvd.DistributedOptimizer(optimizer)
+
+    model.compile(optimizer=optimizer, loss="mse", metrics=["mse"])
+
+    # Use the optimized FUSE Mount
+    checkpoint_dir = f"{working_dir}/horovod_checkpoint_weights.ckpt"
+
+    callbacks = [
+        # Horovod: broadcast initial variable states from rank 0 to all other processes.
+        # This is necessary to ensure consistent initialization of all workers when
+        # training is started with random weights or restored from a checkpoint.
+        hvd.callbacks.BroadcastGlobalVariablesCallback(0),
+
+        # Horovod: average metrics among workers at the end of every epoch.
+        # Note: This callback must be in the list before the ReduceLROnPlateau,
+        # TensorBoard or other metrics-based callbacks.
+        hvd.callbacks.MetricAverageCallback(),
+
+        # Horovod: using `lr = 1.0 * hvd.size()` from the very beginning leads to worse final
+        # accuracy. Scale the learning rate `lr = 1.0` ---> `lr = 1.0 * hvd.size()` during
+        # the first five epochs. See https://arxiv.org/abs/1706.02677 for details.
+        hvd.callbacks.LearningRateWarmupCallback(initial_lr=0.001, warmup_epochs=5, verbose=1),
+
+        # Reduce the learning rate if training plateaus.
+        ReduceLROnPlateau(patience=10, verbose=1)
+    ]
+
+    # Horovod: save checkpoints only on worker 0 to prevent other workers from corrupting them.
+    if hvd.rank() == 0:
+        callbacks.append(ModelCheckpoint(checkpoint_dir, save_weights_only=True))
+
+    history = model.fit(X_train, y_train, validation_split=.2, epochs=10, batch_size=64, verbose=2, callbacks=callbacks)
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC Test it out on just the driver.
+# MAGIC %md Test it out on just the driver.
 
 # COMMAND ----------
 
@@ -227,7 +222,6 @@ hr.run(run_training_horovod)
 # physical_devices = tf.config.list_physical_devices('GPU')
 # hr = HorovodRunner(np=len(pyhsical_devices), driver_log_verbosity="all")
 # hr.run(run_training_horovod)
-
 
 # COMMAND ----------
 

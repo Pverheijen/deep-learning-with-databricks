@@ -1,5 +1,4 @@
 # Databricks notebook source
-# MAGIC 
 # MAGIC %md-sandbox
 # MAGIC 
 # MAGIC <div style="text-align: center; line-height: 0; padding-top: 9px;">
@@ -8,8 +7,7 @@
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC # Advanced Keras Lab
+# MAGIC %md # Advanced Keras Lab
 # MAGIC 
 # MAGIC Now we are going to take the following objectives we learned in the past lab, and apply them here! You will further improve upon your first model with the wine quality dataset.
 # MAGIC 
@@ -89,9 +87,9 @@ from tensorflow.keras.models import Sequential
 tf.random.set_seed(42)
 
 def build_model():
-  return Sequential([Dense(50, input_dim=11, activation="relu"),
-                     Dense(20, activation="relu"),
-                     Dense(1, activation="linear")])
+    return Sequential([Dense(50, input_dim=11, activation="relu"),
+                       Dense(20, activation="relu"),
+                       Dense(1, activation="linear")])
   
 model = build_model()
 model.summary()
@@ -113,16 +111,15 @@ model.compile(optimizer="adam", loss="mse", metrics=["mse"])
 
 # TODO
 from tensorflow.keras.callbacks import ModelCheckpoint, EarlyStopping
-
-filepath = f"{working_dir}/keras_checkpoint_weights_lab.ckpt"
-
+ 
+filepath = f"{working_dir}/keras_checkpoint_weights_lab.ckpt".replace("dbfs:/", "/dbfs/")
+ 
 checkpointer = FILL_IN
 early_stopping = FILL_IN
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC ## 4. Fit Model
+# MAGIC %md ## 4. Fit Model
 # MAGIC 
 # MAGIC Now let's put everything together! Fit the model to the training and validation data `(X_val, y_val)` with `epochs`=30, `batch_size`=32, and the 2 callbacks we defined above: `checkpointer` and `early_stopping`.
 # MAGIC 
@@ -138,12 +135,11 @@ history = model.fit(FILL_IN)
 # MAGIC %md
 # MAGIC ## 5. Load Model
 # MAGIC 
-# MAGIC Load in the weights saved from this model via checkpointing to a new variable called `newModel`, and make predictions for our test data. Then compute the RMSE. See if you can do this without re-compiling the model!
+# MAGIC Load in the weights saved from this model via checkpointing to a new variable called `saved_model`, and make predictions for our test data. Then compute the RMSE. See if you can do this without re-compiling the model!
 
 # COMMAND ----------
 
 # TODO
-
 
 # COMMAND ----------
 

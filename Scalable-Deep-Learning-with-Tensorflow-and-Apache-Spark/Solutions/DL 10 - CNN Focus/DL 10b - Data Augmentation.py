@@ -1,5 +1,4 @@
 # Databricks notebook source
-# MAGIC 
 # MAGIC %md-sandbox
 # MAGIC 
 # MAGIC <div style="text-align: center; line-height: 0; padding-top: 9px;">
@@ -19,7 +18,7 @@
 
 # COMMAND ----------
 
-# MAGIC %run ./Includes/Classroom-Setup
+# MAGIC %run ../Includes/Classroom-Setup
 
 # COMMAND ----------
 
@@ -35,8 +34,7 @@ display(df_cats)
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC ### Data Augmentation
+# MAGIC %md ### Data Augmentation
 # MAGIC 
 # MAGIC There are many techniques to augment your data. Please reference this [blog post](https://towardsdatascience.com/exploring-image-data-augmentation-with-keras-and-tensorflow-a8162d89b844) for visualizations on individual transformations. Below, we will highlight the commonly used options. <br>
 # MAGIC <br>
@@ -83,7 +81,7 @@ datagen = ImageDataGenerator(rescale=1/255,
 from tensorflow.keras.preprocessing import image
 import matplotlib.pyplot as plt
 
-img_path_1 = cat_data["path"][0].replace("file:/", "/")
+img_path_1 = cat_data["path"][0].replace("dbfs:/", "/dbfs/")
 img = image.load_img(img_path_1, target_size = (224, 224))
 
 x = image.img_to_array(img)   # this is a Numpy array with shape (3, 224, 224)
@@ -91,10 +89,10 @@ x = x.reshape((1,) + x.shape) # this is a Numpy array with shape (1, 3, 224, 224
 
 plt.figure(figsize=(10, 10))
 for i, batch in enumerate(datagen.flow(x, batch_size=1, seed=42)):
-  ax = plt.subplot(3, 3, i + 1)
-  imgplot = plt.imshow(image.array_to_img(batch[0]))
-  if i == 8:
-    break # loops indefinitely, need to break the loop at some point
+    ax = plt.subplot(3, 3, i + 1)
+    imgplot = plt.imshow(image.array_to_img(batch[0]))
+    if i == 8:
+        break # loops indefinitely, need to break the loop at some point
 
 # COMMAND ----------
 
@@ -106,11 +104,10 @@ for i, batch in enumerate(datagen.flow(x, batch_size=1, seed=42)):
 # COMMAND ----------
 
 train_data = cat_data.iloc[:5].append(dog_data.iloc[:5])
-train_data["path"] = train_data["path"].apply(lambda x: x.replace("file:/","/"))
+train_data["path"] = train_data["path"].apply(lambda x: x.replace("dbfs:/", "/dbfs/"))
 
 test_data = cat_data.iloc[5:].append(dog_data.iloc[5:])
-test_data["path"] = test_data["path"].apply(lambda x: x.replace("file:/","/"))
-
+test_data["path"] = test_data["path"].apply(lambda x: x.replace("dbfs:/", "/dbfs/"))
 
 # COMMAND ----------
 
@@ -158,37 +155,33 @@ batch_size = 2
 
 # Note that we are NOT passing in the rescaling argument here, 
 # since we are using resnet's pretrained weights, we need to use resnet's preprocess_input function
-train_datagen = ImageDataGenerator(rotation_range=40,
-   width_shift_range=0.2,
-   height_shift_range=0.2,
-   zoom_range=0.2,
-   horizontal_flip=True,
-   vertical_flip=False, # No upside down cats or dogs!
-   fill_mode="nearest",
-   preprocessing_function=applications.resnet.preprocess_input
+train_datagen = ImageDataGenerator(
+    rotation_range=40,
+    width_shift_range=0.2,
+    height_shift_range=0.2,
+    zoom_range=0.2,
+    horizontal_flip=True,
+    vertical_flip=False, # No upside down cats or dogs!
+    fill_mode="nearest",
+    preprocessing_function=applications.resnet.preprocess_input
 )
 
 train_generator = train_datagen.flow_from_dataframe(
-  dataframe=train_data,
-  directory=None,
-  x_col="path",
-  y_col="label",
-  target_size=(img_height, img_width),
-  color_mode="rgb",
-  class_mode="binary",
-  batch_size=batch_size,
-  seed=42 # random seed for shuffling and transformations.
+    dataframe=train_data,
+    directory=None,
+    x_col="path",
+    y_col="label",
+    target_size=(img_height, img_width),
+    color_mode="rgb",
+    class_mode="binary",
+    batch_size=batch_size,
+    seed=42 # random seed for shuffling and transformations.
 )
 
 print(f"Class labels: {train_generator.class_indices}")
-
 step_size_train = train_generator.n//train_generator.batch_size
 
-model.fit(
-  train_generator,
-  steps_per_epoch=step_size_train,
-  epochs=10,
-  verbose=1)
+model.fit(train_generator, steps_per_epoch=step_size_train, epochs=10, verbose=1)
 
 # COMMAND ----------
 
@@ -202,15 +195,16 @@ test_datagen = ImageDataGenerator(preprocessing_function=applications.resnet.pre
 batch_size = 6
 
 test_generator = test_datagen.flow_from_dataframe(
-  dataframe=test_data, 
-  directory=None, 
-  x_col="path", 
-  y_col="label", 
-  class_mode="binary", 
-  target_size=(img_height, img_width),
-  shuffle=False,
-  batch_size=batch_size,
-  seed=42)
+    dataframe=test_data, 
+    directory=None, 
+    x_col="path", 
+    y_col="label", 
+    class_mode="binary", 
+    target_size=(img_height, img_width),
+    shuffle=False,
+    batch_size=batch_size,
+    seed=42
+)
 
 step_size_test = test_generator.n//test_generator.batch_size
 
@@ -227,9 +221,9 @@ print(f"Loss: {eval_results[0]}. Accuracy: {eval_results[1]}")
 import pandas as pd
 
 predictions = pd.DataFrame({
-  "Prediction": (model.predict(test_generator, steps=step_size_test) > .5).astype(int).flatten(),
-  "True": test_generator.classes,
-  "Path": test_data["path"].apply(lambda x: f"file:{x}")
+    "Prediction": (model.predict(test_generator, steps=step_size_test) > .5).astype(int).flatten(),
+    "True": test_generator.classes,
+    "Path": test_data["path"].apply(lambda x: f"file:{x}")
 }).replace({v: k for k, v in train_generator.class_indices.items()})
 
 all_images_df = df_cats.union(df_dogs).drop("label")

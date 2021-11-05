@@ -1,5 +1,4 @@
 # Databricks notebook source
-# MAGIC 
 # MAGIC %md-sandbox
 # MAGIC 
 # MAGIC <div style="text-align: center; line-height: 0; padding-top: 9px;">
@@ -8,8 +7,7 @@
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC # Keras
+# MAGIC %md # Keras
 # MAGIC 
 # MAGIC In this notebook, we will build upon the concepts introduced in the previous lab to build a neural network that is more powerful than a simple linear regression model!
 # MAGIC 
@@ -53,8 +51,7 @@ print(cal_housing.DESCR)
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC ## Define a Network
+# MAGIC %md ## Define a Network
 # MAGIC 
 # MAGIC Let's not just reinvent linear regression. Let's build a model, but with multiple layers using the [Sequential model](https://www.tensorflow.org/api_docs/python/tf/keras/Sequential) from Keras.
 # MAGIC 
@@ -95,9 +92,9 @@ model.add(Dense(1, activation="linear"))
 # COMMAND ----------
 
 def build_model():
-  return Sequential([Dense(20, input_dim=8, activation="relu"),
-                     Dense(20, activation="relu"),
-                     Dense(1, activation="linear")]) # Keep the last layer as linear because this is a regression problem
+    return Sequential([Dense(20, input_dim=8, activation="relu"),
+                       Dense(20, activation="relu"),
+                       Dense(1, activation="linear")]) # Keep the last layer as linear because this is a regression problem
 
 # COMMAND ----------
 
@@ -167,13 +164,13 @@ history = model.fit(X_train, y_train, epochs=20)
 import matplotlib.pyplot as plt
 
 def view_model_loss():
-  plt.clf()
-  plt.semilogy(history.history["loss"])
-  plt.title("Model Loss")
-  plt.ylabel("Loss")
-  plt.xlabel("Epoch")
-  plt.show()
-  
+    plt.clf()
+    plt.semilogy(history.history["loss"])
+    plt.title("Model Loss")
+    plt.ylabel("Loss")
+    plt.xlabel("Epoch")
+    plt.show()
+
 view_model_loss()
 
 # COMMAND ----------
@@ -194,8 +191,7 @@ history = model.fit(X_train, y_train, epochs=20, batch_size=64, verbose=2)
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC ## 5. Evaluate
+# MAGIC %md ## 5. Evaluate
 
 # COMMAND ----------
 
@@ -212,14 +208,13 @@ model.evaluate(X_test, y_test)
 
 # COMMAND ----------
 
-filepath = f"{working_dir}/keras_checkpoint_weights.ckpt"
+filepath = f"{working_dir}/keras_checkpoint_weights.ckpt".replace("dbfs:/", "/dbfs/")
 
 model.save(filepath)
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC You can load both the model and architecture together using `load_model()`
+# MAGIC %md You can load both the model and architecture together using `load_model()`
 
 # COMMAND ----------
 
@@ -246,7 +241,6 @@ new_model.summary()
 new_model.compile(optimizer="adam", loss="mse")
 new_model.fit(X_train, y_train, epochs=1, batch_size=64, verbose=2)
 new_model.save_weights(filepath)
-
 
 # COMMAND ----------
 

@@ -1,5 +1,4 @@
 # Databricks notebook source
-# MAGIC 
 # MAGIC %md-sandbox
 # MAGIC 
 # MAGIC <div style="text-align: center; line-height: 0; padding-top: 9px;">
@@ -17,6 +16,8 @@
 # MAGIC - Create a `pyfunc` to serve a `keras` model with pre and post processing logic
 # MAGIC - Save the `pyfunc` for downstream consumption 
 # MAGIC - Serve the model using a REST endpoint
+# MAGIC 
+# MAGIC :NOTE: *You need [cluster creation](https://docs.databricks.com/applications/mlflow/model-serving.html#requirements) permissions to create a model serving endpoint. The instructor will either demo this notebook or enable cluster creation permission for the students from the Admin console.*
 
 # COMMAND ----------
 
@@ -24,8 +25,7 @@
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC ## Model Serving in Databricks
+# MAGIC %md ## Model Serving in Databricks
 # MAGIC 
 # MAGIC The MLflow model registry in Databricks is now integrated with MLflow Model Serving.  This is currently intended for development use cases and is therefore not intended for production.  In this module, you will create a wrapper class around a `keras` model that provides custom pre and post processing logic necessary for this more complex deployment scenario. 
 # MAGIC 
@@ -37,13 +37,11 @@
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC ## Creating a Wrapper Class using `pyfunc`
+# MAGIC %md ## Creating a Wrapper Class using `pyfunc`
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC Create a `keras` model using a reference architecture and pretrained weights.
+# MAGIC %md Create a `keras` model using a reference architecture and pretrained weights.
 
 # COMMAND ----------
 
@@ -55,30 +53,28 @@ model.summary()
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC Create a small dataset to test the model.  This is two images of cats.
+# MAGIC %md Create a small dataset to test the model.  This is two images of cats.
 
 # COMMAND ----------
 
 import pandas as pd
 import base64
 
-filenames = [f"{datasets_dir}/dl/img/cats/cats2.jpg".replace("file:///", "/"), 
-             f"{datasets_dir}/dl/img/cats/cats4.jpg".replace("file:///", "/")]
+filenames = [f"{datasets_dir}/dl/img/cats/cats2.jpg".replace("dbfs:/", "/dbfs/"), 
+             f"{datasets_dir}/dl/img/cats/cats4.jpg".replace("dbfs:/", "/dbfs/")]
 
 def read_image(path: str) -> bytes:
-  ''' Reads an image from a path and returns the contents in bytes '''
-  with open(path, "rb") as f:
-    image_bytes = f.read()
-  return image_bytes
+    """Reads an image from a path and returns the contents in bytes"""
+    with open(path, "rb") as f:
+        image_bytes = f.read()
+    return image_bytes
 
 data = pd.DataFrame(data=[base64.encodebytes(read_image(x)) for x in filenames], columns=["image"])
 data
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC Save the model using `mlflow`.
+# MAGIC %md Save the model using `mlflow`.  
 
 # COMMAND ----------
 
@@ -89,15 +85,14 @@ import uuid
 model_name = f"keras_model_{uuid.uuid4().hex[:10]}"
 
 with mlflow.start_run() as run:
-  mlflow.keras.log_model(artifact_path=model_name, keras_model=model)
-  model_uri = f"runs:/{run.info.run_id}/{model_name}"
-  
+    mlflow.keras.log_model(artifact_path=model_name, keras_model=model)
+    model_uri = f"runs:/{run.info.run_id}/{model_name}"
+
 print(f"Model saved to {model_uri}")
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC Create a wrapper class that includes the following as a `pyfunc`:
+# MAGIC %md Create a wrapper class that includes the following as a `pyfunc`:
 # MAGIC 
 # MAGIC - A `load_context` method to load in the model. 
 # MAGIC - Custom featurization logic that parses base64 encoded images (necessary for HTTP requests)
@@ -109,71 +104,71 @@ import mlflow
 
 class KerasImageClassifierPyfunc(mlflow.pyfunc.PythonModel):
   
-  def __init__(self):
-    self.model = None
-    self.img_height = 224
-    self.img_width = 224
+    def __init__(self):
+        self.model = None
+        self.img_height = 224
+        self.img_width = 224
     
-  def load_context(self, context=None, path=None):
-    '''
-    When loading a pyfunc, this method runs automatically with the related
-    context.  This method is designed to load the keras model from a path 
-    if it is running in a notebook or use the artifact from the context
-    if it is loaded with mlflow.pyfunc.load_model()
-    '''
-    import numpy as np
-    import tensorflow as tf
-    
-    if context: # This block executes for server run
-      model_path = context.artifacts["keras_model"]
-    else: # This block executes for notebook run
-      model_path = path
-    
-    self.model = mlflow.keras.load_model(model_path)
-    
-  def predict_from_bytes(self, image_bytes):
-    '''
-    Applied across numpy representations of the model input, this method
-    uses the appropriate decoding based upon whether it is run in the 
-    notebook or on a server
-    '''
-    import base64
-    
-    try: # This block executes for notebook run
-      image_bytes_decoded = base64.decodebytes(image_bytes)
-      img_array = tf.image.decode_image(image_bytes_decoded)
-    except: # This block executes for server run
-      img_array = tf.image.decode_image(image_bytes) 
-      
-    img_array = tf.image.resize(img_array, (self.img_height, self.img_width))
-    img_array = tf.expand_dims(img_array, 0)
-    prediction = self.model.predict(img_array)
-    return prediction[0]
-  
-  def postprocess_raw_predictions(self, raw_prediction):
-    '''
-    Post processing logic to render predictions in a human readable form
-    '''
-    from tensorflow.keras.applications.vgg16 import decode_predictions
-    
-    res = decode_predictions(raw_prediction, top=3)
-    str_template = "Best response of {best} with probability of {p}"
-    return [str_template.format(best=i[0][1], p=i[0][2]) for i in res]
+    def load_context(self, context=None, path=None):
+        """
+        When loading a pyfunc, this method runs automatically with the related
+        context.  This method is designed to load the keras model from a path 
+        if it is running in a notebook or use the artifact from the context
+        if it is loaded with mlflow.pyfunc.load_model()
+        """
+        import numpy as np
+        import tensorflow as tf
 
-  def predict(self, context=None, model_input=None):
-    '''
-    Wrapper predict method
-    '''
-    n_records = model_input.shape[0]
+        if context: # This block executes for server run
+            model_path = context.artifacts["keras_model"]
+        else: # This block executes for notebook run
+            model_path = path
+
+        self.model = mlflow.keras.load_model(model_path)
     
-    input_numpy = model_input.values
-    raw_predictions = np.vectorize(self.predict_from_bytes, otypes=[np.ndarray])(input_numpy)
-    raw_predictions = np.array(raw_predictions.tolist()).reshape([n_records, 1000])
-    
-    decoded_predictions = self.postprocess_raw_predictions(raw_predictions)
-    decoded_predictions = pd.DataFrame(decoded_predictions, columns=["prediction"])
-    decoded_predictions.index = model_input.index
-    return decoded_predictions
+    def predict_from_bytes(self, image_bytes):
+        """
+        Applied across numpy representations of the model input, this method
+        uses the appropriate decoding based upon whether it is run in the 
+        notebook or on a server
+        """
+        import base64
+
+        try: # This block executes for notebook run
+            image_bytes_decoded = base64.decodebytes(image_bytes)
+            img_array = tf.image.decode_image(image_bytes_decoded)
+        except: # This block executes for server run
+            img_array = tf.image.decode_image(image_bytes) 
+
+        img_array = tf.image.resize(img_array, (self.img_height, self.img_width))
+        img_array = tf.expand_dims(img_array, 0)
+        prediction = self.model.predict(img_array)
+        return prediction[0]
+  
+    def postprocess_raw_predictions(self, raw_prediction):
+        """
+        Post processing logic to render predictions in a human readable form
+        """
+        from tensorflow.keras.applications.vgg16 import decode_predictions
+
+        res = decode_predictions(raw_prediction, top=3)
+        str_template = "Best response of {best} with probability of {p}"
+        return [str_template.format(best=i[0][1], p=i[0][2]) for i in res]
+
+    def predict(self, context=None, model_input=None):
+        """
+        Wrapper predict method
+        """
+        n_records = model_input.shape[0]
+
+        input_numpy = model_input.values
+        raw_predictions = np.vectorize(self.predict_from_bytes, otypes=[np.ndarray])(input_numpy)
+        raw_predictions = np.array(raw_predictions.tolist()).reshape([n_records, 1000])
+
+        decoded_predictions = self.postprocess_raw_predictions(raw_predictions)
+        decoded_predictions = pd.DataFrame(decoded_predictions, columns=["prediction"])
+        decoded_predictions.index = model_input.index
+        return decoded_predictions
 
 classifier_pyfunc = KerasImageClassifierPyfunc()
 classifier_pyfunc.load_context(path=model_uri) # This will run automatically when using mlflow.pyfunc.load_model()
@@ -183,8 +178,7 @@ output
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC Toilet tissue?  Take a look at the images to see why the model predicted these classes.  Note the confidence of the prediction.
+# MAGIC %md Toilet tissue?  Take a look at the images to see why the model predicted these classes.  Note the confidence of the prediction.
 
 # COMMAND ----------
 
@@ -201,26 +195,22 @@ plt.imshow(img)
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC ## Save the `pyfunc` with Dependencies
+# MAGIC %md ## Save the `pyfunc` with Dependencies
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC Create a model signature to document model inputs and outputs.
+# MAGIC %md Create a model signature to document model inputs and outputs.
 
 # COMMAND ----------
 
 from mlflow.models.signature import infer_signature
 
 signature = infer_signature(data, output)
-
 signature
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC Create the Conda environment for all the `pyfunc`'s dependencies.
+# MAGIC %md Create the Conda environment for all the `pyfunc`'s dependencies.
 
 # COMMAND ----------
 
@@ -245,8 +235,7 @@ conda_env
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC Create associated artifacts. Note that since the default serialization of a `keras` models uses `tensorflow` serialization we'll instead read in the model using `keras` when the Python function is loaded.
+# MAGIC %md Create associated artifacts. Note that since the default serialization of a `keras` models uses `tensorflow` serialization we'll instead read in the model using `keras` when the Python function is loaded.
 
 # COMMAND ----------
 
@@ -256,26 +245,24 @@ artifacts = {
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC Log the `pyfunc` including the artifacts, environment, signature, and input example.
+# MAGIC %md Log the `pyfunc` including the artifacts, environment, signature, and input example.
 
 # COMMAND ----------
 
-mlflow_pyfunc_model_path = f"{userhome}/{model_name}".replace("file:///", "/")
+mlflow_pyfunc_model_path = f"{userhome}/{model_name}".replace("dbfs:/", "/dbfs/")
 
 mlflow.pyfunc.save_model(
-  path=mlflow_pyfunc_model_path, 
-  python_model=KerasImageClassifierPyfunc(), 
-  artifacts=artifacts,
-  conda_env=conda_env,
-  signature=signature,
-  input_example=data[:1] # Can only log one row because of MLflow serving size limits
+    path=mlflow_pyfunc_model_path, 
+    python_model=KerasImageClassifierPyfunc(), 
+    artifacts=artifacts,
+    conda_env=conda_env,
+    signature=signature,
+    input_example=data[:1] # Can only log one row because of MLflow serving size limits
 )
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC Load the model back in and test on a sample of the data.
+# MAGIC %md Load the model back in and test on a sample of the data.
 
 # COMMAND ----------
 
@@ -284,13 +271,11 @@ loaded_model.predict(data)
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC ## Log to the Model Registry and Serve using REST
+# MAGIC %md ## Log to the Model Registry and Serve using REST
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC Log to the model registry.
+# MAGIC %md Log to the model registry.
 
 # COMMAND ----------
 
@@ -298,8 +283,7 @@ mlflow.register_model(model_uri=mlflow_pyfunc_model_path.replace("/dbfs", "dbfs:
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC Load from the model registry to confirm the registration is complete.
+# MAGIC %md Load from the model registry to confirm the registration is complete.
 
 # COMMAND ----------
 
@@ -308,60 +292,58 @@ import time
 model_version_uri = f"models:/{model_name}/1"
 
 while True:
-  try:
-    model_version_1 = mlflow.pyfunc.load_model(model_version_uri)
-    break
-  except:
-    print(f"Model not ready yet.  Sleeping...")
-    time.sleep(10)
+    try:
+        model_version_1 = mlflow.pyfunc.load_model(model_version_uri)
+        break
+    except:
+        print(f"Model not ready yet.  Sleeping...")
+        time.sleep(10)
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC Enable cluster serving.  **This will create a dedicated VM to serve this model** so be sure to shut it down when you're done.
+# MAGIC %md Enable cluster serving.  **This will create a dedicated VM to serve this model** so be sure to shut it down when you're done. 
 
 # COMMAND ----------
 
 # We need both a token for the API, which we can get from the notebook.
 token = dbutils.notebook.entry_point.getDbutils().notebook().getContext().apiToken().getOrElse(None)
 # With the token, we can create our authorization header for our subsequent REST calls
-headers = {'Authorization': f'Bearer {token}'}
+headers = {"Authorization": f"Bearer {token}"}
 
 # Next we need an enpoint at which to execute our request which we can get from the Notebook's tags collection
 java_tags = dbutils.notebook.entry_point.getDbutils().notebook().getContext().tags()
 # This ojbect comes from the Java CM - Convert the Java Map opject to a Python dictionary
 tags = sc._jvm.scala.collection.JavaConversions.mapAsJavaMap(java_tags)
 # Lastly, extract the databricks instance (domain name) from the dictionary
-instance = tags['browserHostName']
+instance = tags["browserHostName"]
 
 # COMMAND ----------
 
 import requests
 
-url = f'https://{instance}/api/2.0/mlflow/endpoints/enable'
+url = f"https://{instance}/api/2.0/mlflow/endpoints/enable"
 
 r = requests.post(url, headers=headers, json={"registered_model_name": model_name})
 assert r.status_code == 200, f"Expected an HTTP 200 response, received {r.status_code}"
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC Get cluster serving status.  This will wait until the endpoint is ready.
+# MAGIC %md Get cluster serving status.  This will wait until the endpoint is ready.
 
 # COMMAND ----------
 
 while True:
-  url = f'https://{instance}/api/2.0/mlflow/endpoints/get-status'
-  r = requests.get(url, headers=headers, json={"registered_model_name": model_name})
-  assert r.status_code == 200, f"Expected an HTTP 200 response, received {r.status_code}"
-  
-  state = r.json().get("endpoint_status")['state']
-  if state != "ENDPOINT_STATE_READY":
-    print(f"Endpoint not ready yet ({state}).  Sleeping...")
-    time.sleep(10)
-  else:
-    print(f"Endpoint READY")
-    break
+    url = f"https://{instance}/api/2.0/mlflow/endpoints/get-status"
+    r = requests.get(url, headers=headers, json={"registered_model_name": model_name})
+    assert r.status_code == 200, f"Expected an HTTP 200 response, received {r.status_code}"
+
+    state = r.json().get("endpoint_status")["state"]
+    if state != "ENDPOINT_STATE_READY":
+        print(f"Endpoint not ready yet ({state}).  Sleeping...")
+        time.sleep(10)
+    else:
+        print(f"Endpoint READY")
+        break
 
 r.json()
 
@@ -378,11 +360,11 @@ import os
 import pandas as pd
 
 def score_model(data: pd.DataFrame, model_name: str):
-  url = f'https://{instance}/model/{model_name}/1/invocations'
-  data_json = data.to_dict(orient='split')
-  r = requests.request(method='POST', headers=headers, url=url, json=data_json)
-  assert r.status_code in [200, 404], f"Expected an HTTP 200 or 404 response, received {r.status_code}"
-  return r.json() if r.status_code == 200 else None
+    url = f"https://{instance}/model/{model_name}/1/invocations"
+    data_json = data.to_dict(orient="split")
+    r = requests.request(method="POST", headers=headers, url=url, json=data_json)
+    assert r.status_code in [200, 404], f"Expected an HTTP 200 or 404 response, received {r.status_code}"
+    return r.json() if r.status_code == 200 else None
 
 results = score_model(data, model_name)
 
@@ -396,14 +378,12 @@ print(results)
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC Disable cluster serving.  **This will shut down the model serving endpoint.**
+# MAGIC %md Disable cluster serving.  **This will shut down the model serving endpoint.**
 
 # COMMAND ----------
 
-url = f'https://{instance}/api/2.0/mlflow/endpoints/disable'
+url = f"https://{instance}/api/2.0/mlflow/endpoints/disable"
 requests.post(url, headers=headers, json={"registered_model_name": model_name})
-
 
 # COMMAND ----------
 

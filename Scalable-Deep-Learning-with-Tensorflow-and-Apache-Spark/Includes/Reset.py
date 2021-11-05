@@ -7,21 +7,17 @@
 
 # COMMAND ----------
 
-# MAGIC %md # Install Datasets
-# MAGIC 
-# MAGIC We need to "install" the datasets this course uses by copying them from its current location in the cloud to your local filesystem.
-# MAGIC 
-# MAGIC All that is required is to run the following cell. By default, the **`Classroom-Setup`** script will not reinstall the datasets upon <br/>subsequent invocation but this behavior can be adjusted by modifying the parameters below.
-# MAGIC 
-# MAGIC Feel free to leave this notebook running and proceed with the course while the install completes in the background.
+# Does any work to reset the environment prior to testing.
+username = spark.sql("SELECT current_user()").first()[0]
+
+course_dir = f"file:///dbfs/Users/{username}/dbacademy/deep_learning"
+
+print(f"Removing course directory: {course_dir}")
+dbutils.fs.rm(course_dir, True)
 
 # COMMAND ----------
 
-# MAGIC %run "./Includes/Classroom-Setup"  $reinstall = "false"
-
-# COMMAND ----------
-
-display(dbutils.fs.ls(datasets_dir))
+# MAGIC %run "./Classroom-Setup"
 
 # COMMAND ----------
 

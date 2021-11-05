@@ -1,5 +1,4 @@
 # Databricks notebook source
-# MAGIC 
 # MAGIC %md-sandbox
 # MAGIC 
 # MAGIC <div style="text-align: center; line-height: 0; padding-top: 9px;">
@@ -8,8 +7,7 @@
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC # X-Ray Vision with Transfer Learning
+# MAGIC %md # X-Ray Vision with Transfer Learning
 # MAGIC 
 # MAGIC In this notebook, we will use Transfer Learning on images of chest x-rays to predict if a patient has pneumonia (bacterial or viral) or is normal. 
 # MAGIC 
@@ -22,12 +20,11 @@
 
 # COMMAND ----------
 
-# MAGIC %run "../Includes/Classroom-Setup"
+# MAGIC %run "../../Includes/Classroom-Setup"
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC ## Visualize train and test data
+# MAGIC %md ## Visualize train and test data
 # MAGIC 
 # MAGIC The datasets are placed into 4 different folders (2 folders for train and 2 folders for test). "normal" class is placed into "normal" folder. "pneumonia" class dataset is placed in "pneumonia" folder. Therer are two types of pneumonia in the dataset: virus and bacteria, but for our problem today, we will just predict normal/pneumonia.
 # MAGIC 
@@ -47,8 +44,7 @@ display(combined_sample)
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC ## Build and Fine-tune the Model
+# MAGIC %md ## Build and Fine-tune the Model
 # MAGIC 
 # MAGIC We are going to use a pretrained VGG16 model. We will apply all layers of the neural network, but remove the last layer which outputted 1000 categories. Instead, we will replace it with a new dense layer which outputs the class probabilities.
 
@@ -64,8 +60,8 @@ vgg16_model = applications.VGG16(weights="imagenet")
 model = Sequential()
 
 for layer in vgg16_model.layers[:-1]: # Exclude last layer from copying
-  layer.trainable = False  # only last layer is fine-tuned
-  model.add(layer)
+    layer.trainable = False  # only last layer is fine-tuned
+    model.add(layer)
 
 model.add(Dense(1, activation="sigmoid"))
 model.summary()
@@ -80,7 +76,7 @@ model.summary()
 
 # COMMAND ----------
 
-# ANSWER
+# TODO
 from sklearn.utils import class_weight
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 import numpy as np
@@ -93,11 +89,7 @@ img_width = 224
 img_height = 224
 # Loading training data
 datagen = ImageDataGenerator(preprocessing_function=applications.vgg16.preprocess_input)
-train_generator = datagen.flow_from_directory(directory=f"{datasets_dir}/chest-xray/train/".replace("file:///", "/"), 
-                                              class_mode="binary", 
-                                              classes=["normal", "pneumonia"],
-                                              batch_size=batch_size,
-                                              target_size=(img_height, img_width))
+train_generator = datagen.flow_from_directory(<FILL_IN>)
 
 print(f"Class labels: {train_generator.class_indices}")
 
@@ -112,42 +104,25 @@ class_weight_dic = {0: class_weight[0],
 steps_per_epoch = 5
 epochs = 5
 # Train the model 
-model.fit(train_generator, steps_per_epoch=steps_per_epoch, epochs=epochs, class_weight=class_weight_dic) 
+model.fit(<FILL_IN>) 
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC ## Evaluate the model
+# MAGIC %md ## Evaluate the model
 # MAGIC 
 # MAGIC In the code above, we saw our accuracy on our training dataset. Let's see how well it performs on our test dataset.
 
 # COMMAND ----------
 
-# # TODO
+# TODO
 
-# test_datagen = FILL_IN
+test_datagen = FILL_IN
 
-# test_generator = FILL_IN
+test_generator = FILL_IN
 
-# eval_results = FILL_IN
-# accuracy = round(eval_results[1]*100, 2)
-# print(f"Predicted accuracy: {accuracy}%")
-
-# COMMAND ----------
-
-# ANSWER
-test_datagen = ImageDataGenerator(preprocessing_function=applications.vgg16.preprocess_input)
-
-test_generator = datagen.flow_from_directory(directory=f"{datasets_dir}/chest-xray/test/".replace("file:///", "/"), 
-                                             class_mode="binary", 
-                                             classes=["normal", "pneumonia"],
-                                             batch_size=batch_size,
-                                             target_size=(img_height, img_width))
-
-eval_results = model.evaluate(test_generator)
+eval_results = FILL_IN
 accuracy = round(eval_results[1]*100, 2)
 print(f"Predicted accuracy: {accuracy}%")
-
 
 # COMMAND ----------
 

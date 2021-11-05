@@ -1,5 +1,4 @@
 # Databricks notebook source
-# MAGIC 
 # MAGIC %md-sandbox
 # MAGIC 
 # MAGIC <div style="text-align: center; line-height: 0; padding-top: 9px;">
@@ -9,6 +8,7 @@
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 
 # MAGIC # Generative Adversarial Networks (GANs)
 # MAGIC 
 # MAGIC ## ![Spark Logo Tiny](https://files.training.databricks.com/images/105/logo_spark_tiny.png) In this lesson you:<br>
@@ -29,6 +29,10 @@
 # MAGIC Our goal is to create synthetic images of these clothing items using GANs.
 # MAGIC 
 # MAGIC <img src="https://tensorflow.org/images/fashion-mnist-sprite.png" width=500>
+
+# COMMAND ----------
+
+# MAGIC %run ../Includes/Classroom-Setup
 
 # COMMAND ----------
 
@@ -95,31 +99,31 @@ X_train = (X_train - 127.5) / 127.5
 from tensorflow.keras import layers
 
 def def_discriminator():
-  """
-  A discriminator is simply a binary classification model to tell if an image is real or fake
-  """
-  model = tf.keras.Sequential()
-  model.add(layers.Conv2D(32, (6, 6), padding="same", input_shape=(28,28,1))) # Note that the input shape (28, 28) here matches the pixels of the original images 
-  model.add(layers.LeakyReLU()) 
-  
-  model.add(layers.Conv2D(64, (6, 6), strides=(2,2), padding="same"))
-  model.add(layers.LeakyReLU())
-  model.add(layers.Conv2D(64, (6, 6), strides=(2,2), padding="same"))
-  model.add(layers.LeakyReLU())
-  
-  model.add(layers.Flatten())
-  model.add(layers.Dropout(0.3)) ## Generally use between 0.3 and 0.6 
-  model.add(layers.Dense(1, activation="sigmoid"))
-  
-  model.compile(loss=tf.keras.losses.binary_crossentropy, 
-                optimizer=tf.keras.optimizers.Adam(learning_rate=LR/2, # Half the generator's learning rate to help stabilize equilibrium 
-                                                   decay=LR/NUM_EPOCH))
-  
-  return model
+    """
+    A discriminator is simply a binary classification model to tell if an image is real or fake
+    """
+    model = tf.keras.Sequential()
+    model.add(layers.Conv2D(32, (6, 6), padding="same", input_shape=(28,28,1))) # Note that the input shape (28, 28) here matches the pixels of the original images 
+    model.add(layers.LeakyReLU()) 
+
+    model.add(layers.Conv2D(64, (6, 6), strides=(2,2), padding="same"))
+    model.add(layers.LeakyReLU())
+    model.add(layers.Conv2D(64, (6, 6), strides=(2,2), padding="same"))
+    model.add(layers.LeakyReLU())
+
+    model.add(layers.Flatten())
+    model.add(layers.Dropout(0.3)) ## Generally use between 0.3 and 0.6 
+    model.add(layers.Dense(1, activation="sigmoid"))
+
+    model.compile(loss=tf.keras.losses.binary_crossentropy, 
+                  optimizer=tf.keras.optimizers.Adam(learning_rate=LR/2, decay=LR/NUM_EPOCH)) # Half the generator's learning rate to help stabilize equilibrium
+    
+
+    return model
 
 # COMMAND ----------
 
-# MAGIC %md-sandbox
+# MAGIC %md
 # MAGIC Now, let's define our generator. There are two new components we haven't learned: 
 # MAGIC * dropout 
 # MAGIC * transposed convolutional layers 
@@ -133,7 +137,7 @@ def def_discriminator():
 # MAGIC 
 # MAGIC ![](https://files.training.databricks.com/images/nn_dropout.png)
 # MAGIC 
-# MAGIC <img alt="Side Note" title="Side Note" style="vertical-align: text-bottom; position: relative; height:1.75em; top:0.05em; transform:rotate(15deg)" src="https://files.training.databricks.com/static/images/icon-note.webp"/> See the original paper here: [Dropout: A Simple Way to Prevent Neural Networks from
+# MAGIC <img src="https://files.training.databricks.com/images/icon_note_24.png"/> See the original paper here: [Dropout: A Simple Way to Prevent Neural Networks from
 # MAGIC Overfitting](http://jmlr.org/papers/volume15/srivastava14a/srivastava14a.pdf)
 
 # COMMAND ----------
@@ -158,28 +162,28 @@ DIM = 7
 DEPTH = 64
 
 def def_generator(noise_dim):
-  """
-  The purpose of the generator is to generate fake/synthetic images.
-  """
-  input_shape = (DIM, DIM, DEPTH)
-  
-  model = tf.keras.Sequential()
-  model.add(layers.Dense(DIM * DIM * DEPTH, input_dim=noise_dim))
-  model.add(layers.LeakyReLU())
+    """
+    The purpose of the generator is to generate fake/synthetic images.
+    """
+    input_shape = (DIM, DIM, DEPTH)
 
-  ### Reshape the output of the previous layer set
-  model.add(layers.Reshape(input_shape))
-  # Not using a kernel size divisible by the stride for better performance in this particular case
-  model.add(layers.Conv2DTranspose(32, (3, 3), strides=(2,2), padding="same")) 
-  model.add(layers.LeakyReLU())
-  
-  model.add(layers.Conv2DTranspose(32, (3, 3), strides=(2,2), padding="same"))
-  model.add(layers.LeakyReLU())
-  
-  ### 1 represents the number of channels, for grayscale; 3 for RGB
-  model.add(layers.Conv2D(1, (3, 3), activation="tanh", padding="same"))
-  
-  return model
+    model = tf.keras.Sequential()
+    model.add(layers.Dense(DIM * DIM * DEPTH, input_dim=noise_dim))
+    model.add(layers.LeakyReLU())
+
+    ### Reshape the output of the previous layer set
+    model.add(layers.Reshape(input_shape))
+    # Not using a kernel size divisible by the stride for better performance in this particular case
+    model.add(layers.Conv2DTranspose(32, (3, 3), strides=(2,2), padding="same")) 
+    model.add(layers.LeakyReLU())
+
+    model.add(layers.Conv2DTranspose(32, (3, 3), strides=(2,2), padding="same"))
+    model.add(layers.LeakyReLU())
+
+    ### 1 represents the number of channels, for grayscale; 3 for RGB
+    model.add(layers.Conv2D(1, (3, 3), activation="tanh", padding="same"))
+
+    return model
 
 # COMMAND ----------
 
@@ -194,19 +198,19 @@ from tensorflow.keras.models import Model
 
 def def_gan(noise_dim, discriminator, generator):
   
-  ### Freeze discriminator weights so that 
-  ### the feedback from the discriminator enables the generator to learn
-  ### how to generate better fake images 
-  discriminator.trainable = False
-  
-  gan_input = Input(shape=(noise_dim,))
-  gan_output = discriminator(generator(gan_input))
-  
-  gan_model = Model(gan_input, gan_output)
-  gan_model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=LR, decay=LR/NUM_EPOCH), 
-                    loss=tf.keras.losses.binary_crossentropy)
-  
-  return gan_model
+    ### Freeze discriminator weights so that 
+    ### the feedback from the discriminator enables the generator to learn
+    ### how to generate better fake images 
+    discriminator.trainable = False
+
+    gan_input = Input(shape=(noise_dim,))
+    gan_output = discriminator(generator(gan_input))
+
+    gan_model = Model(gan_input, gan_output)
+    gan_model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=LR, decay=LR/NUM_EPOCH), 
+                      loss=tf.keras.losses.binary_crossentropy)
+
+    return gan_model
 
 # COMMAND ----------
 
@@ -243,34 +247,34 @@ np.random.shuffle(X_train)
 
 ### Training GAN starts here
 for step in range(n_steps):
-  ### Step 1: Generate noise vector 
-  noise = tf.random.normal([BATCH_SIZE, NOISE_DIM])
+    ### Step 1: Generate noise vector 
+    noise = tf.random.normal([BATCH_SIZE, NOISE_DIM])
 
-  ### Step 2: Pass noise vector through generator to generate fake images
-  fake_images = generator.predict(noise)
+    ### Step 2: Pass noise vector through generator to generate fake images
+    fake_images = generator.predict(noise)
 
-  ### Step 3: Sample real images and mix with fake ones 
-  ### Sample real images from the training data 
-  real_image_batch = X_train[:BATCH_SIZE]
-  real_fake_image_mix = np.concatenate([real_image_batch, fake_images])
-  mix_labels = np.concatenate((np.ones(BATCH_SIZE), 
-                               np.zeros(BATCH_SIZE)), axis=0)
-  mix_labels += 0.05 * np.random.random(mix_labels.shape) # A best practice: add random noise to your labels 
+    ### Step 3: Sample real images and mix with fake ones 
+    ### Sample real images from the training data 
+    real_image_batch = X_train[:BATCH_SIZE]
+    real_fake_image_mix = np.concatenate([real_image_batch, fake_images])
+    mix_labels = np.concatenate((np.ones(BATCH_SIZE), 
+                                 np.zeros(BATCH_SIZE)), axis=0)
+    mix_labels += 0.05 * np.random.random(mix_labels.shape) # A best practice: add random noise to your labels 
 
-  ### Step 4: Train discriminator on mixed set so that it knows to distinguish between the two correctly
-  dis_loss = discriminator.train_on_batch(real_fake_image_mix, mix_labels)
+    ### Step 4: Train discriminator on mixed set so that it knows to distinguish between the two correctly
+    dis_loss = discriminator.train_on_batch(real_fake_image_mix, mix_labels)
 
-  ### Steps 5 and 6
-  ### Step 5: Generate noise vectors again but purposely label them as "real", try to fool the discriminator
-  ### Step 6: Train GAN using noise vectors labeled as "real" images 
-  ### Update weights of generator based on feedback of discriminator, thus allowing us to generate more real images
-  noise = tf.random.normal([BATCH_SIZE, NOISE_DIM])
-  misleading_labels = np.ones(BATCH_SIZE, dtype=int)
-  gan_loss = gan.train_on_batch(noise, misleading_labels)
-  
-  print(f"Step {step}....................")
-  print(f"discriminator loss: {round(dis_loss, 2)}")
-  print(f"adversarial loss: {round(gan_loss, 2)}\n")
+    ### Steps 5 and 6
+    ### Step 5: Generate noise vectors again but purposely label them as "real", try to fool the discriminator
+    ### Step 6: Train GAN using noise vectors labeled as "real" images 
+    ### Update weights of generator based on feedback of discriminator, thus allowing us to generate more real images
+    noise = tf.random.normal([BATCH_SIZE, NOISE_DIM])
+    misleading_labels = np.ones(BATCH_SIZE, dtype=int)
+    gan_loss = gan.train_on_batch(noise, misleading_labels)
+
+    print(f"Step {step}....................")
+    print(f"discriminator loss: {round(dis_loss, 2)}")
+    print(f"adversarial loss: {round(gan_loss, 2)}\n")
 
 # COMMAND ----------
 
@@ -282,19 +286,19 @@ for step in range(n_steps):
 # COMMAND ----------
 
 def generate_images(generator, benchmark_noise):
-  """
-  Generate synthetic images from the initial noise
-  """
-  
-  ### Notice `training` is set to False so that all layers are in inference mode.
-  predictions = generator(benchmark_noise, training=False)
+    """
+    Generate synthetic images from the initial noise
+    """
 
-  for i in range(predictions.shape[0]):
-    plt.subplot(4, 4, i+1)
-    ### We then scale our image data back from the tanh range [-1, 1] to [0, 255]
-    plt.imshow(predictions[i, :, :, 0] * 127.5 + 127.5)
-    plt.axis('off')
-  
+    ### Notice `training` is set to False so that all layers are in inference mode.
+    predictions = generator(benchmark_noise, training=False)
+
+    for i in range(predictions.shape[0]):
+        plt.subplot(4, 4, i+1)
+        ### We then scale our image data back from the tanh range [-1, 1] to [0, 255]
+        plt.imshow(predictions[i, :, :, 0] * 127.5 + 127.5)
+        plt.axis('off')
+
 generate_images(generator, benchmark_noise)
 
 # COMMAND ----------
