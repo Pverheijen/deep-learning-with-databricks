@@ -146,9 +146,7 @@ predict_images(img_paths, vgg16_model)
 # MAGIC %md
 # MAGIC You can play around with this with your own images by doing:
 # MAGIC 
-# MAGIC `%sh wget <image_url>/<image_name.jpg>`
-# MAGIC 
-# MAGIC `%fs cp file:/databricks/driver/<image_name.jpg> yourName/tmp/<image_name.jpg>`
+# MAGIC `%sh wget <image_url>/<image_name.jpg> -P /dbfs/tmp/`
 
 # COMMAND ----------
 

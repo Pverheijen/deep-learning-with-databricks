@@ -94,7 +94,7 @@ from tensorflow.keras.callbacks import ModelCheckpoint, EarlyStopping
 
 filepath = f"{working_dir}/keras_mlflow.ckpt".replace("dbfs:/", "/dbfs/")
 checkpointer = ModelCheckpoint(filepath=filepath, verbose=1, save_best_only=True)
-early_stopping = EarlyStopping(monitor="val_loss", min_delta=0.0001, patience=2, mode="auto")
+early_stopping = EarlyStopping(<FILL IN>)
 
 # COMMAND ----------
 
