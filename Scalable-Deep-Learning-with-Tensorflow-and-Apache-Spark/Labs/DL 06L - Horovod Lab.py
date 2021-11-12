@@ -199,27 +199,27 @@ def run_training_horovod():
                          cur_shard=hvd.rank(), 
                          shard_count= hvd.size()) as train_dataset:
 
-    dataset = FILL_IN
-    model = FILL_IN
-    steps_per_epoch = FILL_IN
-    optimizer = FILL_IN
-    optimizer = FILL_IN
-    model.compile(optimizer=optimizer, loss="mse", FILL_IN)
+        dataset = FILL_IN
+        model = FILL_IN
+        steps_per_epoch = FILL_IN
+        optimizer = FILL_IN
+        optimizer = FILL_IN
+        model.compile(optimizer=optimizer, loss="mse", FILL_IN)
 
-    checkpoint_dir = f"{working_dir}/petastorm_checkpoint_weights_lab.ckpt".replace("dbfs:/", "/dbfs/")
+        checkpoint_dir = f"{working_dir}/petastorm_checkpoint_weights_lab.ckpt".replace("dbfs:/", "/dbfs/")
 
-    callbacks = [
-        hvd.callbacks.BroadcastGlobalVariablesCallback(0),
-        hvd.callbacks.MetricAverageCallback(),
-        hvd.callbacks.LearningRateWarmupCallback(initial_lr=INITIAL_LR, warmup_epochs=WARMUP_EPOCHS, verbose=1),
-        ReduceLROnPlateau(monitor="loss", patience=10, verbose=1)
-    ]
+        callbacks = [
+            hvd.callbacks.BroadcastGlobalVariablesCallback(0),
+            hvd.callbacks.MetricAverageCallback(),
+            hvd.callbacks.LearningRateWarmupCallback(initial_lr=INITIAL_LR, warmup_epochs=WARMUP_EPOCHS, verbose=1),
+            ReduceLROnPlateau(monitor="loss", patience=10, verbose=1)
+        ]
 
-    # Horovod: save checkpoints only on worker 0 to prevent other workers from corrupting them.
-    if hvd.rank() == 0:
-        callbacks.append(ModelCheckpoint(checkpoint_dir, save_weights_only=True))
+        # Horovod: save checkpoints only on worker 0 to prevent other workers from corrupting them.
+        if hvd.rank() == 0:
+            callbacks.append(ModelCheckpoint(checkpoint_dir, save_weights_only=True))
 
-    history = FILL_IN
+        history = FILL_IN
 
 # COMMAND ----------
 

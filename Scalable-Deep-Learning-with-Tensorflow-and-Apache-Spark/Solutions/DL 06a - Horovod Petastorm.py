@@ -175,7 +175,7 @@ def run_training_horovod():
         ]
 
         if hvd.rank() == 0:
-            callbacks.append(tf.keras.callbacks.ModelCheckpoint(checkpoint_dir, save_weights_only=True))
+            callbacks.append(tf.keras.callbacks.ModelCheckpoint(checkpoint_dir, monitor="loss", save_weights_only=True))
 
         history = model.fit(dataset, steps_per_epoch=steps_per_epoch, epochs=NUM_EPOCH, callbacks=callbacks, verbose=2)
 

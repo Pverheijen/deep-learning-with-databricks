@@ -82,7 +82,7 @@ import mlflow
 import mlflow.keras
 import uuid
 
-model_name = f"keras_model_{uuid.uuid4().hex[:10]}"
+model_name = f"keras_model_{uuid.uuid4().hex[:6]}"
 
 with mlflow.start_run() as run:
     mlflow.keras.log_model(artifact_path=model_name, keras_model=model)
@@ -214,8 +214,9 @@ signature
 
 # COMMAND ----------
 
+import cloudpickle
+import tensorflow.keras
 from sys import version_info
-import tensorflow as tf
 
 conda_env = {
     "channels": ["defaults"],
@@ -224,7 +225,9 @@ conda_env = {
       "pip",
       {"pip": [
           "mlflow",
-          f"tensorflow=={tf.__version__}"
+          f"tensorflow=={tf.__version__}",
+          f"cloudpickle==1.2.2", # Forcing cloudpickle version due to serialization issue
+          f"keras=={tensorflow.keras.__version__}" # Need both tensorflow and keras due to mlflow dependency
         ],
       },
     ],
@@ -249,37 +252,20 @@ artifacts = {
 
 # COMMAND ----------
 
-mlflow_pyfunc_model_path = f"{userhome}/{model_name}".replace("dbfs:/", "/dbfs/")
-
-mlflow.pyfunc.save_model(
-    path=mlflow_pyfunc_model_path, 
-    python_model=KerasImageClassifierPyfunc(), 
-    artifacts=artifacts,
-    conda_env=conda_env,
-    signature=signature,
-    input_example=data[:1] # Can only log one row because of MLflow serving size limits
-)
-
-# COMMAND ----------
-
-# MAGIC %md Load the model back in and test on a sample of the data.
+with mlflow.start_run() as run:
+    mlflow.pyfunc.log_model(
+      "vgg-model", 
+      python_model=KerasImageClassifierPyfunc(), 
+      artifacts=artifacts,
+      conda_env=conda_env,
+      signature=signature,
+      input_example=data[:1], # Can only log one row because of MLflow serving size limits
+      registered_model_name=model_name # Registers model
+  )
 
 # COMMAND ----------
 
-loaded_model = mlflow.pyfunc.load_model(mlflow_pyfunc_model_path)
-loaded_model.predict(data)
-
-# COMMAND ----------
-
-# MAGIC %md ## Log to the Model Registry and Serve using REST
-
-# COMMAND ----------
-
-# MAGIC %md Log to the model registry.
-
-# COMMAND ----------
-
-mlflow.register_model(model_uri=mlflow_pyfunc_model_path.replace("/dbfs", "dbfs:"), name=model_name)
+# MAGIC %md ## Load from the Model Registry and Serve using REST
 
 # COMMAND ----------
 
@@ -298,6 +284,8 @@ while True:
     except:
         print(f"Model not ready yet.  Sleeping...")
         time.sleep(10)
+        
+model_version_1.predict(data) # Test on sample data
 
 # COMMAND ----------
 
@@ -373,7 +361,6 @@ while not results:
     print(f"Conda environment still building.  Sleeping...")
     results = score_model(data, model_name)
     
-print()
 print(results)    
 
 # COMMAND ----------
