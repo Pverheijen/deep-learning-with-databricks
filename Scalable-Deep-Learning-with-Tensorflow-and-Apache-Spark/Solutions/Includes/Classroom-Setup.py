@@ -25,6 +25,10 @@ userhome = getUserhome()
 course_dir = getCourseDir()
 datasets_dir = f"{course_dir}/datasets"
 working_dir = getWorkingDir()
+
+dbutils.fs.mkdirs(userhome)
+dbutils.fs.mkdirs(course_dir)
+dbutils.fs.mkdirs(working_dir)
 None # Suppress output
 
 # COMMAND ----------

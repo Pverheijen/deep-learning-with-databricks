@@ -132,7 +132,7 @@ with converter_train.make_tf_dataset(workers_count=4, batch_size=BATCH_SIZE, num
     # Number of steps required to go through one epoch
     steps_per_epoch = len(converter_train) // BATCH_SIZE
     model = build_model()
-    optimizer = keras.optimizers.Adam(lr=INITIAL_LR)
+    optimizer = keras.optimizers.Adam(learning_rate=INITIAL_LR)
     model.compile(optimizer=optimizer, loss="mse", metrics=["mae"])
     # Do not specify the batch_size if your data is in the form of a dataset (since they generate batches)
     # Instead, use steps_per_epoch
@@ -149,7 +149,8 @@ with converter_train.make_tf_dataset(workers_count=4, batch_size=BATCH_SIZE, num
 
 import horovod.tensorflow.keras as hvd
 
-dbutils.fs.rm(f"{working_dir}/petastorm_checkpoint_weights.ckpt", True)
+checkpoint_dir = f"{working_dir}/petastorm_checkpoint_weights.ckpt"
+dbutils.fs.rm(checkpoint_dir, True)
 
 def run_training_horovod():
     # Horovod: initialize Horovod.
@@ -160,13 +161,12 @@ def run_training_horovod():
         steps_per_epoch = len(converter_train) // (BATCH_SIZE*hvd.size())
 
         # Adding in Distributed Optimizer
-        optimizer = tf.keras.optimizers.Adam(lr=INITIAL_LR*hvd.size())
+        optimizer = tf.keras.optimizers.Adam(learning_rate=INITIAL_LR*hvd.size())
         optimizer = hvd.DistributedOptimizer(optimizer)
 
         model.compile(optimizer=optimizer, loss="mse", metrics=["mae"])
 
         # Adding in callbacks
-        checkpoint_dir = f"{working_dir}/petastorm_checkpoint_weights.ckpt"
         callbacks = [
             hvd.callbacks.BroadcastGlobalVariablesCallback(0),
             hvd.callbacks.MetricAverageCallback(),
@@ -175,7 +175,7 @@ def run_training_horovod():
         ]
 
         if hvd.rank() == 0:
-            callbacks.append(tf.keras.callbacks.ModelCheckpoint(checkpoint_dir, monitor="loss", save_weights_only=True))
+            callbacks.append(tf.keras.callbacks.ModelCheckpoint(checkpoint_dir.replace("dbfs:/", "/dbfs/"), monitor="loss", save_best_only=True))
 
         history = model.fit(dataset, steps_per_epoch=steps_per_epoch, epochs=NUM_EPOCH, callbacks=callbacks, verbose=2)
 
@@ -195,6 +195,19 @@ hr.run(run_training_horovod)
 
 hr = HorovodRunner(np=spark.sparkContext.defaultParallelism, driver_log_verbosity="all")
 hr.run(run_training_horovod)
+
+# COMMAND ----------
+
+# MAGIC %md Let's load & evaluate the model.
+
+# COMMAND ----------
+
+from tensorflow.keras.models import load_model
+
+trained_model = load_model(checkpoint_dir.replace("dbfs:/", "/dbfs/"))
+print(trained_model.summary())
+
+trained_model.evaluate(X_test, y_test)
 
 # COMMAND ----------
 

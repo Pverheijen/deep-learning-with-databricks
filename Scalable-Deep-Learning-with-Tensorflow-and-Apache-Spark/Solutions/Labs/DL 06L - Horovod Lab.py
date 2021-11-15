@@ -68,7 +68,6 @@ def get_dataset(rank=0, size=1):
 # COMMAND ----------
 
 import tensorflow as tf
-from tensorflow import keras
 tf.random.set_seed(42)
 
 def build_model():
@@ -90,7 +89,7 @@ def build_model():
 # ANSWER
 import horovod.tensorflow.keras as hvd
 from tensorflow.keras import optimizers
-from tensorflow.keras.callbacks import *
+from tensorflow.keras.callbacks import ModelCheckpoint, ReduceLROnPlateau
 
 BATCH_SIZE = 16
 NUM_EPOCHS = 10
@@ -106,7 +105,7 @@ def run_training_horovod():
     (X_train, y_train), (X_test, y_test) = get_dataset(hvd.rank(), hvd.size())
 
     model = build_model()
-    optimizer = optimizers.Adam(lr=INITIAL_LR*hvd.size())
+    optimizer = optimizers.Adam(learning_rate=INITIAL_LR*hvd.size())
     optimizer = hvd.DistributedOptimizer(optimizer)
     model.compile(optimizer=optimizer, loss="mse", metrics=["mse"])
     checkpoint_dir = f"{working_dir}/horovod_checkpoint_weights_lab.ckpt".replace("dbfs:/", "/dbfs/")
@@ -128,14 +127,14 @@ def run_training_horovod():
         hvd.callbacks.LearningRateWarmupCallback(initial_lr=INITIAL_LR, warmup_epochs=WARMUP_EPOCHS, verbose=1),
 
         # Reduce the learning rate if training plateaus.
-        ReduceLROnPlateau(patience=10, verbose=1)
+        ReduceLROnPlateau(patience=10, verbose=1, monitor="loss")
     ]
 
     # Horovod: save checkpoints only on worker 0 to prevent other workers from corrupting them.
     if hvd.rank() == 0:
-        callbacks.append(ModelCheckpoint(checkpoint_dir, save_weights_only=True))
+        callbacks.append(ModelCheckpoint(checkpoint_dir, save_best_only=True, monitor="loss"))
 
-    history = model.fit(X_train, y_train, callbacks=callbacks, validation_split=.2, epochs=NUM_EPOCHS, batch_size=BATCH_SIZE, verbose=2)
+    history = model.fit(X_train, y_train, callbacks=callbacks, epochs=NUM_EPOCHS, batch_size=BATCH_SIZE, verbose=2)
 
 # COMMAND ----------
 
@@ -206,7 +205,6 @@ converter_train = make_spark_converter(vec_train_df)
 # COMMAND ----------
 
 # ANSWER
-from petastorm import make_batch_reader
 import horovod.tensorflow.keras as hvd
 
 def run_training_horovod():
@@ -220,7 +218,7 @@ def run_training_horovod():
         dataset = train_dataset.map(lambda x: (x.features, x.label))
         model = build_model()
         steps_per_epoch = len(converter_train) // (BATCH_SIZE * hvd.size())
-        optimizer = keras.optimizers.Adam(lr=INITIAL_LR*hvd.size())
+        optimizer = optimizers.Adam(learning_rate=INITIAL_LR*hvd.size())
         optimizer = hvd.DistributedOptimizer(optimizer)
         model.compile(optimizer=optimizer, loss="mse")
 
@@ -235,7 +233,7 @@ def run_training_horovod():
 
         # Horovod: save checkpoints only on worker 0 to prevent other workers from corrupting them.
         if hvd.rank() == 0:
-            callbacks.append(ModelCheckpoint(checkpoint_dir, save_weights_only=True))
+            callbacks.append(ModelCheckpoint(checkpoint_dir, save_best_only=True, monitor="loss"))
 
         history = model.fit(dataset, callbacks=callbacks, steps_per_epoch=steps_per_epoch, epochs=NUM_EPOCHS)
 

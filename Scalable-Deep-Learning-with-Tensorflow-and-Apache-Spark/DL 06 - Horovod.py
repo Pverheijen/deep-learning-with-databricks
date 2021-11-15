@@ -69,7 +69,7 @@ from sklearn.preprocessing import StandardScaler
 
 def get_dataset(rank=0, size=1):
     scaler = StandardScaler()
-    cal_housing = fetch_california_housing(data_home=f"{working_dir}/{rank}/")
+    cal_housing = fetch_california_housing(data_home=f"{working_dir}/{rank}/".replace("dbfs:/", "/dbfs/"))
     X_train, X_test, y_train, y_test = train_test_split(cal_housing.data,
                                                         cal_housing.target,
                                                         test_size=0.2,
@@ -109,7 +109,7 @@ def run_training_horovod():
     model = build_model()
 
     # Horovod: adjust learning rate based on number of GPUs/CPUs
-    optimizer = optimizers.Adam(lr=0.001*hvd.size())
+    optimizer = optimizers.Adam(learning_rate=0.001*hvd.size())
 
     # Horovod: add Horovod Distributed Optimizer
     optimizer = hvd.DistributedOptimizer(optimizer)
@@ -120,7 +120,7 @@ def run_training_horovod():
 
 # COMMAND ----------
 
-# MAGIC %md Test it out on just the driver.
+# MAGIC %md Test it out on just the driver (negative sign indicates running on the driver).
 
 # COMMAND ----------
 
@@ -137,7 +137,9 @@ hr.run(run_training_horovod)
 # COMMAND ----------
 
 from tensorflow.keras import optimizers
-from tensorflow.keras.callbacks import *
+from tensorflow.keras.callbacks import ReduceLROnPlateau, ModelCheckpoint
+
+checkpoint_dir = f"{working_dir}/horovod_checkpoint_weights.ckpt".replace("dbfs:/", "/dbfs/")
 
 def run_training_horovod():
     # Horovod: initialize Horovod.
@@ -150,7 +152,6 @@ def run_training_horovod():
     #   if gpus:
     #       tf.config.experimental.set_visible_devices(gpus[hvd.local_rank()], 'GPU')
 
-
     print(f"Rank is: {hvd.rank()}")
     print(f"Size is: {hvd.size()}")
 
@@ -159,15 +160,12 @@ def run_training_horovod():
     model = build_model()
 
     # Horovod: adjust learning rate based on number of GPUs.
-    optimizer = optimizers.Adam(lr=0.001*hvd.size())
+    optimizer = optimizers.Adam(learning_rate=0.001*hvd.size())
 
     # Horovod: add Horovod Distributed Optimizer.
     optimizer = hvd.DistributedOptimizer(optimizer)
 
     model.compile(optimizer=optimizer, loss="mse", metrics=["mse"])
-
-    # Use the optimized FUSE Mount
-    checkpoint_dir = f"{working_dir}/horovod_checkpoint_weights.ckpt"
 
     callbacks = [
         # Horovod: broadcast initial variable states from rank 0 to all other processes.
@@ -191,7 +189,7 @@ def run_training_horovod():
 
     # Horovod: save checkpoints only on worker 0 to prevent other workers from corrupting them.
     if hvd.rank() == 0:
-        callbacks.append(ModelCheckpoint(checkpoint_dir, save_weights_only=True))
+        callbacks.append(ModelCheckpoint(checkpoint_dir, save_best_only=True))
 
     history = model.fit(X_train, y_train, validation_split=.2, epochs=10, batch_size=64, verbose=2, callbacks=callbacks)
 
@@ -219,9 +217,26 @@ hr = HorovodRunner(np=spark.sparkContext.defaultParallelism, driver_log_verbosit
 hr.run(run_training_horovod)
 
 # # If running on GPUs
-# physical_devices = tf.config.list_physical_devices('GPU')
+# physical_devices = tf.config.list_physical_devices("GPU")
 # hr = HorovodRunner(np=len(pyhsical_devices), driver_log_verbosity="all")
 # hr.run(run_training_horovod)
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC Load model from checkpoint for inference.
+
+# COMMAND ----------
+
+from tensorflow.keras.models import load_model
+
+trained_model = load_model(checkpoint_dir)
+trained_model.summary()
+
+# COMMAND ----------
+
+X, y = get_dataset()[1]
+trained_model.evaluate(X, y)
 
 # COMMAND ----------
 

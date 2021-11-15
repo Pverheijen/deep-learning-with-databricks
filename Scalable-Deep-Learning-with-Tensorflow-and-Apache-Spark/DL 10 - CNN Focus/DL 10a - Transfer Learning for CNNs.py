@@ -156,7 +156,7 @@ from tensorflow.keras.optimizers import Adam
 # Check out the MLflow UI as this runs
 mlflow.tensorflow.autolog(every_n_iter=2)
 
-model.compile(loss="binary_crossentropy", optimizer=Adam(lr=0.005), metrics=["accuracy"]) 
+model.compile(loss="binary_crossentropy", optimizer=Adam(learning_rate=0.005), metrics=["accuracy"]) 
 
 # Loading training data
 batch_size = 4

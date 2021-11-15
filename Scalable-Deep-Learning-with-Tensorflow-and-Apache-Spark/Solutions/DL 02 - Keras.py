@@ -136,7 +136,7 @@ model.fit(X_train, y_train, epochs=10)
 from tensorflow.keras import optimizers
 
 model = build_model()
-optimizer = optimizers.SGD(lr=0.000001)
+optimizer = optimizers.SGD(learning_rate=0.000001)
 model.compile(optimizer=optimizer, loss=loss, metrics=metrics)
 model.fit(X_train, y_train, epochs=10)
 
@@ -154,7 +154,7 @@ model.fit(X_train, y_train, epochs=10)
 from tensorflow.keras import optimizers
 
 model = build_model()
-optimizer = optimizers.Adam(lr=0.001)
+optimizer = optimizers.Adam(learning_rate=0.001)
 
 model.compile(optimizer=optimizer, loss=loss, metrics=metrics)
 history = model.fit(X_train, y_train, epochs=20)

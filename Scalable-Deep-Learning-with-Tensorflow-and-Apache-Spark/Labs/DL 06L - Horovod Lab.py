@@ -68,7 +68,6 @@ def get_dataset(rank=0, size=1):
 # COMMAND ----------
 
 import tensorflow as tf
-from tensorflow import keras
 tf.random.set_seed(42)
 
 def build_model():
@@ -91,7 +90,7 @@ def build_model():
 
 import horovod.tensorflow.keras as hvd
 from tensorflow.keras import optimizers
-from tensorflow.keras.callbacks import *
+from tensorflow.keras.callbacks import ModelCheckpoint, ReduceLROnPlateau
 
 BATCH_SIZE = 16
 NUM_EPOCHS = 10
@@ -117,7 +116,7 @@ def run_training_horovod():
 
     # Horovod: save checkpoints only on worker 0 to prevent other workers from corrupting them.
     if hvd.rank() == 0:
-        callbacks.append(ModelCheckpoint(checkpoint_dir, save_weights_only=True))
+        callbacks.append(ModelCheckpoint(checkpoint_dir, save_best_only=True, monitor="loss"))
 
     history = model.fit(X_train, y_train, FILL_IN)
 
@@ -188,7 +187,6 @@ converter_train = make_spark_converter(vec_train_df)
 # COMMAND ----------
 
 # TODO
-from petastorm import make_batch_reader
 import horovod.tensorflow.keras as hvd
 
 def run_training_horovod():
@@ -217,7 +215,7 @@ def run_training_horovod():
 
         # Horovod: save checkpoints only on worker 0 to prevent other workers from corrupting them.
         if hvd.rank() == 0:
-            callbacks.append(ModelCheckpoint(checkpoint_dir, save_weights_only=True))
+            callbacks.append(ModelCheckpoint(checkpoint_dir, save_weights_only=True, monitor="loss"))
 
         history = FILL_IN
 

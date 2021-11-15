@@ -91,7 +91,7 @@ model = Sequential([
 
 from tensorflow.keras.optimizers import Adam
 
-model.compile(optimizer=Adam(lr=0.001), loss="mse", metrics=["mse"])
+model.compile(optimizer=Adam(learning_rate=0.001), loss="mse", metrics=["mse"])
 
 # COMMAND ----------
 
