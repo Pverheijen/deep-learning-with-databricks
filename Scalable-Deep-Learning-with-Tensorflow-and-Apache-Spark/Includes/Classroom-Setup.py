@@ -40,8 +40,8 @@ def path_exists(path):
         return False
 
 def install_datasets(reinstall=False):
-    min_time = "5 min"
-    max_time = "20 min"
+    min_time = "3 min"
+    max_time = "10 min"
 
     # You can swap out the source_path with an alternate version during development
     # source_path = f"dbfs:/mnt/work-xxx/{course_name}"
@@ -68,7 +68,7 @@ def install_datasets(reinstall=False):
           region that your workspace is in, this operation can take as little as {min_time} and 
           upwards to {max_time}, but this is a one-time operation.""")
 
-    print("""\nInstalling the "dl" dataset...""")
+    print("""\nInstalling the dataset...""")
     dbutils.fs.cp(source_path, target_dir, True)
 
     print(f"""\nThe install of the datasets completed successfully.""")  

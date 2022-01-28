@@ -9,7 +9,7 @@
 
 # MAGIC %md # Install Datasets
 # MAGIC 
-# MAGIC We need to "install" the datasets this course uses by copying them from its current location in the cloud to your local filesystem.
+# MAGIC We need to "install" the datasets this course uses by copying them from its current location in the cloud to a location relative to your workspace.
 # MAGIC 
 # MAGIC All that is required is to run the following cell. By default, the **`Classroom-Setup`** script will not reinstall the datasets upon <br/>subsequent invocation but this behavior can be adjusted by modifying the parameters below.
 # MAGIC 
@@ -17,7 +17,7 @@
 
 # COMMAND ----------
 
-# MAGIC %run "./Includes/Classroom-Setup"  $reinstall = "false"
+# MAGIC %run "./Includes/Classroom-Setup"  $reinstall="false"
 
 # COMMAND ----------
 

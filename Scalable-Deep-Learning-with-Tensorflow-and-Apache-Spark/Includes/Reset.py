@@ -10,7 +10,7 @@
 # Does any work to reset the environment prior to testing.
 username = spark.sql("SELECT current_user()").first()[0]
 
-course_dir = f"file:///dbfs/Users/{username}/dbacademy/deep_learning"
+course_dir = f"dbfs:/user/{username}/dbacademy/deep_learning"
 
 print(f"Removing course directory: {course_dir}")
 dbutils.fs.rm(course_dir, True)

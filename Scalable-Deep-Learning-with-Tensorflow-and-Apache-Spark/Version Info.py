@@ -11,7 +11,7 @@
 # MAGIC 
 # MAGIC * Name: **Scalable Deep Learning with Tensorflow and Apache Spark**
 # MAGIC * Version:  **5.0.1**
-# MAGIC * Built On: **Jan 28, 2022 at 18:15:33 UTC**
+# MAGIC * Built On: **Jan 28, 2022 at 18:59:06 UTC**
 
 # COMMAND ----------
 
