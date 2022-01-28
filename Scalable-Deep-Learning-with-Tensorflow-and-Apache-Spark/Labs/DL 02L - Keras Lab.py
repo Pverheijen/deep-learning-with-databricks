@@ -20,26 +20,19 @@
 
 # COMMAND ----------
 
-# MAGIC %pip install tensorflow-datasets
-
-# COMMAND ----------
-
-import tensorflow_datasets as tfds
 import pandas as pd
+from sklearn.datasets import load_wine
 
 # Import Dataset
-wine_quality_tfds = tfds.load("wine_quality", split="train", shuffle_files=False)
-wine_quality_pdf = tfds.as_dataframe(wine_quality_tfds)
-wine_quality_pdf.columns = wine_quality_pdf.columns.str.replace("features/","")
-wine_quality_pdf.head(5)
+wine_quality = load_wine(as_frame=True)
 
 # COMMAND ----------
 
 from sklearn.model_selection import train_test_split
 
 # split 80/20 train-test
-X_train, X_test, y_train, y_test = train_test_split(wine_quality_pdf.drop("quality", axis=1),
-                                                    wine_quality_pdf["quality"],
+X_train, X_test, y_train, y_test = train_test_split(wine_quality.data,
+                                                    wine_quality.target,
                                                     test_size=0.2,
                                                     random_state=1)
 
@@ -82,7 +75,7 @@ model = <FILL_IN>
 # MAGIC %md
 # MAGIC ## Question
 # MAGIC 
-# MAGIC If you did the previous cell correctly, you should see there are 600 parameters for the first layer. Why are there 600?
+# MAGIC If you did the previous cell correctly, you should see there are 700 parameters for the first layer. Why are there 700?
 # MAGIC 
 # MAGIC **HINT**: Add in `use_bias=False` in the Dense layer, and you should see a difference in the number of parameters (don't forget to set this back to `True` before moving on)
 
@@ -162,7 +155,7 @@ view_model_loss()
 # COMMAND ----------
 
 # MAGIC %md-sandbox
-# MAGIC &copy; 2021 Databricks, Inc. All rights reserved.<br/>
-# MAGIC Apache, Apache Spark, Spark and the Spark logo are trademarks of the <a href="http://www.apache.org/">Apache Software Foundation</a>.<br/>
+# MAGIC &copy; 2022 Databricks, Inc. All rights reserved.<br/>
+# MAGIC Apache, Apache Spark, Spark and the Spark logo are trademarks of the <a href="https://www.apache.org/">Apache Software Foundation</a>.<br/>
 # MAGIC <br/>
-# MAGIC <a href="https://databricks.com/privacy-policy">Privacy Policy</a> | <a href="https://databricks.com/terms-of-use">Terms of Use</a> | <a href="http://help.databricks.com/">Support</a>
+# MAGIC <a href="https://databricks.com/privacy-policy">Privacy Policy</a> | <a href="https://databricks.com/terms-of-use">Terms of Use</a> | <a href="https://help.databricks.com/">Support</a>

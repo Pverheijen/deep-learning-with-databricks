@@ -18,10 +18,6 @@
 
 # COMMAND ----------
 
-# MAGIC %pip install tensorflow-datasets
-
-# COMMAND ----------
-
 # MAGIC %run "../Includes/Classroom-Setup"
 
 # COMMAND ----------
@@ -34,23 +30,21 @@
 
 # COMMAND ----------
 
-import tensorflow_datasets as tfds
 import pandas as pd
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
+from sklearn.datasets import load_wine
 
 def get_dataset(rank=0, size=1):
     scaler = StandardScaler()
 
-    wine_quality_tfds = tfds.load("wine_quality", split="train", shuffle_files=False)
-    wine_quality_pdf = tfds.as_dataframe(wine_quality_tfds)
-    wine_quality_pdf.columns = wine_quality_pdf.columns.str.replace("features/", "")
-
-    # split 80/20 train-test
-    X_train, X_test, y_train, y_test = train_test_split(wine_quality_pdf.drop("quality", axis=1),
-                                                        wine_quality_pdf["quality"],
-                                                        test_size=0.2,
-                                                        random_state=1)
+    wine_quality = load_wine()
+    X_train, X_test, y_train, y_test = train_test_split(wine_quality.data,
+                                                        wine_quality.target, 
+                                                        test_size=0.2, 
+                                                        random_state=42
+                                                       )
+    
     scaler.fit(X_train)
     X_train = scaler.transform(X_train[rank::size])
     y_train = y_train[rank::size]
@@ -74,7 +68,7 @@ def build_model():
     from tensorflow.keras.models import Sequential
     from tensorflow.keras.layers import Dense
 
-    return Sequential([Dense(50, input_dim=11, activation="relu"),
+    return Sequential([Dense(50, input_dim=13, activation="relu"),
                        Dense(20, activation="relu"),
                        Dense(1, activation="linear")])
 
@@ -89,7 +83,7 @@ def build_model():
 # ANSWER
 import horovod.tensorflow.keras as hvd
 from tensorflow.keras import optimizers
-from tensorflow.keras.callbacks import ModelCheckpoint, ReduceLROnPlateau
+from tensorflow.keras.callbacks import ModelCheckpoint, ReduceLROnPlateau, LambdaCallback
 
 BATCH_SIZE = 16
 NUM_EPOCHS = 10
@@ -105,7 +99,7 @@ def run_training_horovod():
     (X_train, y_train), (X_test, y_test) = get_dataset(hvd.rank(), hvd.size())
 
     model = build_model()
-    optimizer = optimizers.Adam(learning_rate=INITIAL_LR*hvd.size())
+    optimizer = optimizers.Adam(learning_rate=INITIAL_LR)
     optimizer = hvd.DistributedOptimizer(optimizer)
     model.compile(optimizer=optimizer, loss="mse", metrics=["mse"])
     checkpoint_dir = f"{working_dir}/horovod_checkpoint_weights_lab.ckpt".replace("dbfs:/", "/dbfs/")
@@ -124,10 +118,13 @@ def run_training_horovod():
         # Horovod: using `lr = 1.0 * hvd.size()` from the very beginning leads to worse final
         # accuracy. Scale the learning rate `lr = 1.0` ---> `lr = 1.0 * hvd.size()` during
         # the first five epochs. See https://arxiv.org/abs/1706.02677 for details.
-        hvd.callbacks.LearningRateWarmupCallback(initial_lr=INITIAL_LR, warmup_epochs=WARMUP_EPOCHS, verbose=1),
+        hvd.callbacks.LearningRateWarmupCallback(initial_lr=INITIAL_LR*hvd.size(), warmup_epochs=WARMUP_EPOCHS, verbose=1),
 
         # Reduce the learning rate if training plateaus.
-        ReduceLROnPlateau(patience=10, verbose=1, monitor="loss")
+        ReduceLROnPlateau(patience=10, verbose=1, monitor="loss"),
+      
+        # Print out the learning rate for each epoch
+        LambdaCallback(on_epoch_begin=lambda epoch,logs: print(f"current epoch id = {epoch}, learning rate = {model.optimizer.learning_rate.numpy()}"))
     ]
 
     # Horovod: save checkpoints only on worker 0 to prevent other workers from corrupting them.
@@ -158,22 +155,24 @@ hr.run(run_training_horovod)
 
 # COMMAND ----------
 
-wine_quality_tfds = tfds.load("wine_quality", split="train", shuffle_files=False)
-wine_quality_pdf = tfds.as_dataframe(wine_quality_tfds)
-wine_quality_pdf.columns = wine_quality_pdf.columns.str.replace("features/","")
+# Load in wine dataset 
+wine_quality = load_wine()
 
-# split 80/20 train-test
-X_train, X_test, y_train, y_test = train_test_split(wine_quality_pdf.drop("quality", axis=1),
-                                                    wine_quality_pdf["quality"],
-                                                    test_size=0.2,
-                                                    random_state=1)
+# Split into training and test sets
+X_train, X_test, y_train, y_test = train_test_split(wine_quality.data,
+                                                    wine_quality.target, 
+                                                    test_size=0.2, 
+                                                    random_state=42
+                                                   )
+
+# Scale features 
 scaler = StandardScaler()
 X_train = scaler.fit_transform(X_train)
 X_test = scaler.transform(X_test)
 
 # concatenate our features and label, then create a Spark DataFrame from our Pandas DataFrame.
-data = pd.concat([pd.DataFrame(X_train, columns=wine_quality_pdf.drop("quality", axis=1).columns), 
-                  pd.DataFrame(y_train.values, columns=["label"])], axis=1)
+data = pd.concat([pd.DataFrame(X_train, columns=wine_quality.feature_names), 
+                  pd.DataFrame(y_train, columns=["label"])], axis=1)
 train_df = spark.createDataFrame(data)
 display(train_df)
 
@@ -188,7 +187,7 @@ display(train_df)
 # ANSWER
 from pyspark.ml.feature import VectorAssembler
 
-vec_assembler = VectorAssembler(inputCols=list(wine_quality_pdf.drop("quality", axis=1).columns), outputCol="features")
+vec_assembler = VectorAssembler(inputCols=list(wine_quality.feature_names), outputCol="features")
 vec_train_df = vec_assembler.transform(train_df).select("features", "label")
 display(vec_train_df)
 
@@ -218,7 +217,7 @@ def run_training_horovod():
         dataset = train_dataset.map(lambda x: (x.features, x.label))
         model = build_model()
         steps_per_epoch = len(converter_train) // (BATCH_SIZE * hvd.size())
-        optimizer = optimizers.Adam(learning_rate=INITIAL_LR*hvd.size())
+        optimizer = optimizers.Adam(learning_rate=INITIAL_LR)
         optimizer = hvd.DistributedOptimizer(optimizer)
         model.compile(optimizer=optimizer, loss="mse")
 
@@ -227,8 +226,9 @@ def run_training_horovod():
         callbacks = [
             hvd.callbacks.BroadcastGlobalVariablesCallback(0),
             hvd.callbacks.MetricAverageCallback(),
-            hvd.callbacks.LearningRateWarmupCallback(initial_lr=INITIAL_LR, warmup_epochs=5, verbose=1),
-            ReduceLROnPlateau(monitor="loss", patience=10, verbose=1)
+            hvd.callbacks.LearningRateWarmupCallback(initial_lr=INITIAL_LR*hvd.size(), warmup_epochs=5, verbose=1),
+            ReduceLROnPlateau(monitor="loss", patience=10, verbose=1),
+            LambdaCallback(on_epoch_begin=lambda epoch,logs: print(f"current epoch id = {epoch}, learning rate = {model.optimizer.learning_rate.numpy()}"))
         ]
 
         # Horovod: save checkpoints only on worker 0 to prevent other workers from corrupting them.
@@ -254,7 +254,7 @@ hr.run(run_training_horovod)
 # COMMAND ----------
 
 # MAGIC %md-sandbox
-# MAGIC &copy; 2021 Databricks, Inc. All rights reserved.<br/>
-# MAGIC Apache, Apache Spark, Spark and the Spark logo are trademarks of the <a href="http://www.apache.org/">Apache Software Foundation</a>.<br/>
+# MAGIC &copy; 2022 Databricks, Inc. All rights reserved.<br/>
+# MAGIC Apache, Apache Spark, Spark and the Spark logo are trademarks of the <a href="https://www.apache.org/">Apache Software Foundation</a>.<br/>
 # MAGIC <br/>
-# MAGIC <a href="https://databricks.com/privacy-policy">Privacy Policy</a> | <a href="https://databricks.com/terms-of-use">Terms of Use</a> | <a href="http://help.databricks.com/">Support</a>
+# MAGIC <a href="https://databricks.com/privacy-policy">Privacy Policy</a> | <a href="https://databricks.com/terms-of-use">Terms of Use</a> | <a href="https://help.databricks.com/">Support</a>

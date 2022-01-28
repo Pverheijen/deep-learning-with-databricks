@@ -103,10 +103,10 @@ for i, batch in enumerate(datagen.flow(x, batch_size=1, seed=42)):
 
 # COMMAND ----------
 
-train_data = cat_data.iloc[:5].append(dog_data.iloc[:5])
+train_data = cat_data.iloc[:32].append(dog_data.iloc[:32])
 train_data["path"] = train_data["path"].apply(lambda x: x.replace("dbfs:/", "/dbfs/"))
 
-test_data = cat_data.iloc[5:].append(dog_data.iloc[5:])
+test_data = cat_data.iloc[32:].append(dog_data.iloc[32:])
 test_data["path"] = test_data["path"].apply(lambda x: x.replace("dbfs:/", "/dbfs/"))
 
 # COMMAND ----------
@@ -151,7 +151,7 @@ model.compile(loss="binary_crossentropy", optimizer=Adam(learning_rate=0.001), m
 
 # COMMAND ----------
 
-batch_size = 2
+batch_size = 8
 
 # Note that we are NOT passing in the rescaling argument here, 
 # since we are using resnet's pretrained weights, we need to use resnet's preprocess_input function
@@ -186,13 +186,14 @@ model.fit(train_generator, steps_per_epoch=step_size_train, epochs=10, verbose=1
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC Let's check the model accuracy on the test set. Note that we do not perform data augmentation on the test dataset. 
+# MAGIC Let's check the model accuracy on the test set. Note that we are not performing data augmentation on the test dataset. 
 
 # COMMAND ----------
 
 test_datagen = ImageDataGenerator(preprocessing_function=applications.resnet.preprocess_input)
 
-batch_size = 6
+# Small dataset so we can evaluate it in one batch
+batch_size = test_data.count()[0]
 
 test_generator = test_datagen.flow_from_dataframe(
     dataframe=test_data, 
@@ -223,7 +224,7 @@ import pandas as pd
 predictions = pd.DataFrame({
     "Prediction": (model.predict(test_generator, steps=step_size_test) > .5).astype(int).flatten(),
     "True": test_generator.classes,
-    "Path": test_data["path"].apply(lambda x: f"file:{x}")
+    "Path": test_data["path"].apply(lambda x: x.replace("/dbfs", "dbfs:"))
 }).replace({v: k for k, v in train_generator.class_indices.items()})
 
 all_images_df = df_cats.union(df_dogs).drop("label")
@@ -242,7 +243,7 @@ display(all_images_df.join(predictions_df, predictions_df.Path==all_images_df.pa
 # COMMAND ----------
 
 # MAGIC %md-sandbox
-# MAGIC &copy; 2021 Databricks, Inc. All rights reserved.<br/>
-# MAGIC Apache, Apache Spark, Spark and the Spark logo are trademarks of the <a href="http://www.apache.org/">Apache Software Foundation</a>.<br/>
+# MAGIC &copy; 2022 Databricks, Inc. All rights reserved.<br/>
+# MAGIC Apache, Apache Spark, Spark and the Spark logo are trademarks of the <a href="https://www.apache.org/">Apache Software Foundation</a>.<br/>
 # MAGIC <br/>
-# MAGIC <a href="https://databricks.com/privacy-policy">Privacy Policy</a> | <a href="https://databricks.com/terms-of-use">Terms of Use</a> | <a href="http://help.databricks.com/">Support</a>
+# MAGIC <a href="https://databricks.com/privacy-policy">Privacy Policy</a> | <a href="https://databricks.com/terms-of-use">Terms of Use</a> | <a href="https://help.databricks.com/">Support</a>

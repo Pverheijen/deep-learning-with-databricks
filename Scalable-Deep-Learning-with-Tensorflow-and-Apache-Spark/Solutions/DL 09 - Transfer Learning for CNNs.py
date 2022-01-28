@@ -18,7 +18,7 @@
 
 # COMMAND ----------
 
-# MAGIC %run "../Includes/Classroom-Setup"
+# MAGIC %run "./Includes/Classroom-Setup"
 
 # COMMAND ----------
 
@@ -96,17 +96,21 @@ display(df_cats)
 
 # COMMAND ----------
 
-# MAGIC %md Do a custom train/test split to make sure there are stratified samples.
+display(df_dogs)
+
+# COMMAND ----------
+
+# MAGIC %md Do a train/test split.
 
 # COMMAND ----------
 
 cat_data = df_cats.toPandas()
 dog_data = df_dogs.toPandas()
 
-train_data = cat_data.iloc[:5].append(dog_data.iloc[:5])
+train_data = cat_data.iloc[:32].append(dog_data.iloc[:32])
 train_data["path"] = train_data["path"].apply(lambda x: x.replace("dbfs:/", "/dbfs/"))
 
-test_data = cat_data.iloc[5:].append(dog_data.iloc[5:])
+test_data = cat_data.iloc[32:].append(dog_data.iloc[32:])
 test_data["path"] = test_data["path"].apply(lambda x: x.replace("dbfs:/", "/dbfs/"))
 
 print(f"Train data samples: {len(train_data)} \tTest data samples: {len(test_data)}")
@@ -159,7 +163,7 @@ mlflow.tensorflow.autolog(every_n_iter=2)
 model.compile(loss="binary_crossentropy", optimizer=Adam(learning_rate=0.005), metrics=["accuracy"]) 
 
 # Loading training data
-batch_size = 4
+batch_size = 8
 train_datagen = ImageDataGenerator(preprocessing_function=applications.vgg16.preprocess_input)
 train_generator = train_datagen.flow_from_dataframe(dataframe=train_data, 
                                                     directory=None, 
@@ -173,8 +177,9 @@ print(f"Class labels: {train_generator.class_indices}")
 
 step_size = train_generator.n//train_generator.batch_size
 
-# Train the model 
-model.fit(train_generator, epochs=10, steps_per_epoch=step_size, verbose=2)
+# Train the model
+# You might want to increase the # of epochs, but it will take longer to train
+model.fit(train_generator, epochs=3, steps_per_epoch=step_size, verbose=2)
 
 # COMMAND ----------
 
@@ -186,7 +191,7 @@ model.fit(train_generator, epochs=10, steps_per_epoch=step_size, verbose=2)
 test_datagen = ImageDataGenerator(preprocessing_function=applications.vgg16.preprocess_input)
 
 # Small dataset so we can evaluate it in one batch
-batch_size = 6
+batch_size = test_data.count()[0]
 
 test_generator = test_datagen.flow_from_dataframe(
     dataframe=test_data, 
@@ -215,18 +220,18 @@ print(f"Loss: {eval_results[0]}. Accuracy: {eval_results[1]}")
 predictions = pd.DataFrame({
     "Prediction": ((model.predict(test_generator) >= 0.5)+0).ravel(),
     "True": test_generator.classes,
-    "Path": test_data["path"].apply(lambda x: f"file:{x}")
+    "Path": test_data["path"].apply(lambda x: x.replace("/dbfs", "dbfs:"))
 }).replace({v: k for k, v in train_generator.class_indices.items()})
 
 all_images_df = df_cats.union(df_dogs).drop("label")
 predictions_df = spark.createDataFrame(predictions)
 
-display(all_images_df.join(predictions_df, predictions_df.Path==all_images_df.path))
+display(all_images_df.join(predictions_df, predictions_df.Path==all_images_df.path).select("content", "Prediction", "True"))
 
 # COMMAND ----------
 
 # MAGIC %md-sandbox
-# MAGIC &copy; 2021 Databricks, Inc. All rights reserved.<br/>
-# MAGIC Apache, Apache Spark, Spark and the Spark logo are trademarks of the <a href="http://www.apache.org/">Apache Software Foundation</a>.<br/>
+# MAGIC &copy; 2022 Databricks, Inc. All rights reserved.<br/>
+# MAGIC Apache, Apache Spark, Spark and the Spark logo are trademarks of the <a href="https://www.apache.org/">Apache Software Foundation</a>.<br/>
 # MAGIC <br/>
-# MAGIC <a href="https://databricks.com/privacy-policy">Privacy Policy</a> | <a href="https://databricks.com/terms-of-use">Terms of Use</a> | <a href="http://help.databricks.com/">Support</a>
+# MAGIC <a href="https://databricks.com/privacy-policy">Privacy Policy</a> | <a href="https://databricks.com/terms-of-use">Terms of Use</a> | <a href="https://help.databricks.com/">Support</a>

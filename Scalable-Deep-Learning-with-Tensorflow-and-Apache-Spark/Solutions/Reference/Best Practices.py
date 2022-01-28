@@ -41,7 +41,9 @@
 # MAGIC   - after dropout layers (if dropout layers are used concurrently)
 # MAGIC   - after convolutional or fully connected layers
 # MAGIC   
-# MAGIC Do as much work as you can on a small data sample
+# MAGIC - Neural Network Architecture Search
+# MAGIC   - [Neural Architecture Search with Reinforcement Learning](https://arxiv.org/abs/1611.01578)
+# MAGIC   - It is very expensive to do neural architecture search! **Do as much work as you can on a small data sample**
 
 # COMMAND ----------
 
@@ -82,6 +84,24 @@
 # MAGIC   - Random flips
 # MAGIC   - Adjust hue, saturation, brightness
 # MAGIC   - Note: Use the right kind of augmentation (e.g. don't flip a cat upside down, but satellite image OK)
+# MAGIC   
+# MAGIC   
+# MAGIC ### Bag of Tricks ([Paper](https://arxiv.org/pdf/1812.01187.pdf))
+# MAGIC 
+# MAGIC - Efficient training
+# MAGIC   - Large batch training with linear scaling learning rate, LR warmup, zero γ, no bias decay
+# MAGIC   - Low precision training
+# MAGIC   - Model tweaks
+# MAGIC - Switching stride size of first two conv. Layer
+# MAGIC   - Replacing 7x7 conv with three 3x3 convs 
+# MAGIC   - Adding 2x2 average pooling layer with stride of 2 before conv 
+# MAGIC - Training refinements 
+# MAGIC   - Cosine LR decay
+# MAGIC   - Label smoothing
+# MAGIC   - Knowledge distillation
+# MAGIC   - Mixup training
+# MAGIC - Transfer learning
+# MAGIC   - Applications in object detection and semantic segmentation
 
 # COMMAND ----------
 
@@ -139,7 +159,7 @@
 # COMMAND ----------
 
 # MAGIC %md-sandbox
-# MAGIC &copy; 2021 Databricks, Inc. All rights reserved.<br/>
-# MAGIC Apache, Apache Spark, Spark and the Spark logo are trademarks of the <a href="http://www.apache.org/">Apache Software Foundation</a>.<br/>
+# MAGIC &copy; 2022 Databricks, Inc. All rights reserved.<br/>
+# MAGIC Apache, Apache Spark, Spark and the Spark logo are trademarks of the <a href="https://www.apache.org/">Apache Software Foundation</a>.<br/>
 # MAGIC <br/>
-# MAGIC <a href="https://databricks.com/privacy-policy">Privacy Policy</a> | <a href="https://databricks.com/terms-of-use">Terms of Use</a> | <a href="http://help.databricks.com/">Support</a>
+# MAGIC <a href="https://databricks.com/privacy-policy">Privacy Policy</a> | <a href="https://databricks.com/terms-of-use">Terms of Use</a> | <a href="https://help.databricks.com/">Support</a>

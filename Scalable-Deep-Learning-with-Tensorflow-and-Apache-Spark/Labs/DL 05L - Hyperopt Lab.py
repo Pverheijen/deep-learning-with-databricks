@@ -15,33 +15,27 @@
 
 # COMMAND ----------
 
-# MAGIC %pip install tensorflow-datasets
-
-# COMMAND ----------
-
 # MAGIC %run "../Includes/Classroom-Setup"
 
 # COMMAND ----------
 
-import tensorflow_datasets as tfds
 import pandas as pd
+from sklearn.datasets import load_wine
 
 # Import Dataset
-wine_quality_tfds = tfds.load("wine_quality", split="train", shuffle_files=False)
-wine_quality_pdf = tfds.as_dataframe(wine_quality_tfds)
-wine_quality_pdf.columns = wine_quality_pdf.columns.str.replace("features/","")
-wine_quality_pdf.head(5)
+wine_quality = load_wine(as_frame=True)
 
 # COMMAND ----------
 
-from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
+from sklearn.model_selection import train_test_split
 
 # split 80/20 train-test
-X_train, X_test, y_train, y_test = train_test_split(wine_quality_pdf.drop("quality", axis=1),
-                                                    wine_quality_pdf["quality"],
+X_train, X_test, y_train, y_test = train_test_split(wine_quality.data,
+                                                    wine_quality.target,
                                                     test_size=0.2,
                                                     random_state=1)
+
 # Scale features
 scaler = StandardScaler()
 X_train = scaler.fit_transform(X_train)
@@ -64,7 +58,7 @@ tf.random.set_seed(42)
 
 def create_model(hpo):
     model = Sequential()
-    model.add(Dense(int(hpo["dense_l1"]), input_dim=11, activation="relu")) # You can change the activation functions too!
+    model.add(Dense(int(hpo["dense_l1"]), input_dim=13, activation="relu")) # You can change the activation functions too!
     model.add(Dense(int(hpo["dense_l2"]), activation="relu"))
     model.add(Dense(1, activation="linear"))
     return model
@@ -113,7 +107,7 @@ best_hyperparams
 # COMMAND ----------
 
 # MAGIC %md-sandbox
-# MAGIC &copy; 2021 Databricks, Inc. All rights reserved.<br/>
-# MAGIC Apache, Apache Spark, Spark and the Spark logo are trademarks of the <a href="http://www.apache.org/">Apache Software Foundation</a>.<br/>
+# MAGIC &copy; 2022 Databricks, Inc. All rights reserved.<br/>
+# MAGIC Apache, Apache Spark, Spark and the Spark logo are trademarks of the <a href="https://www.apache.org/">Apache Software Foundation</a>.<br/>
 # MAGIC <br/>
-# MAGIC <a href="https://databricks.com/privacy-policy">Privacy Policy</a> | <a href="https://databricks.com/terms-of-use">Terms of Use</a> | <a href="http://help.databricks.com/">Support</a>
+# MAGIC <a href="https://databricks.com/privacy-policy">Privacy Policy</a> | <a href="https://databricks.com/terms-of-use">Terms of Use</a> | <a href="https://help.databricks.com/">Support</a>

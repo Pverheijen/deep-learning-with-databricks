@@ -20,10 +20,6 @@
 
 # COMMAND ----------
 
-# MAGIC %pip install tensorflow-datasets
-
-# COMMAND ----------
-
 # MAGIC %run "../Includes/Classroom-Setup"
 
 # COMMAND ----------
@@ -32,24 +28,20 @@
 
 # COMMAND ----------
 
-import tensorflow_datasets as tfds
 import pandas as pd
+from sklearn.datasets import load_wine
 
 # Import Dataset
-wine_quality_tfds = tfds.load("wine_quality", split="train", shuffle_files=False)
-wine_quality_pdf = tfds.as_dataframe(wine_quality_tfds)
-wine_quality_pdf.columns = wine_quality_pdf.columns.str.replace("features/","")
-wine_quality_pdf.head(5)
+wine_quality = load_wine(as_frame=True)
 
 # COMMAND ----------
 
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 
-
 # split 80/20 train-test
-X_train, X_test, y_train, y_test = train_test_split(wine_quality_pdf.drop("quality", axis=1),
-                                                    wine_quality_pdf["quality"],
+X_train, X_test, y_train, y_test = train_test_split(wine_quality.data,
+                                                    wine_quality.target,
                                                     test_size=0.2,
                                                     random_state=1)
 # Scale features
@@ -76,7 +68,7 @@ from tensorflow.keras.layers import Dense
 tf.random.set_seed(42)
 
 def build_model():
-    return Sequential([Dense(50, input_dim=11, activation="relu"),
+    return Sequential([Dense(50, input_dim=13, activation="relu"),
                        Dense(20, activation="relu"),
                        Dense(1, activation="linear")])
 
@@ -102,7 +94,7 @@ early_stopping = EarlyStopping(<FILL IN>)
 # MAGIC 
 # MAGIC Now let's use MLflow to automatically track experiments with [mlflow.tensorflow.autolog()](https://www.mlflow.org/docs/latest/python_api/mlflow.tensorflow.html#mlflow.tensorflow.autolog). Try changing your hyperparameters, such as `epochs` or `batch_size` and compare what gives you the best result.
 # MAGIC 
-# MAGIC :NOTE: You can always add manual MLflow logging statements to log things in addition to the autologged values.
+# MAGIC **NOTE:** You can always add manual MLflow logging statements to log things in addition to the autologged values.
 
 # COMMAND ----------
 
@@ -143,7 +135,7 @@ display(X_test_df.withColumn("prediction", predict(*wine_quality_pdf.drop("quali
 # COMMAND ----------
 
 # MAGIC %md-sandbox
-# MAGIC &copy; 2021 Databricks, Inc. All rights reserved.<br/>
-# MAGIC Apache, Apache Spark, Spark and the Spark logo are trademarks of the <a href="http://www.apache.org/">Apache Software Foundation</a>.<br/>
+# MAGIC &copy; 2022 Databricks, Inc. All rights reserved.<br/>
+# MAGIC Apache, Apache Spark, Spark and the Spark logo are trademarks of the <a href="https://www.apache.org/">Apache Software Foundation</a>.<br/>
 # MAGIC <br/>
-# MAGIC <a href="https://databricks.com/privacy-policy">Privacy Policy</a> | <a href="https://databricks.com/terms-of-use">Terms of Use</a> | <a href="http://help.databricks.com/">Support</a>
+# MAGIC <a href="https://databricks.com/privacy-policy">Privacy Policy</a> | <a href="https://databricks.com/terms-of-use">Terms of Use</a> | <a href="https://help.databricks.com/">Support</a>

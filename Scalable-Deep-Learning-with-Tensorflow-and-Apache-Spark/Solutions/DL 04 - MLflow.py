@@ -81,6 +81,8 @@ import matplotlib.pyplot as plt
 def view_model_loss(history):
     plt.clf()
     plt.plot(history.history["loss"], label="train_loss")
+    if "val_loss" in history.history:
+        plt.plot(history.history["val_loss"], label="val_loss")
     plt.title("Model Loss")
     plt.ylabel("Loss")
     plt.xlabel("Epoch")
@@ -92,48 +94,37 @@ def view_model_loss(history):
 # MAGIC %md
 # MAGIC ### Track experiments!
 # MAGIC 
-# MAGIC You can use [mlflow.set_experiment()](https://mlflow.org/docs/latest/python_api/mlflow.html#mlflow.set_experiment) to set an experiment, but if you do not specify an experiment, it will automatically be scoped to this notebook.
+# MAGIC When traking an experiment, you can use [mlflow.set_experiment()](https://mlflow.org/docs/latest/python_api/mlflow.html#mlflow.set_experiment) to set an experiment, but if you do not specify an experiment, it will automatically be scoped to this notebook.
+# MAGIC 
+# MAGIC Additionally, when training a model you can log to MLflow using [autologging](https://docs.databricks.com/applications/mlflow/databricks-autologging.html). Autologging allows you to log metrics, parameters, and models without the need for explicit log statements.
+# MAGIC 
+# MAGIC There are a few ways to use autologging:
+# MAGIC 
+# MAGIC   1. Call `mlflow.autolog()` before your training code. This will enable autologging for each supported library you have installed as soon as you import it.
+# MAGIC 
+# MAGIC   2. Enable autologging at the workspace level from the admin console
+# MAGIC 
+# MAGIC   3. Use library-specific autolog calls for each library you use in your code. (e.g. `mlflow.tensorflow.autolog()`)
+# MAGIC 
+# MAGIC Here we are only using numeric features for simplicity of building the random forest.
 
 # COMMAND ----------
 
-from mlflow.keras import log_model
 import mlflow
 
 # Note issue with **kwargs https://github.com/keras-team/keras/issues/9805
 def track_experiments(run_name, model, compile_kwargs, fit_kwargs, optional_params={}):
-    """
-    This is a wrapper function for tracking experiments with MLflow
-
-    Parameters
-    ----------
-    model: Keras model
-      The model to track
-
-    compile_kwargs: dict
-      Keyword arguments to compile model with
-
-    fit_kwargs: dict
-      Keyword arguments to fit model with
-    """
-    import time
-
     with mlflow.start_run(run_name=run_name) as run:
+        
+        # Enable autologging - need to put in the with statement to keep the run id
+        mlflow.tensorflow.autolog(log_models=True)
+        
         model = model()
         model.compile(**compile_kwargs)
         history = model.fit(**fit_kwargs)
-
-        for param_key, param_value in {**compile_kwargs, **fit_kwargs, **optional_params}.items():
-            if param_key not in ["x", "y"]:
-                mlflow.log_param(param_key, param_value)
-
-        for key, values in history.history.items():
-            for i, v in enumerate(values):
-                mlflow.log_metric(key, v, step=i)
-
-        for i, layer in enumerate(model.layers):
-            mlflow.log_param(f"hidden_layer_{i}_units", layer.output_shape[1])
-
-        log_model(model, "model")
+            
+        # Log optional params 
+        mlflow.log_params(optional_params)
 
         plt = view_model_loss(history)
         fig = plt.gcf()
@@ -162,8 +153,12 @@ fit_kwargs = {
     "batch_size": 64
 }
 
+optional_params = {
+    "standardize_data": "false"
+}
+
 run_name = "ADAM"
-run = track_experiments(run_name, build_model, compile_kwargs, fit_kwargs)
+run = track_experiments(run_name, build_model, compile_kwargs, fit_kwargs, optional_params)
 
 # COMMAND ----------
 
@@ -260,7 +255,7 @@ X_test_df.createOrReplaceGlobalTempView("X_test_df")
 # COMMAND ----------
 
 # MAGIC %md-sandbox
-# MAGIC &copy; 2021 Databricks, Inc. All rights reserved.<br/>
-# MAGIC Apache, Apache Spark, Spark and the Spark logo are trademarks of the <a href="http://www.apache.org/">Apache Software Foundation</a>.<br/>
+# MAGIC &copy; 2022 Databricks, Inc. All rights reserved.<br/>
+# MAGIC Apache, Apache Spark, Spark and the Spark logo are trademarks of the <a href="https://www.apache.org/">Apache Software Foundation</a>.<br/>
 # MAGIC <br/>
-# MAGIC <a href="https://databricks.com/privacy-policy">Privacy Policy</a> | <a href="https://databricks.com/terms-of-use">Terms of Use</a> | <a href="http://help.databricks.com/">Support</a>
+# MAGIC <a href="https://databricks.com/privacy-policy">Privacy Policy</a> | <a href="https://databricks.com/terms-of-use">Terms of Use</a> | <a href="https://help.databricks.com/">Support</a>

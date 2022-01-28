@@ -160,7 +160,7 @@ def run_training_horovod():
     model = build_model()
 
     # Horovod: adjust learning rate based on number of GPUs.
-    optimizer = optimizers.Adam(learning_rate=0.001*hvd.size())
+    optimizer = optimizers.Adam(learning_rate=0.001)
 
     # Horovod: add Horovod Distributed Optimizer.
     optimizer = hvd.DistributedOptimizer(optimizer)
@@ -181,7 +181,7 @@ def run_training_horovod():
         # Horovod: using `lr = 1.0 * hvd.size()` from the very beginning leads to worse final
         # accuracy. Scale the learning rate `lr = 1.0` ---> `lr = 1.0 * hvd.size()` during
         # the first five epochs. See https://arxiv.org/abs/1706.02677 for details.
-        hvd.callbacks.LearningRateWarmupCallback(initial_lr=0.001, warmup_epochs=5, verbose=1),
+        hvd.callbacks.LearningRateWarmupCallback(initial_lr=0.001*hvd.size(), warmup_epochs=5, verbose=1),
 
         # Reduce the learning rate if training plateaus.
         ReduceLROnPlateau(patience=10, verbose=1)
@@ -241,7 +241,7 @@ trained_model.evaluate(X, y)
 # COMMAND ----------
 
 # MAGIC %md-sandbox
-# MAGIC &copy; 2021 Databricks, Inc. All rights reserved.<br/>
-# MAGIC Apache, Apache Spark, Spark and the Spark logo are trademarks of the <a href="http://www.apache.org/">Apache Software Foundation</a>.<br/>
+# MAGIC &copy; 2022 Databricks, Inc. All rights reserved.<br/>
+# MAGIC Apache, Apache Spark, Spark and the Spark logo are trademarks of the <a href="https://www.apache.org/">Apache Software Foundation</a>.<br/>
 # MAGIC <br/>
-# MAGIC <a href="https://databricks.com/privacy-policy">Privacy Policy</a> | <a href="https://databricks.com/terms-of-use">Terms of Use</a> | <a href="http://help.databricks.com/">Support</a>
+# MAGIC <a href="https://databricks.com/privacy-policy">Privacy Policy</a> | <a href="https://databricks.com/terms-of-use">Terms of Use</a> | <a href="https://help.databricks.com/">Support</a>

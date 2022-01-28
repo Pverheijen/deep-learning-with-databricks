@@ -15,9 +15,39 @@
 # MAGIC  - Learn about generative and discriminative models that make up generative adversarial networks 
 # MAGIC  - Apply dropout
 # MAGIC  
-# MAGIC <img src="https://miro.medium.com/max/3000/1*t82vgL9KcDVpT4JqCb9Q4Q.png">
+# MAGIC ### Discriminator
 # MAGIC 
-# MAGIC This was a very original architecture in deep learning when it was first released by [Ian Goodfellow et al in 2014](https://arxiv.org/pdf/1406.2661.pdf). It was the first network that contains 2 models that compete against each other during training. GANs eventually generates fairly realistic synthetic images as the discriminator becomes smarter at distinguishing between real and fake images. 
+# MAGIC A discriminative model, at its core is a Real/fake classifier. It takes counterfeits and real values as input, and predicts probability of counterfeit. 
+# MAGIC  
+# MAGIC  
+# MAGIC ### Generator
+# MAGIC 
+# MAGIC A generative model captures the data distribution, takes noise vecotrs from latent space as input, outputs a counterfeit.
+# MAGIC 
+# MAGIC 
+# MAGIC ### GANs
+# MAGIC 
+# MAGIC <img src="https://miro.medium.com/max/3000/1*t82vgL9KcDVpT4JqCb9Q4Q.png", width=1000>
+
+# COMMAND ----------
+
+# MAGIC %md This was a very original architecture in deep learning when it was first released by [Ian Goodfellow et al in 2014](https://arxiv.org/pdf/1406.2661.pdf). It was the first network that contains a generator and a discriminator. The two models compete against each other during training of GANs. GANs eventually generates fairly realistic synthetic images as the discriminator becomes smarter at distinguishing between real and fake images. 
+# MAGIC 
+# MAGIC The algorithm:
+# MAGIC - G takes noise as input, outputs a counterfeit
+# MAGIC - D takes counterfeits and real values as input, outputs P(counterfeit)
+# MAGIC 
+# MAGIC The following techniques can help **prevent overfitting**, 
+# MAGIC - Alternate k steps of optimizing D and one step of optimizing G
+# MAGIC - Start with k of at least 5
+# MAGIC - Use *log(1 - D(G(z)))* to provide stronger, non-saturated gradients
+# MAGIC 
+# MAGIC <img src="https://media-exp1.licdn.com/dms/image/C5112AQGWsO2ZFbKnYQ/article-inline_image-shrink_1000_1488/0/1520192659145?e=1647475200&v=beta&t=06VrAMeZgpmcvw0K-bQV892ecuBlWJggwv045e4Jz8Q", width=1000>
+# MAGIC 
+# MAGIC GANs can be used in generating art, deep fakes, up-scaling graphics, and astronomy research. For example, we can use GANs to generate synthetic handwritten images, resembling the MNIST dataset. 
+# MAGIC 
+# MAGIC <img src = "https://tensorflow.org/images/gan/dcgan.gif", width=600>
+# MAGIC 
 # MAGIC 
 # MAGIC As a follow-up, we highly recommend this [GANs](https://www.coursera.org/specializations/generative-adversarial-networks-gans?) course from coursera. There are other very interesting applications of generative models, such as [Glow](https://openai.com/blog/glow/) from OpenAI and [speech recognition](https://ai.facebook.com/blog/wav2vec-unsupervised-speech-recognition-without-supervision/) from Facebook AI.
 
@@ -320,15 +350,28 @@ generate_images(generator, benchmark_noise)
 # MAGIC * Sample random vectors from a normal distribution, rather than a uniform distribution
 # MAGIC * Add dropout to the discriminator (generally between 0.3 and 0.6)
 # MAGIC * Add noise to the class labels when training the discriminator
-# MAGIC * Use batch normalization in the generator (this is data- and architecture-dependent, so experiment with it!)
+# MAGIC * Use batch normalization in the generator (this is data- and architecture-dependent, so experiment with it)
 # MAGIC * Use a kernel size that is divisible by the stride size whenever a strided Conv2DTranspose or Conv2D is used in both the generator and the discriminator. (Note: We incorporated this in only the generator since it gave better performance.)
 # MAGIC 
 # MAGIC Additionally, if adversarial (generator) loss rises a lot while your discriminator loss falls to 0, you can try reducing the discriminator's learning rate and increasing its dropout rate. 
 
 # COMMAND ----------
 
+# MAGIC %md Additional interesting generator applications include:
+# MAGIC 
+# MAGIC - **[Style Transfer to create artistic images](https://arxiv.org/abs/1508.06576)**
+# MAGIC 
+# MAGIC <img src="https://tensorflow.org/tutorials/generative/images/stylized-image.png", width=600>
+# MAGIC 
+# MAGIC 
+# MAGIC - **[Deep Dream](https://deepdreamgenerator.com/)**
+# MAGIC 
+# MAGIC <img src="https://b2h3x3f6.stackpathcdn.com/assets/landing/img/gallery/4.jpg", width=600>
+
+# COMMAND ----------
+
 # MAGIC %md-sandbox
-# MAGIC &copy; 2021 Databricks, Inc. All rights reserved.<br/>
-# MAGIC Apache, Apache Spark, Spark and the Spark logo are trademarks of the <a href="http://www.apache.org/">Apache Software Foundation</a>.<br/>
+# MAGIC &copy; 2022 Databricks, Inc. All rights reserved.<br/>
+# MAGIC Apache, Apache Spark, Spark and the Spark logo are trademarks of the <a href="https://www.apache.org/">Apache Software Foundation</a>.<br/>
 # MAGIC <br/>
-# MAGIC <a href="https://databricks.com/privacy-policy">Privacy Policy</a> | <a href="https://databricks.com/terms-of-use">Terms of Use</a> | <a href="http://help.databricks.com/">Support</a>
+# MAGIC <a href="https://databricks.com/privacy-policy">Privacy Policy</a> | <a href="https://databricks.com/terms-of-use">Terms of Use</a> | <a href="https://help.databricks.com/">Support</a>

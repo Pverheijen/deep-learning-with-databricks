@@ -103,13 +103,14 @@ def model_predict(input):
     return model.predict(input).flatten()
 
 # NOTE: In order to pass in categorical_features, they all need to be ints
-explainer = LimeTabularExplainer(X_train, feature_names=wine_quality_pdf.drop("quality", axis=1).columns, class_names=["quality"], mode="regression")
+explainer = LimeTabularExplainer(X_train, feature_names=wine_quality_pdf.drop("quality", axis=1).columns, mode="regression")
 
 # COMMAND ----------
 
 exp = explainer.explain_instance(X_test[0], model_predict, num_features=11)
 print(f"True value: {y_test.values[0]}")
-print(f"Local predicted value: {exp.predicted_value}")
+print(f"Model predicted value: {exp.predicted_value}")
+print(f"Local predicted value: {exp.local_pred[0]}")
 
 # COMMAND ----------
 
@@ -249,7 +250,7 @@ shap.summary_plot(shap_explainer.shap_values(X_train[0:200]),
 # COMMAND ----------
 
 # MAGIC %md-sandbox
-# MAGIC &copy; 2021 Databricks, Inc. All rights reserved.<br/>
-# MAGIC Apache, Apache Spark, Spark and the Spark logo are trademarks of the <a href="http://www.apache.org/">Apache Software Foundation</a>.<br/>
+# MAGIC &copy; 2022 Databricks, Inc. All rights reserved.<br/>
+# MAGIC Apache, Apache Spark, Spark and the Spark logo are trademarks of the <a href="https://www.apache.org/">Apache Software Foundation</a>.<br/>
 # MAGIC <br/>
-# MAGIC <a href="https://databricks.com/privacy-policy">Privacy Policy</a> | <a href="https://databricks.com/terms-of-use">Terms of Use</a> | <a href="http://help.databricks.com/">Support</a>
+# MAGIC <a href="https://databricks.com/privacy-policy">Privacy Policy</a> | <a href="https://databricks.com/terms-of-use">Terms of Use</a> | <a href="https://help.databricks.com/">Support</a>
