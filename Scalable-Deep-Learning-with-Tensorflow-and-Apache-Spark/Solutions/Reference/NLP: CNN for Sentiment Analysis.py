@@ -36,7 +36,7 @@ from pyspark.sql.functions import col, when
 from tensorflow.keras.preprocessing.text import Tokenizer
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 
-text_df = (spark.read.parquet("/mnt/training/reviews/reviews_cleaned.parquet")
+text_df = (spark.read.parquet(f"{datasets_dir}/nlp/reviews/reviews_cleaned.parquet")
            .select("Text", "Score")
            .limit(5000) ### limit to only 5000 rows to reduce training time
            .withColumn("sentiment", when(col("Score") > 3, 1).otherwise(0))

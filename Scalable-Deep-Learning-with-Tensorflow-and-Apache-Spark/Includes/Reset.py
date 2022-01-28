@@ -17,6 +17,14 @@ dbutils.fs.rm(course_dir, True)
 
 # COMMAND ----------
 
+try: 
+    dbutils.fs.unmount("/mnt/training")
+    print("/mnt/training was unmouted")
+except: 
+    print("/mnt/training was not mounted")
+
+# COMMAND ----------
+
 # MAGIC %run "./Classroom-Setup"
 
 # COMMAND ----------

@@ -81,7 +81,7 @@
 
 # COMMAND ----------
 
-processed_df = spark.read.parquet("/mnt/training/reviews/tfidf.parquet")
+processed_df = spark.read.parquet(f"{datasets_dir}/nlp/reviews/tfidf.parquet")
 display(processed_df.limit(2))
 
 # COMMAND ----------
@@ -130,10 +130,6 @@ word_vectors = api.load("glove-wiki-gigaword-100")
 
 # MAGIC %md
 # MAGIC Let's take a look at the embedding of the word `california`.
-
-# COMMAND ----------
-
-# MAGIC %fs ls /mnt/training/reviews/
 
 # COMMAND ----------
 
