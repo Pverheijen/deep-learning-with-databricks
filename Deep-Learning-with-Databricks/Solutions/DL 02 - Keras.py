@@ -53,7 +53,7 @@ print(cal_housing.DESCR)
 
 # MAGIC %md ## Define a Network
 # MAGIC 
-# MAGIC Let's not just reinvent linear regression. Let's build a model, but with multiple layers using the [Sequential model](https://www.tensorflow.org/api_docs/python/tf/keras/Sequential) from Keras.
+# MAGIC Let's not just reinvent linear regression. Let's build a model, but with multiple layers using the <a href="https://www.tensorflow.org/api_docs/python/tf/keras/Sequential" target="_blank">Sequential model</a> from Keras.
 # MAGIC 
 # MAGIC ![](https://files.training.databricks.com/images/Neural_network.svg)
 
@@ -64,7 +64,7 @@ print(cal_housing.DESCR)
 # MAGIC 
 # MAGIC If we keep the activation as linear, then we aren't utilizing the power of neural networks!! The power of neural networks derives from the non-linear combinations of linear functions.
 # MAGIC 
-# MAGIC **RECAP:** So what are our options for [activation functions](http://cs231n.github.io/neural-networks-1/#actfun)? 
+# MAGIC **RECAP:** So what are our options for <a href="http://cs231n.github.io/neural-networks-1/#actfun" target="_blank">activation functions</a>? 
 
 # COMMAND ----------
 
@@ -99,7 +99,7 @@ def build_model():
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC We can check the model definition by calling `.summary()`
+# MAGIC We can check the model definition by calling **`.summary()`**
 
 # COMMAND ----------
 
@@ -111,7 +111,7 @@ model.summary()
 # MAGIC %md
 # MAGIC ## 2. Loss Functions + Metrics
 # MAGIC 
-# MAGIC In Keras, the *loss function* is the function for our optimizer to minimize. *[Metrics](https://www.tensorflow.org/api_docs/python/tf/keras/metrics)* are similar to a loss function, except that the results from evaluating a metric are not used when training the model.
+# MAGIC In Keras, the *loss function* is the function for our optimizer to minimize. <a href="https://www.tensorflow.org/api_docs/python/tf/keras/metrics" target="_blank">*Metrics*</a> are similar to a loss function, except that the results from evaluating a metric are not used when training the model.
 # MAGIC 
 # MAGIC **Recap:** Which loss functions should we use for regression? Classification?
 
@@ -145,9 +145,9 @@ model.fit(X_train, y_train, epochs=10)
 # MAGIC %md
 # MAGIC ## 3. Optimizer
 # MAGIC 
-# MAGIC Let's try this again, but using the Adam optimizer. There are a lot of optimizers out there, and here is a [great blog post](http://ruder.io/optimizing-gradient-descent/) illustrating the various optimizers.
+# MAGIC Let's try this again, but using the Adam optimizer. There are a lot of optimizers out there, and here is a <a href="http://ruder.io/optimizing-gradient-descent/" target="_blank">great blog post</a> illustrating the various optimizers.
 # MAGIC 
-# MAGIC When in doubt, the Adam optimizer does a very good job. If you want to adjust any of the hyperparameters, you will need to import the optimizer from `optimizers` instead of passing in the name as a string.
+# MAGIC When in doubt, the Adam optimizer does a very good job. If you want to adjust any of the hyperparameters, you will need to import the optimizer from **`optimizers`** instead of passing in the name as a string.
 
 # COMMAND ----------
 
@@ -178,10 +178,10 @@ view_model_loss()
 # MAGIC %md
 # MAGIC ## 4. Batch Size
 # MAGIC 
-# MAGIC Let's set our `batch_size` (how much data to be processed simultaneously by the model) to 64, and increase our `epochs` to 20. Mini-batches are often a power of 2, to facilitate memory allocation on GPU (typically between 16 and 512).
+# MAGIC Let's set our **`batch_size`** (how much data to be processed simultaneously by the model) to 64, and increase our **`epochs`** to 20. Mini-batches are often a power of 2, to facilitate memory allocation on GPU (typically between 16 and 512).
 # MAGIC 
 # MAGIC 
-# MAGIC Also, if you don't want to see all of the intermediate values print out, you can set the `verbose` parameter: 0 = silent, 1 = progress bar, 2 = one line per epoch (defaults to 1)
+# MAGIC Also, if you don't want to see all of the intermediate values print out, you can set the **`verbose`** parameter: 0 = silent, 1 = progress bar, 2 = one line per epoch (defaults to 1)
 
 # COMMAND ----------
 
@@ -204,7 +204,7 @@ model.evaluate(X_test, y_test)
 # MAGIC 
 # MAGIC Whenever you train neural networks, you want to save them. This way, you can reuse them later! 
 # MAGIC 
-# MAGIC In our case, we want to save  need to save both the architecture and the weights, so we will use `model.save`. If you only want to save the weights, you can use `model.save_weights`.
+# MAGIC In our case, we want to save  need to save both the architecture and the weights, so we will use **`model.save`**. If you only want to save the weights, you can use **`model.save_weights`**.
 
 # COMMAND ----------
 
@@ -214,7 +214,7 @@ model.save(filepath)
 
 # COMMAND ----------
 
-# MAGIC %md You can load both the model and architecture together using `load_model()`
+# MAGIC %md You can load both the model and architecture together using **`load_model()`**
 
 # COMMAND ----------
 

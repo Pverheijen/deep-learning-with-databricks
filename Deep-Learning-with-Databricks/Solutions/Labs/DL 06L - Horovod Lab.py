@@ -26,7 +26,7 @@
 # MAGIC 
 # MAGIC We again load the Wine Quality data. However, as we saw in the demo, for Horovod we want to shard the data before passing into HorovodRunner. 
 # MAGIC 
-# MAGIC For the `get_dataset` function below, load the data, split into 80/20 train-test, standardize the features and return train and test sets.
+# MAGIC For the **`get_dataset`** function below, load the data, split into 80/20 train-test, standardize the features and return train and test sets.
 
 # COMMAND ----------
 
@@ -76,7 +76,7 @@ def build_model():
 
 # MAGIC %md ## 3. Horovod
 # MAGIC 
-# MAGIC In order to distribute the training of our Keras model with Horovod, we must define our `run_training_horovod` training function
+# MAGIC In order to distribute the training of our Keras model with Horovod, we must define our **`run_training_horovod`** training function
 
 # COMMAND ----------
 
@@ -180,7 +180,7 @@ display(train_df)
 
 # MAGIC %md ### Create Vectors
 # MAGIC 
-# MAGIC Use the VectorAssembler to combine all the features (not including the label) into a single column called `features`.
+# MAGIC Use the VectorAssembler to combine all the features (not including the label) into a single column called **`features`**.
 
 # COMMAND ----------
 

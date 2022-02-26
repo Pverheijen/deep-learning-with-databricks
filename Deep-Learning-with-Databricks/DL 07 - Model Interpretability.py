@@ -14,18 +14,19 @@
 # MAGIC No, we're not talking about limes.
 # MAGIC 
 # MAGIC We're talking about methods of interpreting models, namely:
-# MAGIC * [Local Interpretable Model-Agnostic Explanations](https://github.com/marcotcr/lime) (LIME) and 
-# MAGIC * [SHapley Additive exPlanations](https://shap.readthedocs.io/en/latest) (SHAP)
+# MAGIC   * <a href="https://github.com/marcotcr/lime" target="_blank">Local Interpretable Model-Agnostic Explanations</a> (LIME) and 
+# MAGIC   * <a href="https://shap.readthedocs.io/en/latest" target="_blank">SHapley Additive exPlanations</a> (SHAP)
 # MAGIC 
 # MAGIC ## ![Spark Logo Tiny](https://files.training.databricks.com/images/105/logo_spark_tiny.png) In this lesson you:<br>
 # MAGIC  - Use LIME and SHAP to understand which features are most important in the model's prediction for that data point
 # MAGIC  
-# MAGIC We will be using [notebook-scoped](https://docs.databricks.com/libraries/notebooks-python-libraries.html#notebook-scoped-python-libraries) libraries to install lime (shap is already installed).
+# MAGIC   We will be using <a href="https://docs.databricks.com/libraries/notebooks-python-libraries.html#notebook-scoped-python-libraries" target="_blank">notebook-scoped</a> libraries to install lime (shap is already installed).
 
 # COMMAND ----------
 
 # MAGIC %pip install lime==0.2.0.1
 # MAGIC %pip install tensorflow-datasets
+# MAGIC %pip install numba==0.53
 
 # COMMAND ----------
 
@@ -76,7 +77,7 @@ history = model.fit(X_train, y_train, epochs=30, batch_size=32, verbose=2)
 
 # MAGIC %md
 # MAGIC ### Using LIME for Model Explanation
-# MAGIC We can use the [LIME](https://github.com/marcotcr/lime) library to provide explanations of individual predictions.
+# MAGIC We can use the <a href= "https://github.com/marcotcr/lime" target="_blank">LIME</a> library to provide explanations of individual predictions.
 # MAGIC 
 # MAGIC ![](https://raw.githubusercontent.com/marcotcr/lime/master/doc/images/lime.png)
 
@@ -124,19 +125,19 @@ displayHTML(exp.as_html())
 
 # MAGIC %md 
 # MAGIC Positive impact: 
-# MAGIC 0. `pH` 
-# MAGIC 0. `sulphates` 
-# MAGIC 0. `total sulfur dioxide` 
-# MAGIC 0. `chlorides`     
-# MAGIC 0. `volatile acidity`   
+# MAGIC 0. **`pH`** 
+# MAGIC 0. **`sulphates`** 
+# MAGIC 0. **`total sulfur dioxide` **
+# MAGIC 0. **`chlorides`**     
+# MAGIC 0. **`volatile acidity`**   
 # MAGIC 
 # MAGIC Negative impact:
-# MAGIC 0. `density` 
-# MAGIC 0. `residual sugar` 
-# MAGIC 0. `free sulfur dioxide`
-# MAGIC 0. `citric acid`  
-# MAGIC 0. `alcohol`
-# MAGIC 0. `fixed acidity`
+# MAGIC 0. **`density`**
+# MAGIC 0. **`residual sugar`** 
+# MAGIC 0. **`free sulfur dioxide`**
+# MAGIC 0. **`citric acid`** 
+# MAGIC 0. **`alcohol`**
+# MAGIC 0. **`fixed acidity`**
 # MAGIC 
 # MAGIC Do these make sense?
 
@@ -156,11 +157,11 @@ exp.as_list()
 
 # MAGIC %md ## SHAP
 # MAGIC 
-# MAGIC SHAP ([SHapley Additive exPlanations](https://github.com/slundberg/shap)) is another approach to explain the output of a machine learning model. See the [SHAP NIPS](http://papers.nips.cc/paper/7062-a-unified-approach-to-interpreting-model-predictions) paper for details, and Christoph Molnar's book chapter on [Shapley Values](https://christophm.github.io/interpretable-ml-book/shapley.html).
+# MAGIC SHAP <a href="https://github.com/slundberg/shap" target="_blank">SHapley Additive exPlanations</a> is another approach to explain the output of a machine learning model. See the <a href="http://papers.nips.cc/paper/7062-a-unified-approach-to-interpreting-model-predictions" target="_blank">SHAP NIPS</a> paper for details, and Christoph Molnar's book chapter on <a href="https://christophm.github.io/interpretable-ml-book/shapley.html" target="_blank">Shapley Values</a>.
 # MAGIC 
 # MAGIC ![](https://raw.githubusercontent.com/slundberg/shap/master/docs/artwork/shap_diagram.png)
 # MAGIC 
-# MAGIC Great [blog post](https://blog.dominodatalab.com/shap-lime-python-libraries-part-1-great-explainers-pros-cons/) comparing LIME to SHAP. SHAP provides greater theoretical guarantees than LIME, but at the cost of additional compute. 
+# MAGIC Great <a href="https://blog.dominodatalab.com/shap-lime-python-libraries-part-1-great-explainers-pros-cons/" target="_blank">blog post</a> comparing LIME to SHAP. SHAP provides greater theoretical guarantees than LIME, but at the cost of additional compute. 
 
 # COMMAND ----------
 
@@ -194,9 +195,9 @@ shap.save_html(file_path, shap.force_plot(base_value,
 # MAGIC 
 # MAGIC * Red pixels increase the model's output while blue pixels decrease the output.
 # MAGIC 
-# MAGIC Here's a great [article](https://christophm.github.io/interpretable-ml-book/shapley.html) discussing how SHAP works under the hood.
+# MAGIC Here's a great <a href="https://christophm.github.io/interpretable-ml-book/shapley.html" target="_blank">article</a> discussing how SHAP works under the hood.
 # MAGIC 
-# MAGIC From the [original SHAP paper](https://proceedings.neurips.cc/paper/2017/file/8a20a8621978632d76c43dfd28b67767-Paper.pdf):
+# MAGIC From the <a href="https://proceedings.neurips.cc/paper/2017/file/8a20a8621978632d76c43dfd28b67767-Paper.pdf" target="_blank">original SHAP paper</a>:
 # MAGIC > Base value is the value that would be predicted if we did not know any features for the current output.
 # MAGIC 
 # MAGIC In other words, it is the mean prediction. 
@@ -212,7 +213,7 @@ displayHTML(f.read())
 
 # COMMAND ----------
 
-# MAGIC %md The values on the bottom show the true values of `X_test[0]`.
+# MAGIC %md The values on the bottom show the true values of **`X_test[0]`**.
 
 # COMMAND ----------
 
@@ -223,7 +224,7 @@ pd.DataFrame(X_test[0], wine_quality_pdf.drop("quality", axis=1).columns, ["feat
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC This says that, overall, factors like `pH` had the most positive effect on predicted wine quality, while `free sulfur dioxide` had the most negative.
+# MAGIC This says that, overall, factors like **`pH`** had the most positive effect on predicted wine quality, while **`free sulfur dioxide`** had the most negative.
 # MAGIC 
 # MAGIC Let's see what the values corresponding to each feature are.
 

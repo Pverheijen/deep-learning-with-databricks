@@ -58,7 +58,7 @@ X_train_split, X_val, y_train_split, y_val = train_test_split(X_train,
 # COMMAND ----------
 
 # MAGIC %md ## Build_model
-# MAGIC Create a `build_model()` function. Because Keras models are stateful, we want to get a fresh model every time we are trying out a new experiment.
+# MAGIC Create a **`build_model()`** function. Because Keras models are stateful, we want to get a fresh model every time we are trying out a new experiment.
 
 # COMMAND ----------
 
@@ -77,7 +77,7 @@ def build_model():
 # MAGIC %md
 # MAGIC ### Early Stopping
 # MAGIC 
-# MAGIC Let's add [EarlyStopping](https://www.tensorflow.org/api_docs/python/tf/keras/callbacks/EarlyStopping) to our network to we stop the training when a monitored metric has stopped improving.
+# MAGIC Let's add <a href="https://www.tensorflow.org/api_docs/python/tf/keras/callbacks/EarlyStopping" target="_blank">EarlyStopping</a> to our network to we stop the training when a monitored metric has stopped improving.
 
 # COMMAND ----------
 
@@ -92,7 +92,7 @@ early_stopping = EarlyStopping(<FILL IN>)
 
 # MAGIC %md ### Track Experiments!
 # MAGIC 
-# MAGIC Now let's use MLflow to automatically track experiments with [mlflow.tensorflow.autolog()](https://www.mlflow.org/docs/latest/python_api/mlflow.tensorflow.html#mlflow.tensorflow.autolog). Try changing your hyperparameters, such as `epochs` or `batch_size` and compare what gives you the best result.
+# MAGIC Now let's use MLflow to automatically track experiments with <a href="https://www.mlflow.org/docs/latest/python_api/mlflow.tensorflow.html#mlflow.tensorflow.autolog" target="_blank">mlflow.tensorflow.autolog()</a>. Try changing your hyperparameters, such as **`epochs`** or **`batch_size`** and compare what gives you the best result.
 # MAGIC 
 # MAGIC **NOTE:** You can always add manual MLflow logging statements to log things in addition to the autologged values.
 

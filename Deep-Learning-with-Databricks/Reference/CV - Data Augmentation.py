@@ -13,7 +13,7 @@
 # MAGIC Data augmentation generates new training examples from existing training examples via several random transformations. By augmenting data, the model should never see the exact same picture more than once during the model training process, and helps add additional labeled data points if your data is small. Hence, this step can help prevent model overfitting and helps model to generalize to new data. 
 # MAGIC 
 # MAGIC ## ![Spark Logo Tiny](https://files.training.databricks.com/images/105/logo_spark_tiny.png) In this lesson you:<br>
-# MAGIC - Configure random transformation to augment data via `ImageDataGenerator`
+# MAGIC - Configure random transformation to augment data via **`ImageDataGenerator`**
 # MAGIC - Perform data augmentation
 
 # COMMAND ----------
@@ -36,26 +36,26 @@ display(df_cats)
 
 # MAGIC %md ### Data Augmentation
 # MAGIC 
-# MAGIC There are many techniques to augment your data. Please reference this [blog post](https://towardsdatascience.com/exploring-image-data-augmentation-with-keras-and-tensorflow-a8162d89b844) for visualizations on individual transformations. Below, we will highlight the commonly used options. <br>
+# MAGIC There are many techniques to augment your data. Please reference this <a href="https://towardsdatascience.com/exploring-image-data-augmentation-with-keras-and-tensorflow-a8162d89b844" target="_blank">blog post</a> for visualizations on individual transformations. Below, we will highlight the commonly used options. <br>
 # MAGIC <br>
-# MAGIC - Rotation (`rotation_range`)
+# MAGIC - Rotation (**`rotation_range`**)
 # MAGIC   - Rotates the image in certain angles
-# MAGIC - Width (`width_shift_range`)
+# MAGIC - Width (**`width_shift_range`**)
 # MAGIC   - Shifts the image to the left or right
-# MAGIC - Height (`height_shift_range`)
+# MAGIC - Height (**`height_shift_range`**)
 # MAGIC   - Shift the image to the top or bottom
-# MAGIC - Shearing (`shear_range`)
+# MAGIC - Shearing (**`shear_range`**)
 # MAGIC    - Slants the shape of the image. This creates a sort of ‘stretch’ in the image, which is not seen in rotation. 
-# MAGIC - Zoom (`zoom_range`)
+# MAGIC - Zoom (**`zoom_range`)
 # MAGIC    - Magnifies or zooms out the image
-# MAGIC - Flipping (`horizontal_flip`, `vertical_flip`)
+# MAGIC - Flipping (**`horizontal_flip`**, **`vertical_flip`**)
 # MAGIC    - Horizontally or vertically flips the image
 # MAGIC - Rescale
 # MAGIC    - A value by which we will multiply the data before any other processing. Our original images consist in RGB coefficients in the 0-255, but such values would be too high for our models to process (given a typical learning rate), so we target values between 0 and 1 instead by scaling with a 1/255 factor.
 # MAGIC 
 # MAGIC Reference:
-# MAGIC - Options for `ImageDataGenerator` class in the [docs](https://www.tensorflow.org/api_docs/python/tf/keras/preprocessing/image/ImageDataGenerator)
-# MAGIC - Other data augmentation libraries, such as [Albumentations](https://github.com/albumentations-team/albumentations#list-of-augmentations)
+# MAGIC - Options for **`ImageDataGenerator`** class in the <a href="https://www.tensorflow.org/api_docs/python/tf/keras/preprocessing/image/ImageDataGenerator" target="_blank">docs</a>
+# MAGIC - Other data augmentation libraries, such as <a href="https://github.com/albumentations-team/albumentations#list-of-augmentations" target="_blank">Albumentations</a>
 
 # COMMAND ----------
 
@@ -237,7 +237,7 @@ display(all_images_df.join(predictions_df, predictions_df.Path==all_images_df.pa
 # MAGIC %md
 # MAGIC ### Additional note
 # MAGIC 
-# MAGIC If you were to plan on tuning the entire model, you need to change `base_model.trainable` from `False` to `True` to fine tune the entire model. Additionally, you should use a lower learning rate. 
+# MAGIC If you were to plan on tuning the entire model, you need to change **`base_model.trainable`** from **`False`** to **`True`** to fine tune the entire model. Additionally, you should use a lower learning rate. 
 # MAGIC However, note that fine-tuning the entire model will take a significantly long time to train compared to before due to the large number of trainable parameters.
 
 # COMMAND ----------

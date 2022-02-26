@@ -11,9 +11,9 @@
 # MAGIC 
 # MAGIC In this notebook, we will use Transfer Learning on images of chest x-rays to predict if a patient has pneumonia (bacterial or viral) or is normal. 
 # MAGIC 
-# MAGIC This data set was obtained from [http://dx.doi.org/10.17632/rscbjbr9sj.2](http://dx.doi.org/10.17632/rscbjbr9sj.2). The source of the data is:
+# MAGIC This data set was obtained from <a href="http://dx.doi.org/10.17632/rscbjbr9sj.2" target="_blank">http://dx.doi.org/10.17632/rscbjbr9sj.2</a>. The <a href="http://dx.doi.org/10.17632/rscbjbr9sj.2" target="_blank">source</a> of the data is:
 # MAGIC Kermany, Daniel; Zhang, Kang; Goldbaum, Michael (2018), “Labeled Optical Coherence Tomography (OCT) and Chest X-Ray Images for Classification”, Mendeley Data, v2
-# MAGIC http://dx.doi.org/10.17632/rscbjbr9sj.2
+# MAGIC 
 # MAGIC 
 # MAGIC ## ![Spark Logo Tiny](https://files.training.databricks.com/images/105/logo_spark_tiny.png) In this lesson you:<br>
 # MAGIC  - Build a model to predict if a patient has pneumonia or not using transfer learning
@@ -71,8 +71,8 @@ model.summary()
 # MAGIC %md
 # MAGIC Let's compile and train the model. In order to do that:
 # MAGIC 0. Compile the model
-# MAGIC 0. Create a generator to read data in `batch_size=16` from the sub-directories.
-# MAGIC 0. Train the model with `steps_per_epoch=5` and `epochs=5`
+# MAGIC 0. Create a generator to read data in **`batch_size=16`** from the sub-directories.
+# MAGIC 0. Train the model with **`steps_per_epoch=5`** and **`epochs=5`**
 
 # COMMAND ----------
 

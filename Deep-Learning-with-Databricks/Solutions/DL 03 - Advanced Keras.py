@@ -56,7 +56,7 @@ pd.DataFrame(X_train, columns=cal_housing.feature_names).describe()
 # MAGIC 
 # MAGIC Because our features are all on different scales, it's going to be more difficult for our neural network during training. Let's do feature-wise standardization.
 # MAGIC 
-# MAGIC We are going to use the [StandardScaler](http://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.StandardScaler.html) from Sklearn, which will remove the mean (zero-mean) and scale to unit variance.
+# MAGIC We are going to use the <a href="http://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.StandardScaler.html" target="_blank">StandardScaler</a> from Sklearn, which will remove the mean (zero-mean) and scale to unit variance.
 # MAGIC 
 # MAGIC $$x' = \frac{x - \bar{x}}{\sigma}$$
 
@@ -98,13 +98,13 @@ model.compile(optimizer=Adam(learning_rate=0.001), loss="mse", metrics=["mse"])
 # MAGIC %md
 # MAGIC ## 2. Validation Data
 # MAGIC 
-# MAGIC Let's take a look at the [.fit()](https://www.tensorflow.org/api_docs/python/tf/keras/Sequential#fit) method in the docs to see all of the options we have available! 
+# MAGIC Let's take a look at the <a href="https://www.tensorflow.org/api_docs/python/tf/keras/Sequential#fit" target="_blank">.fit()</a> method in the docs to see all of the options we have available! 
 # MAGIC 
 # MAGIC We can either explicitly specify a validation dataset, or we can specify a fraction of our training data to be used as our validation dataset.
 # MAGIC 
 # MAGIC The reason why we need a validation dataset is to evaluate how well we are performing on unseen data (neural networks will overfit if you train them for too long!).
 # MAGIC 
-# MAGIC We can specify `validation_split` to be any value between 0.0 and 1.0 (defaults to 0.0).
+# MAGIC We can specify **`validation_split`** to be any value between 0.0 and 1.0 (defaults to 0.0).
 
 # COMMAND ----------
 
@@ -115,9 +115,9 @@ history = model.fit(X_train, y_train, validation_split=.2, epochs=10, batch_size
 # MAGIC %md
 # MAGIC ## 3. Checkpointing
 # MAGIC 
-# MAGIC After each epoch, we want to save the model. However, we will pass in the flag `save_best_only=True`, which will only save the model if the validation loss decreased. This way, if our machine crashes or we start to overfit, we can always go back to the "good" state of the model.
+# MAGIC After each epoch, we want to save the model. However, we will pass in the flag **`save_best_only=True`**, which will only save the model if the validation loss decreased. This way, if our machine crashes or we start to overfit, we can always go back to the "good" state of the model.
 # MAGIC 
-# MAGIC To accomplish this, we will use the ModelCheckpoint [callback](https://www.tensorflow.org/api_docs/python/tf/keras/callbacks/ModelCheckpoint). History is an example of a callback that is automatically applied to every Keras model.
+# MAGIC To accomplish this, we will use the ModelCheckpoint <a href="https://www.tensorflow.org/api_docs/python/tf/keras/callbacks/ModelCheckpoint" target="_blank">callback</a>. History is an example of a callback that is automatically applied to every Keras model.
 
 # COMMAND ----------
 
@@ -134,12 +134,12 @@ model_checkpoint = ModelCheckpoint(filepath=filepath, verbose=1, save_best_only=
 # MAGIC Tensorboard provides a nice UI to visualize the training process of your neural network and can help with debugging! We can define it as a callback.
 # MAGIC 
 # MAGIC Here are links to Tensorboard resources:
-# MAGIC * [Getting Started with Tensorboard](https://www.tensorflow.org/tensorboard/get_started)
-# MAGIC * [Profiling with Tensorboard](https://www.tensorflow.org/tensorboard/tensorboard_profiling_keras)
-# MAGIC * [Effects of Weight Initialization](https://www.datacamp.com/community/tutorials/tensorboard-tutorial)
+# MAGIC * <a href="https://www.tensorflow.org/tensorboard/get_started" target="_blank">Getting Started with Tensorboard</a>
+# MAGIC * <a href="https://www.tensorflow.org/tensorboard/tensorboard_profiling_keras" target="_blank">Profiling with Tensorboard</a>
+# MAGIC * <a href="https://www.datacamp.com/community/tutorials/tensorboard-tutorial" target="_blank">Effects of Weight Initialization</a>
 # MAGIC 
 # MAGIC 
-# MAGIC Here is a [Databricks blog post](https://databricks.com/blog/2020/08/25/tensorboard-a-new-way-to-use-tensorboard-on-databricks.html) that contains an end-to-end example of using Tensorboard on Databricks. 
+# MAGIC Here is a <a href="https://databricks.com/blog/2020/08/25/tensorboard-a-new-way-to-use-tensorboard-on-databricks.html" target="_blank">Databricks blog post</a> that contains an end-to-end example of using Tensorboard on Databricks. 
 
 # COMMAND ----------
 
@@ -160,7 +160,7 @@ log_dir = f"/tmp/{username}"
 
 # COMMAND ----------
 
-# MAGIC %md Now let's add in our model checkpoint and Tensorboard callbacks to our `.fit()` command.
+# MAGIC %md Now let's add in our model checkpoint and Tensorboard callbacks to our **`.fit()`** command.
 # MAGIC 
 # MAGIC Click the refresh button on Tensorboard to view the Tensorboard output when the training has completed.
 
@@ -183,19 +183,18 @@ model.evaluate(X_test, y_test)
 
 # MAGIC %md
 # MAGIC 
-# MAGIC Go back and click to refresh the Tensorboard! Note that under the `histograms` tab, you will see histograms of `kernel` in each layer; `kernel` represents the weights of the neural network.
+# MAGIC Go back and click to refresh the Tensorboard! Note that under the **`histograms`** tab, you will see histograms of **`kernel`** in each layer; **`kernel`** represents the weights of the neural network.
 # MAGIC 
-# MAGIC If you are curious about how different initial weight initialization methods affect the training of neural networks, you can change the default weight initialization within the first Dense layer of your neural network. This [documentation](https://www.tensorflow.org/api_docs/python/tf/keras/initializers) lists all the types of weight initialization methods that are supported by Tensorflow.
+# MAGIC If you are curious about how different initial weight initialization methods affect the training of neural networks, you can change the default weight initialization within the first Dense layer of your neural network. This <a href="https://www.tensorflow.org/api_docs/python/tf/keras/initializers" target="_blank">documentation</a> lists all the types of weight initialization methods that are supported by Tensorflow.
 # MAGIC 
-# MAGIC ```
-# MAGIC model = Sequential([
+# MAGIC <pre><code><strong>model = Sequential([
 # MAGIC     Dense(20, input_dim=8, activation="relu", kernel_initializer="<insert_different_weight_initialization_methods_here>"),
 # MAGIC     Dense(20, activation="relu"),
 # MAGIC     Dense(1, activation="linear")
 # MAGIC ])
-# MAGIC ```
+# MAGIC </strong></code></pre>
 # MAGIC 
-# MAGIC If you would like to share your Tensorboard result with your peer, you can check out [TensorBoard.dev](https://tensorboard.dev/) (currently in preview) that allows you to share the dashboard. All you need to do is to upload your Tensorboard logs. 
+# MAGIC If you would like to share your Tensorboard result with your peer, you can check out <a href="https://tensorboard.dev/" target="_blank">TensorBoard.dev</a> (currently in preview) that allows you to share the dashboard. All you need to do is to upload your Tensorboard logs. 
 
 # COMMAND ----------
 

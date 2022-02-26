@@ -13,11 +13,11 @@
 # MAGIC There are many deployment options for machine learning models.  This notebook explores a more complex deployment scenario involving the real time deployment of a convolutional neural network using REST and Databricks MLflow Model Serving.
 # MAGIC 
 # MAGIC ## ![Spark Logo Tiny](https://files.training.databricks.com/images/105/logo_spark_tiny.png) In this lesson you:<br>
-# MAGIC - Create a `pyfunc` to serve a `keras` model with pre and post processing logic
-# MAGIC - Save the `pyfunc` for downstream consumption 
+# MAGIC - Create a **`pyfunc`** to serve a **`keras`** model with pre and post processing logic
+# MAGIC - Save the **`pyfunc`** for downstream consumption 
 # MAGIC - Serve the model using a REST endpoint
 # MAGIC 
-# MAGIC **NOTE:** *You need [cluster creation](https://docs.databricks.com/applications/mlflow/model-serving.html#requirements) permissions to create a model serving endpoint. The instructor will either demo this notebook or enable cluster creation permission for the students from the Admin console.*
+# MAGIC **NOTE:** *You need <a href="https://docs.databricks.com/applications/mlflow/model-serving.html#requirements" target="_blank">cluster creation</a> permissions to create a model serving endpoint. The instructor will either demo this notebook or enable cluster creation permission for the students from the Admin console.*
 
 # COMMAND ----------
 
@@ -27,21 +27,21 @@
 
 # MAGIC %md ## Model Serving in Databricks
 # MAGIC 
-# MAGIC The MLflow model registry in Databricks is now integrated with MLflow Model Serving.  This is currently intended for development use cases and is therefore not intended for production.  In this module, you will create a wrapper class around a `keras` model that provides custom pre and post processing logic necessary for this more complex deployment scenario. 
+# MAGIC The MLflow model registry in Databricks is now integrated with MLflow Model Serving.  This is currently intended for development use cases and is therefore not intended for production.  In this module, you will create a wrapper class around a **`keras`** model that provides custom pre and post processing logic necessary for this more complex deployment scenario. 
 # MAGIC 
 # MAGIC For additional background, see the following resources:
 # MAGIC 
-# MAGIC - [Databricks blog on model serving](https://databricks.com/blog/2020/06/25/announcing-mlflow-model-serving-on-databricks.html)
-# MAGIC - [Example of an image classifier](https://github.com/mlflow/mlflow/tree/master/examples/flower_classifier)
-# MAGIC - [Example of a custom loader used with XGBoost](https://www.mlflow.org/docs/latest/models.html#example-saving-an-xgboost-model-in-mlflow-format)
+# MAGIC - <a href="https://databricks.com/blog/2020/06/25/announcing-mlflow-model-serving-on-databricks.html" target="_blank">Databricks blog on model serving</a>
+# MAGIC - <a href="https://github.com/mlflow/mlflow/tree/master/examples/flower_classifier" target="_blank">Example of an image classifier</a>
+# MAGIC - <a href="https://www.mlflow.org/docs/latest/models.html#example-saving-an-xgboost-model-in-mlflow-format" target="_blank">Example of a custom loader used with XGBoost</a>
 
 # COMMAND ----------
 
-# MAGIC %md ## Creating a Wrapper Class using `pyfunc`
+# MAGIC %md ## Creating a Wrapper Class using **`pyfunc`**
 
 # COMMAND ----------
 
-# MAGIC %md Create a `keras` model using a reference architecture and pretrained weights.
+# MAGIC %md Create a **`keras`** model using a reference architecture and pretrained weights.
 
 # COMMAND ----------
 
@@ -74,7 +74,7 @@ data
 
 # COMMAND ----------
 
-# MAGIC %md Save the model using `mlflow`.  
+# MAGIC %md Save the model using **`mlflow`**.  
 
 # COMMAND ----------
 
@@ -92,9 +92,9 @@ print(f"Model saved to {model_uri}")
 
 # COMMAND ----------
 
-# MAGIC %md Create a wrapper class that includes the following as a `pyfunc`:
+# MAGIC %md Create a wrapper class that includes the following as a **`pyfunc`**:
 # MAGIC 
-# MAGIC - A `load_context` method to load in the model. 
+# MAGIC - A **`load_context`** method to load in the model. 
 # MAGIC - Custom featurization logic that parses base64 encoded images (necessary for HTTP requests)
 # MAGIC - Custom prediction logic that reports the top class and its probability
 
@@ -195,11 +195,15 @@ plt.imshow(img)
 
 # COMMAND ----------
 
-# MAGIC %md ## Save the `pyfunc` with Dependencies
+# MAGIC %md ## Save the **`pyfunc`** with Dependencies
 
 # COMMAND ----------
 
 # MAGIC %md Create a model signature to document model inputs and outputs.
+
+# COMMAND ----------
+
+type(output)
 
 # COMMAND ----------
 
@@ -210,7 +214,7 @@ signature
 
 # COMMAND ----------
 
-# MAGIC %md Create the Conda environment for all the `pyfunc`'s dependencies.
+# MAGIC %md Create the Conda environment for all the **`pyfunc`**'s dependencies.
 
 # COMMAND ----------
 
@@ -238,7 +242,7 @@ conda_env
 
 # COMMAND ----------
 
-# MAGIC %md Create associated artifacts. Note that since the default serialization of a `keras` models uses `tensorflow` serialization we'll instead read in the model using `keras` when the Python function is loaded.
+# MAGIC %md Create associated artifacts. Note that since the default serialization of a **`keras`** models uses **`tensorflow`** serialization we'll instead read in the model using **`keras`** when the Python function is loaded.
 
 # COMMAND ----------
 
@@ -248,7 +252,7 @@ artifacts = {
 
 # COMMAND ----------
 
-# MAGIC %md Log the `pyfunc` including the artifacts, environment, signature, and input example.
+# MAGIC %md Log the **`pyfunc`** including the artifacts, environment, signature, and input example.
 
 # COMMAND ----------
 

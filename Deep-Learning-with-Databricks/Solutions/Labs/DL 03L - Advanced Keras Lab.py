@@ -106,9 +106,9 @@ model.compile(optimizer="adam", loss="mse", metrics=["mse"])
 # MAGIC 
 # MAGIC In the demo notebook, we covered how to implement the ModelCheckpoint callback (History is automatically done for us).
 # MAGIC 
-# MAGIC Now, add the model checkpointing, and only save the best model. Also add a callback for EarlyStopping (if the model doesn't improve after 2 epochs, terminate training). You will need to set `patience=2`, `min_delta=.0001`, and `restore_best_weights=True` to ensures the final model’s weights are from its best epoch, not just the last one.
+# MAGIC Now, add the model checkpointing, and only save the best model. Also add a callback for EarlyStopping (if the model doesn't improve after 2 epochs, terminate training). You will need to set **`patience=2`**, **`min_delta=.0001`**, and **`restore_best_weights=True`** to ensures the final model’s weights are from its best epoch, not just the last one.
 # MAGIC 
-# MAGIC Use the [callbacks documentation](https://www.tensorflow.org/api_docs/python/tf/keras/callbacks/Callback) for reference!
+# MAGIC Use the <a href="https://www.tensorflow.org/api_docs/python/tf/keras/callbacks/Callback" target="_blank">callbacks documentation</a> for reference!
 
 # COMMAND ----------
 
@@ -124,9 +124,9 @@ early_stopping = EarlyStopping(monitor="val_loss", min_delta=0.0001, patience=2,
 
 # MAGIC %md ## 4. Fit Model
 # MAGIC 
-# MAGIC Now let's put everything together! Fit the model to the training and validation data `(X_val, y_val)` with `epochs`=30, `batch_size`=32, and the 2 callbacks we defined above: `checkpointer` and `early_stopping`.
+# MAGIC Now let's put everything together! Fit the model to the training and validation data **`(X_val, y_val)`** with **`epochs`**=30, **`batch_size`**=32, and the 2 callbacks we defined above: **`checkpointer`** and **`early_stopping`**.
 # MAGIC 
-# MAGIC Take a look at the [.fit()](https://www.tensorflow.org/api_docs/python/tf/keras/Model#fit) method in the docs for help.
+# MAGIC Take a look at the <a href="https://www.tensorflow.org/api_docs/python/tf/keras/Model#fit" target="_blank">.fit()</a> method in the docs for help.
 
 # COMMAND ----------
 
@@ -138,7 +138,7 @@ history = model.fit(X_train, y_train, validation_data=(X_val, y_val), epochs=30,
 # MAGIC %md
 # MAGIC ## 5. Load Model
 # MAGIC 
-# MAGIC Load in the weights saved from this model via checkpointing to a new variable called `saved_model`, and make predictions for our test data. Then compute the RMSE. See if you can do this without re-compiling the model!
+# MAGIC Load in the weights saved from this model via checkpointing to a new variable called **`saved_model`**, and make predictions for our test data. Then compute the RMSE. See if you can do this without re-compiling the model!
 
 # COMMAND ----------
 

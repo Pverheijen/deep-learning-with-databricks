@@ -41,7 +41,7 @@
 
 # MAGIC %md ### Common Pre-Trained Models
 # MAGIC 
-# MAGIC Keras exposes a number of deep learning models (architectures) along with pre-trained weights.  They are available in the `tensorflow.keras.applications` package and [the full list is available here.](https://www.tensorflow.org/api_docs/python/tf/keras/applications)  
+# MAGIC Keras exposes a number of deep learning models (architectures) along with pre-trained weights.  They are available in the **`tensorflow.keras.applications`** package and <a href="https://www.tensorflow.org/api_docs/python/tf/keras/applications" target="_blank">the full list is available here.</a>  
 # MAGIC 
 # MAGIC Transfer learning...<br><br>
 # MAGIC 
@@ -54,17 +54,17 @@
 # MAGIC 
 # MAGIC | Network | Year | Top-5 ImageNet Accuracy | # of Params | 
 # MAGIC |---------|------|-------------------|-------------|
-# MAGIC | [AlexNet](https://proceedings.neurips.cc/paper/2012/file/c399862d3b9d6b76c8436e924a68c45b-Paper.pdf) | 2012 | 84.7% | 62M |
-# MAGIC | [VGGNet](https://arxiv.org/abs/1409.1556) | 2014 | 92.3% | 138M |
-# MAGIC | [Inception v1](https://arxiv.org/pdf/1409.4842.pdf) | 2014 | 93.3% | 6.4M |
-# MAGIC | [ResNet-152](https://arxiv.org/abs/1512.03385) | 2015 | 95.5% | 60.3M | 
-# MAGIC | [Inception v3](https://arxiv.org/abs/1512.00567) | 2015 | 94.4% | 23.8M | 
-# MAGIC | [XCeption](https://arxiv.org/abs/1610.02357) | 2016 | 94.5% | 22.8M | 
-# MAGIC | [NasNet](https://arxiv.org/pdf/1707.07012.pdf) | 2017 | 95.3% | 22.6M | 
-# MAGIC | [MobileNet](https://arxiv.org/pdf/1704.04861.pdf) | 2017 | 89.5% | 4.24M |
-# MAGIC | [EfficientNet B5](https://arxiv.org/pdf/1905.11946.pdf) | 2019 | 96.7% | 30M | 
+# MAGIC | <a href="https://proceedings.neurips.cc/paper/2012/file/c399862d3b9d6b76c8436e924a68c45b-Paper.pdf" target="_blank">AlexNet</a> | 2012 | 84.7% | 62M |
+# MAGIC | <a href="https://arxiv.org/abs/1409.1556" target="_blank">VGGNet</a> | 2014 | 92.3% | 138M |
+# MAGIC | <a href="https://arxiv.org/pdf/1409.4842.pdf" target="_blank">Inception v1</a> | 2014 | 93.3% | 6.4M |
+# MAGIC | <a href="https://arxiv.org/abs/1512.03385" target="_blank">ResNet-152</a> | 2015 | 95.5% | 60.3M | 
+# MAGIC | <a href="https://arxiv.org/abs/1512.00567" target="_blank">Inception v3</a> | 2015 | 94.4% | 23.8M | 
+# MAGIC | <a href="https://arxiv.org/abs/1610.02357" target="_blank">XCeption</a> | 2016 | 94.5% | 22.8M | 
+# MAGIC | <a href="https://arxiv.org/pdf/1707.07012.pdf" target="_blank">NasNet</a> | 2017 | 95.3% | 22.6M | 
+# MAGIC | <a href="https://arxiv.org/pdf/1704.04861.pdf" target="_blank">MobileNet</a> | 2017 | 89.5% | 4.24M |
+# MAGIC | <a href="https://arxiv.org/pdf/1905.11946.pdf" target="_blank">EfficientNet B5</a> | 2019 | 96.7% | 30M | 
 # MAGIC 
-# MAGIC <img src="https://files.training.databricks.com/images/icon_note_24.png"/> See this [website](https://paperswithcode.com/sota/image-classification-on-imagenet) that compiles metrics on a variety of deep learning architectures.
+# MAGIC <img src="https://files.training.databricks.com/images/icon_note_24.png"/> See this <a href="https://paperswithcode.com/sota/image-classification-on-imagenet" target="_blank">website</a> that compiles metrics on a variety of deep learning architectures.
 
 # COMMAND ----------
 
@@ -148,9 +148,9 @@ model.summary()
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC To train the model, we use [ImageDataGenerator](https://www.tensorflow.org/api_docs/python/tf/keras/preprocessing/image/ImageDataGenerator) class. Generators are useful when your data is very large, as you only need to load one batch of data into memroy at a time. In general, ImageDataGenerator is used to configure random transformations and normalization operations to be done on your image data during training, as well as instantiate generators of augmented image batches (and their labels). 
+# MAGIC To train the model, we use <a href="https://www.tensorflow.org/api_docs/python/tf/keras/preprocessing/image/ImageDataGenerator" target="_blank">ImageDataGenerator</a> class. Generators are useful when your data is very large, as you only need to load one batch of data into memroy at a time. In general, ImageDataGenerator is used to configure random transformations and normalization operations to be done on your image data during training, as well as instantiate generators of augmented image batches (and their labels). 
 # MAGIC 
-# MAGIC These generators can be used with Keras model methods that accept data generators as inputs. [flow_from_dataframe()](https://www.tensorflow.org/api_docs/python/tf/keras/preprocessing/image/ImageDataGenerator#flow_from_dataframe) takes the dataframe and the path to a directory to generates batches. 
+# MAGIC These generators can be used with Keras model methods that accept data generators as inputs. <a href="https://www.tensorflow.org/api_docs/python/tf/keras/preprocessing/image/ImageDataGenerator#flow_from_dataframe" target="_blank">flow_from_dataframe()</a> takes the dataframe and the path to a directory to generates batches. 
 
 # COMMAND ----------
 
@@ -213,7 +213,7 @@ print(f"Loss: {eval_results[0]}. Accuracy: {eval_results[1]}")
 
 # MAGIC %md ## Visualize the Results
 # MAGIC 
-# MAGIC Since we used sigmoid + binary crossentropy, it computes the probability of class 0 (which is cats) being `True`, by analzying the single probability output. 
+# MAGIC Since we used sigmoid + binary crossentropy, it computes the probability of class 0 (which is cats) being **`True`**, by analzying the single probability output. 
 
 # COMMAND ----------
 

@@ -10,7 +10,7 @@
 # MAGIC %md
 # MAGIC # Document Classification
 # MAGIC 
-# MAGIC In this lab, you will use transfer learning to classify [news topics collected by the NewsCatcher team](https://newscatcherapi.com/), who collect and index news articles and release them to the open-source community. The dataset can be downloaded from [Kaggle](https://www.kaggle.com/kotartemiy/topic-labeled-news-dataset).
+# MAGIC In this lab, you will use transfer learning to classify <a href="https://newscatcherapi.com/" target="_blank">news topics collected by the NewsCatcher team</a>, who collect and index news articles and release them to the open-source community. The dataset can be downloaded from <a href="https://www.kaggle.com/kotartemiy/topic-labeled-news-dataset" target="_blank">Kaggle</a>.
 # MAGIC 
 # MAGIC ## ![Spark Logo Tiny](https://files.training.databricks.com/images/105/logo_spark_tiny.png) In this lab you:<br>
 # MAGIC - fine-tune a pretrained model to classify the topics of the news
@@ -40,7 +40,7 @@
 # MAGIC 
 # MAGIC 
 # MAGIC 
-# MAGIC For the purpose of this lab, we will predict the `topic` of the news.
+# MAGIC For the purpose of this lab, we will predict the **`topic`** of the news.
 # MAGIC 
 # MAGIC The possible topics are: 
 # MAGIC 
@@ -78,11 +78,11 @@ display(train_df.groupby("topic").count())
 # MAGIC ## Lab: Build the text classifier pipeline
 # MAGIC 
 # MAGIC Instructions: 
-# MAGIC 1. Use `DocumentAssembler`
-# MAGIC 2. You will use `UniversalSentenceEncoder` for the first time. Refer to the [documentation](https://nlp.johnsnowlabs.com/api/python/reference/autosummary/sparknlp.annotator.UniversalSentenceEncoder.html) on Universal Sentence Encoder to see an example of how you can build such an encoder.  This is a [pretrained model published by Google on TFhub](https://arxiv.org/pdf/1803.11175.pdf) and SparkNLP provides a wrapper to use this model efficiently with Spark.
-# MAGIC 3. You will need to build a [text classifier](https://nlp.johnsnowlabs.com/api/python/reference/autosummary/sparknlp.annotator.ClassifierDLApproach.html). 
-# MAGIC This model uses embeddings from the `UniversalSentenceEncoder` and was originally trained on the TREC6 dataset, which is another common benchmarking dataset that classifies fact-based questions into different semantic categories. TREC stands for Text REtrieval Conference. More about the TREC dataset [here](https://trec.nist.gov/data/qa.html).
-# MAGIC   - Set the `maxEpochs` to be `3`. This number determines how many epochs you want to fine-tune the pretrained model.
+# MAGIC 1. Use **`DocumentAssembler`**
+# MAGIC 2. You will use **`UniversalSentenceEncoder`** for the first time. Refer to the <a href="https://nlp.johnsnowlabs.com/api/python/reference/autosummary/sparknlp.annotator.UniversalSentenceEncoder.html" target="_blank">documentation</a> on Universal Sentence Encoder to see an example of how you can build such an encoder.  This is a <a href="https://arxiv.org/pdf/1803.11175.pdf" target="_blank">pretrained model published by Google on TFhub</a> and SparkNLP provides a wrapper to use this model efficiently with Spark.
+# MAGIC 3. You will need to build a <a href="https://nlp.johnsnowlabs.com/api/python/reference/autosummary/sparknlp.annotator.ClassifierDLApproach.html" target="_blank">text classifier</a>. 
+# MAGIC This model uses embeddings from the **`UniversalSentenceEncoder`** and was originally trained on the TREC6 dataset, which is another common benchmarking dataset that classifies fact-based questions into different semantic categories. TREC stands for Text REtrieval Conference. More about the TREC dataset <a href="https://trec.nist.gov/data/qa.html" target="_blank">here</a>.
+# MAGIC   - Set the **`maxEpochs`** to be **`3`**. This number determines how many epochs you want to fine-tune the pretrained model.
 # MAGIC 4. Compile the stages above into a pipeline.
 
 # COMMAND ----------
@@ -118,7 +118,7 @@ classifier_pipeline = Pipeline(stages=[document, encoder, text_classifier])
 # MAGIC %md
 # MAGIC ## Train the model
 # MAGIC 
-# MAGIC Use `classifier_pipeline` to train the model and name it as `pipeline_model`.
+# MAGIC Use **`classifier_pipeline`** to train the model and name it as **`pipeline_model`**.
 
 # COMMAND ----------
 
@@ -148,7 +148,7 @@ display(prediction_df.select("title", "topic", "class.result", "class.metadata")
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC Notice that the `result` column is an array because SparkNLP allows you to have multiple sentences in each row. Let's extract the prediction from the array below.
+# MAGIC Notice that the **`result`** column is an array because SparkNLP allows you to have multiple sentences in each row. Let's extract the prediction from the array below.
 
 # COMMAND ----------
 
@@ -163,7 +163,7 @@ display(prediction_df)
 # MAGIC %md
 # MAGIC ## Evaluation
 # MAGIC 
-# MAGIC Complete the cell below to use [sklearn.metrics.classification_report](https://scikit-learn.org/stable/modules/generated/sklearn.metrics.classification_report.html) to generate the evaluation metrics on the prediction dataframe.
+# MAGIC Complete the cell below to use <a href="https://scikit-learn.org/stable/modules/generated/sklearn.metrics.classification_report.html" target="_blank">sklearn.metrics.classification_report</a> to generate the evaluation metrics on the prediction dataframe.
 
 # COMMAND ----------
 

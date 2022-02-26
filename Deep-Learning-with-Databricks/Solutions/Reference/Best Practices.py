@@ -35,14 +35,14 @@
 # MAGIC   - Discriminative Fine Tuning: Different LR per layer
 # MAGIC   - Learning rate warmup (start with low LR and change to a higher LR)
 # MAGIC   - When the batch size is larger, scale up the learning rate accordingly
-# MAGIC   - Use a learning rate finder or scheduler (examples are [here](https://www.avanwyk.com/finding-a-learning-rate-in-tensorflow-2/) and [here](http://d2l.ai/chapter_optimization/lr-scheduler.html#schedulers)) 
+# MAGIC   - Use a learning rate finder or scheduler (examples are <a href="https://www.avanwyk.com/finding-a-learning-rate-in-tensorflow-2/" target="_blank">here</a> and <a href="http://d2l.ai/chapter_optimization/lr-scheduler.html#schedulers" target="_blank">here</a> 
 # MAGIC - Batch normalization works best when done:
 # MAGIC   - after activation functions
 # MAGIC   - after dropout layers (if dropout layers are used concurrently)
 # MAGIC   - after convolutional or fully connected layers
 # MAGIC   
 # MAGIC - Neural Network Architecture Search
-# MAGIC   - [Neural Architecture Search with Reinforcement Learning](https://arxiv.org/abs/1611.01578)
+# MAGIC   - <a href="https://arxiv.org/abs/1611.01578" target="_blank">Neural Architecture Search with Reinforcement Learning</a>
 # MAGIC   - It is very expensive to do neural architecture search! **Do as much work as you can on a small data sample**
 
 # COMMAND ----------
@@ -66,7 +66,7 @@
 # MAGIC 
 # MAGIC Note: No regularization on bias and no weight decay for bias terms <br>
 # MAGIC 
-# MAGIC Click to read the [Tensorflow documentation](https://www.tensorflow.org/tutorials/keras/overfit_and_underfit#training_procedure) for code examples.
+# MAGIC Click to read the <a href="https://www.tensorflow.org/tutorials/keras/overfit_and_underfit#training_procedure" target="_blank">Tensorflow documentation</a> for code examples.
 
 # COMMAND ----------
 
@@ -74,7 +74,7 @@
 # MAGIC ## Convolutional Neural Network
 # MAGIC 
 # MAGIC - Layers are typically arranged so that they gradually decrease the spatial resolution of the representations, while increasing the number of channels
-# MAGIC - Don't use random initialization. Use [He Initalization](https://arxiv.org/pdf/1502.01852.pdf) to keep the variance of activations constant across every layer, which helps prevent exploding or vanishing gradients
+# MAGIC - Don't use random initialization. Use <a href="https://arxiv.org/pdf/1502.01852.pdf" target="_blank">He Initalization</a> to keep the variance of activations constant across every layer, which helps prevent exploding or vanishing gradients
 # MAGIC - Label Smoothing: introduces noise for the labels.
 # MAGIC <br>
 # MAGIC <img src="https://paperswithcode.com/media/methods/image3_1_oTiwmLN.png">
@@ -86,7 +86,7 @@
 # MAGIC   - Note: Use the right kind of augmentation (e.g. don't flip a cat upside down, but satellite image OK)
 # MAGIC   
 # MAGIC   
-# MAGIC ### Bag of Tricks ([Paper](https://arxiv.org/pdf/1812.01187.pdf))
+# MAGIC ### Bag of Tricks (<a href="https://arxiv.org/pdf/1812.01187.pdf" target="_blank">Paper</a>)
 # MAGIC 
 # MAGIC - Efficient training
 # MAGIC   - Large batch training with linear scaling learning rate, LR warmup, zero γ, no bias decay
@@ -123,38 +123,38 @@
 # MAGIC * Use Petastorm
 # MAGIC * Use Multiple GPUs with Horovod
 # MAGIC 
-# MAGIC Click [here](https://databricks.com/blog/2019/08/15/how-not-to-scale-deep-learning-in-6-easy-steps.html) to read the Databricks blog post.
+# MAGIC Click <a href="https://databricks.com/blog/2019/08/15/how-not-to-scale-deep-learning-in-6-easy-steps.html" target="_blank">here</a> to read the Databricks blog post.
 
 # COMMAND ----------
 
 # MAGIC %md
 # MAGIC 
-# MAGIC ## Optimizing input pipeline performance with the [tf.data](https://www.tensorflow.org/api_docs/python/tf/data) API
+# MAGIC ## Optimizing input pipeline performance with the <a href="https://www.tensorflow.org/api_docs/python/tf/data" target="_blank">tf.data</a> API
 # MAGIC 
-# MAGIC The [`tf.data`](https://www.tensorflow.org/api_docs/python/tf/data) API facilitates the building of flexible and efficient input pipelines during model training. More often than not, how optimally batches are fed into your GPU during training will be the core determinant of how efficiently you utilize the underlying GPU resources you are training on. As such, optimizing the input pipeline to your model will be crucial when it comes to achieving peak performance and optimal utilization of your compute resources.
+# MAGIC The <a href="https://www.tensorflow.org/api_docs/python/tf/data" target="_blank">**`tf.data`**</a> API facilitates the building of flexible and efficient input pipelines during model training. More often than not, how optimally batches are fed into your GPU during training will be the core determinant of how efficiently you utilize the underlying GPU resources you are training on. As such, optimizing the input pipeline to your model will be crucial when it comes to achieving peak performance and optimal utilization of your compute resources.
 # MAGIC 
-# MAGIC The `tf.data` API is the recommended API to use when creating input pipelines for TensorFlow models. It contains a [`tf.data.Dataset`](https://www.tensorflow.org/api_docs/python/tf/data/Dataset) abstraction that represents a sequence of elements, which are fed into your training process. If you are unfamiliar with the `tf.data` API, the [following guide](https://www.tensorflow.org/guide/data) is a great resource for getting started on building these input pipelines.
+# MAGIC The **`tf.data`** API is the recommended API to use when creating input pipelines for TensorFlow models. It contains a <a href="https://www.tensorflow.org/api_docs/python/tf/data/Dataset" target="_blank">**`tf.data.Dataset`**</a> abstraction that represents a sequence of elements, which are fed into your training process. If you are unfamiliar with the **`tf.data`** API, the <a href="https://www.tensorflow.org/guide/data" target="_blank">following guide</a> is a great resource for getting started on building these input pipelines.
 # MAGIC 
-# MAGIC With the `tf.data` API you can avail of a range of functionalities to optimize the performance of these pipelines. [This guide](https://www.tensorflow.org/guide/data_performance) is an excellent primer on how to improve the performance of `tf.data` pipelines.
+# MAGIC With the **`tf.data`** API you can avail of a range of functionalities to optimize the performance of these pipelines. <a href="https://www.tensorflow.org/guide/data_performance" target="_blank">This guide</a> is an excellent primer on how to improve the performance of **`tf.data`** pipelines.
 # MAGIC 
-# MAGIC Note that Petastorm - via its [`spark_dataset_converter`](https://petastorm.readthedocs.io/en/latest/api.html?highlight=make%20tf%20dataset#petastorm.spark.spark_dataset_converter.SparkDatasetConverter) - will create a `tf.data.Dataset` when using [`make_tf_dataset`](https://petastorm.readthedocs.io/en/latest/api.html?highlight=make%20tf%20dataset#petastorm.spark.spark_dataset_converter.SparkDatasetConverter.make_tf_dataset), and under the hood will handle the caching, buffering and batching of your dataset which you would ordinarily configure with the `tf.data` API.
+# MAGIC Note that Petastorm - via its <a href="https://petastorm.readthedocs.io/en/latest/api.html?highlight=make%20tf%20dataset#petastorm.spark.spark_dataset_converter.SparkDatasetConverter" target="_blank">**`spark_dataset_converter`**</a> - will create a **`tf.data.Dataset`** when using <a href="https://petastorm.readthedocs.io/en/latest/api.html?highlight=make%20tf%20dataset#petastorm.spark.spark_dataset_converter.SparkDatasetConverter.make_tf_dataset" target="_blank">**`make_tf_dataset`**</a>, and under the hood will handle the caching, buffering and batching of your dataset which you would ordinarily configure with the **`tf.data`** API.
 # MAGIC 
 # MAGIC ##### *How do I monitor the utilization of my GPU?*
 # MAGIC 
-# MAGIC Utilization metrics can be monitored during model training via the [Ganglia UI](https://docs.databricks.com/clusters/clusters-manage.html#ganglia-metrics-1). Optimal performance of your input pipeline will result in minimal pauses during your training procedure.
+# MAGIC Utilization metrics can be monitored during model training via the <a href="https://docs.databricks.com/clusters/clusters-manage.html#ganglia-metrics-1" target="_blank">Ganglia UI</a>. Optimal performance of your input pipeline will result in minimal pauses during your training procedure.
 
 # COMMAND ----------
 
 # MAGIC %md
 # MAGIC #### References
 # MAGIC 
-# MAGIC - [ULMFiT - Language Model Fine-tuning](https://arxiv.org/pdf/1801.06146.pdf)
-# MAGIC - [Bag of Tricks for CNN](https://arxiv.org/pdf/1812.01187.pdf)
-# MAGIC - [fast.ai](https://forums.fast.ai/t/30-best-practices/12344)
-# MAGIC - [Transfer Learning: The Dos and Don'ts](https://medium.com/starschema-blog/transfer-learning-the-dos-and-donts-165729d66625)
-# MAGIC - [Dropout vs Batch Normalization](https://link.springer.com/article/10.1007/s11042-019-08453-9)
-# MAGIC - [How to Configure the Number of Layers and Nodes](https://machinelearningmastery.com/how-to-configure-the-number-of-layers-and-nodes-in-a-neural-network/)
-# MAGIC - [Neural networks and Deep Learning by Aurélien Géron](https://www.oreilly.com/library/view/neural-networks-and/9781492037354/ch01.html)
+# MAGIC - <a href="https://arxiv.org/pdf/1801.06146.pdf" target="_blank">ULMFiT - Language Model Fine-tuning</a>
+# MAGIC - <a href="https://arxiv.org/pdf/1812.01187.pdf" target="_blank">Bag of Tricks for CNN</a>
+# MAGIC - <a href="https://forums.fast.ai/t/30-best-practices/12344" target="_blank">fast.ai</a>
+# MAGIC - <a href="https://medium.com/starschema-blog/transfer-learning-the-dos-and-donts-165729d66625" target="_blank">Transfer Learning: The Dos and Don'ts</a>
+# MAGIC - <a href="https://link.springer.com/article/10.1007/s11042-019-08453-9" target="_blank">Dropout vs Batch Normalization</a>
+# MAGIC - <a href="https://machinelearningmastery.com/how-to-configure-the-number-of-layers-and-nodes-in-a-neural-network/" target="_blank">How to Configure the Number of Layers and Nodes</a>
+# MAGIC - <a href="https://www.oreilly.com/library/view/neural-networks-and/9781492037354/ch01.html" target="_blank">Neural networks and Deep Learning by Aurélien Géron</a>
 
 # COMMAND ----------
 

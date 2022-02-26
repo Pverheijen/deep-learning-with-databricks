@@ -11,7 +11,7 @@
 # MAGIC 
 # MAGIC Before you attempt to throw a neural network at a problem, you want to establish a __baseline model__. Often, this will be a simple model, such as linear regression. Once we establish a baseline, then we can get started with Deep Learning.
 # MAGIC 
-# MAGIC The slides for the course can be found [here](https://brookewenig.github.io/DeepLearning.html).
+# MAGIC The slides for the course can be found <a href="https://brookewenig.github.io/DeepLearning.html" target="_blank">here</a>.
 # MAGIC 
 # MAGIC ## ![Spark Logo Tiny](https://files.training.databricks.com/images/105/logo_spark_tiny.png) In this lesson you:<br>
 # MAGIC  - Build a linear regression model using scikit-learn and reimplement it in Keras 
@@ -95,7 +95,7 @@ plt.show()
 # MAGIC 
 # MAGIC Now that we have established a baseline model, let's see if we can build a fully-connected neural network that can meet or exceed our linear regression model. A fully-connected neural network is simply a set of matrix multiplications followed by some non-linear function (to be discussed later). 
 # MAGIC 
-# MAGIC [Keras](https://www.tensorflow.org/guide/keras) is a high-level API to build neural networks and was released by François Chollet in 2015. It is now the official high-level API of TensorFlow. 
+# MAGIC <a href="https://www.tensorflow.org/guide/keras" target="_blank">Keras</a> is a high-level API to build neural networks and was released by François Chollet in 2015. It is now the official high-level API of TensorFlow. 
 # MAGIC 
 # MAGIC ##### Steps to build a Keras model
 # MAGIC <img style="width:20%" src="https://files.training.databricks.com/images/5_cycle.jpg" >
@@ -108,7 +108,7 @@ plt.show()
 # MAGIC 
 # MAGIC A special case of neural network with no hidden layers and no non-linearities is actually just linear regression :).
 # MAGIC 
-# MAGIC For the next few labs, we will use the [Sequential model](https://www.tensorflow.org/api_docs/python/tf/keras) from Keras.
+# MAGIC For the next few labs, we will use the <a href="https://www.tensorflow.org/api_docs/python/tf/keras" target="_blank">Sequential model</a> from Keras.
 
 # COMMAND ----------
 
@@ -125,7 +125,7 @@ model.add(Dense(units=1, input_dim=1, activation="linear"))
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC We can check the model definition by calling `.summary()`. Note the two parameters - any thoughts on why there are TWO?
+# MAGIC We can check the model definition by calling **`.summary()`**. Note the two parameters - any thoughts on why there are TWO?
 
 # COMMAND ----------
 
@@ -135,9 +135,9 @@ model.summary()
 
 # MAGIC %md # 2. Compile a Network
 # MAGIC 
-# MAGIC To [compile](https://www.tensorflow.org/api_docs/python/tf/keras/Sequential#compile) the network, we need to specify the loss function and which optimizer to use. We'll talk more about optimizers and loss metrics in the next lab.
+# MAGIC To <a href="https://www.tensorflow.org/api_docs/python/tf/keras/Sequential#compile" target="_blank">compile</a> the network, we need to specify the loss function and which optimizer to use. We'll talk more about optimizers and loss metrics in the next lab.
 # MAGIC 
-# MAGIC For right now, we will use `mse` (mean squared error) for our loss function, and the `adam` optimizer.
+# MAGIC For right now, we will use **`mse`** (mean squared error) for our loss function, and the **`adam`** optimizer.
 
 # COMMAND ----------
 
@@ -147,7 +147,7 @@ model.compile(loss="mse", optimizer="adam")
 
 # MAGIC %md # 3. Fit a Network
 # MAGIC 
-# MAGIC Let's [fit](https://www.tensorflow.org/api_docs/python/tf/keras/Sequential#fit) our model on X and y.
+# MAGIC Let's <a href="https://www.tensorflow.org/api_docs/python/tf/keras/Sequential#fit" target="_blank">fit</a> our model on X and y.
 
 # COMMAND ----------
 
@@ -181,9 +181,9 @@ keras_pred_plot(keras_pred)
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC What went wrong?? Turns out there a few more hyperparameters we need to set. Let's take a look at [Keras documentation](https://www.tensorflow.org/api_docs/python/tf/keras/Sequential#fit).
+# MAGIC What went wrong?? Turns out there a few more hyperparameters we need to set. Let's take a look at <a href="https://www.tensorflow.org/api_docs/python/tf/keras/Sequential#fit" target="_blank">Keras documentation</a>.
 # MAGIC 
-# MAGIC `epochs` specifies how many passes you want over your entire dataset. Let's increase the number of epochs, and look at how the MSE decreases.
+# MAGIC **`epochs`** specifies how many passes you want over your entire dataset. Let's increase the number of epochs, and look at how the MSE decreases.
 # MAGIC 
 # MAGIC Here we are capturing the output of model.fit() as it returns a History object, which keeps a record of training loss values and metrics values at successive epochs, as well as validation loss values and validation metrics values (if applicable).
 

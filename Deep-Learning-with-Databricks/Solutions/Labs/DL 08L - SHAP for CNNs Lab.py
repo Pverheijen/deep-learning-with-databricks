@@ -15,7 +15,7 @@
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC Here, we will be using the [Fashion MNIST](https://github.com/zalandoresearch/fashion-mnist) dataset that contains 70,000 grayscale images. <br> 
+# MAGIC Here, we will be using the <a href="https://github.com/zalandoresearch/fashion-mnist" target="_blank">Fashion MNIST</a> dataset that contains 70,000 grayscale images. <br> 
 # MAGIC <br>
 # MAGIC There are 10 categories altogether: T-shirt/top, trouser, pullover, dress, coat, sandal, shirt, sneaker, bag, and ankle boots.
 # MAGIC 
@@ -169,10 +169,10 @@ display(df)
 # MAGIC 
 # MAGIC We can see that the model predicted the first 9 test images correctly. But why? Can we use SHAP to help us understand why the error occurred?
 # MAGIC 
-# MAGIC We are going to use `shap.GradientExplainer` to explain pixel attributions to the predictions. From the [SHAP documentation](https://shap-lrjball.readthedocs.io/en/latest/generated/shap.GradientExplainer.html#shap.GradientExplainer):
+# MAGIC We are going to use **`shap.GradientExplainer`** to explain pixel attributions to the predictions. From the <a href="https://shap-lrjball.readthedocs.io/en/latest/generated/shap.GradientExplainer.html#shap.GradientExplainer" target="_blank">SHAP documentation</a>:
 # MAGIC > GradientExplainer Explains a model using expected gradients. Expected gradients an extension of the integrated gradients method (Sundararajan et al. 2017), a feature attribution method designed for differentiable models based on an extension of Shapley values to infinite player games (Aumann-Shapley values).
 # MAGIC 
-# MAGIC To read more about [pixel attribution here](https://christophm.github.io/interpretable-ml-book/pixel-attribution.html)
+# MAGIC To read more about <a href="https://christophm.github.io/interpretable-ml-book/pixel-attribution.html" target="_blank">pixel attribution here</a>
 
 # COMMAND ----------
 

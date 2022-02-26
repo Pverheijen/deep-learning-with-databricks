@@ -67,7 +67,7 @@ X_test_seq_padded = pad_sequences(X_test_seq, maxlen=max_length, padding="post")
 # MAGIC %md
 # MAGIC ### Let's build a Convolutional Neural Network (CNN) for sentiment analysis!
 # MAGIC 
-# MAGIC Notice that we keep the hyperparameter values the same as the previous LSTM notebook. But we also have two new hyperparameters here: `filters` and `kernel_size` unique to CNNs.
+# MAGIC Notice that we keep the hyperparameter values the same as the previous LSTM notebook. But we also have two new hyperparameters here: **`filters`** and **`kernel_size`** unique to CNNs.
 
 # COMMAND ----------
 
@@ -94,8 +94,7 @@ kernel_size = 3
 # MAGIC 
 # MAGIC ![](https://files.training.databricks.com/images/nn_dropout.png)
 # MAGIC 
-# MAGIC <img src="https://files.training.databricks.com/images/icon_note_24.png"/> See the original paper here: [Dropout: A Simple Way to Prevent Neural Networks from
-# MAGIC Overfitting](http://jmlr.org/papers/volume15/srivastava14a/srivastava14a.pdf)
+# MAGIC <img src="https://files.training.databricks.com/images/icon_note_24.png"/> See the original paper here: <a href="http://jmlr.org/papers/volume15/srivastava14a/srivastava14a.pdf" target="_blank">Dropout: A Simple Way to Prevent Neural Networks from Overfitting</a>
 
 # COMMAND ----------
 
@@ -119,11 +118,11 @@ model = Sequential([
 # MAGIC 
 # MAGIC - We set the pool size to be equal to the input size, so the max of the entire input is the global max pooling output value. 
 # MAGIC - It further reduces the dimensionality.
-# MAGIC - [Click here to read more.](https://www.machinecurve.com/index.php/2020/01/30/what-are-max-pooling-average-pooling-global-max-pooling-and-global-average-pooling/)
-# MAGIC - Or [click here to look at the Keras source code](https://github.com/keras-team/keras/blob/3d176e926f848c5aacd036d6095ab015a2f8cc83/keras/layers/pooling.py#L433)
+# MAGIC - <a href="https://www.machinecurve.com/index.php/2020/01/30/what-are-max-pooling-average-pooling-global-max-pooling-and-global-average-pooling/" target="_blank">Click here to read more.</a>
+# MAGIC - Or <a href="https://github.com/keras-team/keras/blob/3d176e926f848c5aacd036d6095ab015a2f8cc83/keras/layers/pooling.py#L433" target="_blank">click here to look at the Keras source code</a>
 # MAGIC - Example papers that use global max pooling:
-# MAGIC   - [A Deep CNN for Word Spotting in Handwritten Documents, 2017](https://arxiv.org/pdf/1604.00187.pdf)
-# MAGIC   - [Is object localization for free? 2015](https://hal.inria.fr/hal-01015140/file/Oquab15.pdf)
+# MAGIC   - <a href="https://arxiv.org/pdf/1604.00187.pdf" target="_blank">A Deep CNN for Word Spotting in Handwritten Documents, 2017</a>
+# MAGIC   - <a href="https://hal.inria.fr/hal-01015140/file/Oquab15.pdf" target="_blank">Is object localization for free? 2015</a>
 # MAGIC 
 # MAGIC <img src="https://www.machinecurve.com/wp-content/uploads/2020/01/Global-Max-Pooling-1.png">
 

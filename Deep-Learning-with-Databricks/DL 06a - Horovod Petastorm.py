@@ -10,7 +10,7 @@
 # MAGIC %md
 # MAGIC # Horovod with Petastorm
 # MAGIC 
-# MAGIC [Petastorm](https://github.com/uber/petastorm) enables single machine or distributed training and evaluation of deep learning models from datasets in Apache Parquet format and datasets that are already loaded as Spark DataFrames. It supports ML frameworks such as TensorFlow, Pytorch, and PySpark and can be used from pure Python code.
+# MAGIC <a href="https://github.com/uber/petastorm" target="_blank">Petastorm</a> enables single machine or distributed training and evaluation of deep learning models from datasets in Apache Parquet format and datasets that are already loaded as Spark DataFrames. It supports ML frameworks such as TensorFlow, Pytorch, and PySpark and can be used from pure Python code.
 # MAGIC 
 # MAGIC ## ![Spark Logo Tiny](https://files.training.databricks.com/images/105/logo_spark_tiny.png) In this lesson you:<br>
 # MAGIC  - Use Horovod to train a distributed neural network using Parquet files + Petastorm
@@ -115,10 +115,10 @@ def build_model():
 
 # MAGIC %md ## Single Node
 # MAGIC 
-# MAGIC Define shape of the input tensor and output tensor and fit the model on the driver. We need to use Petastorm's [make_tf_dataset](https://petastorm.readthedocs.io/en/latest/api.html#petastorm.spark.spark_dataset_converter.SparkDatasetConverter.make_tf_dataset) to read batches of data.<br><br>
+# MAGIC Define shape of the input tensor and output tensor and fit the model on the driver. We need to use Petastorm's <a href="https://petastorm.readthedocs.io/en/latest/api.html#petastorm.spark.spark_dataset_converter.SparkDatasetConverter.make_tf_dataset" target="_blank">make_tf_dataset</a> to read batches of data.<br><br>
 # MAGIC 
-# MAGIC * Note that we use `num_epochs=None` to generate infinite batches of data to avoid handling the last incomplete batch. This is particularly useful in the distributed training scenario, where we need to guarantee that the numbers of data records seen on all workers are identical. Given that the length of each data shard may not be identical, setting `num_epochs` to any specific number would fail to meet the guarantee.
-# MAGIC * The `workers_count` param specifies the number of threads or processes to be spawned in the reader pool, and it is not a Spark worker. 
+# MAGIC * Note that we use **`num_epochs=None`** to generate infinite batches of data to avoid handling the last incomplete batch. This is particularly useful in the distributed training scenario, where we need to guarantee that the numbers of data records seen on all workers are identical. Given that the length of each data shard may not be identical, setting **`num_epochs`** to any specific number would fail to meet the guarantee.
+# MAGIC * The **`workers_count`** param specifies the number of threads or processes to be spawned in the reader pool, and it is not a Spark worker. 
 
 # COMMAND ----------
 
@@ -143,7 +143,7 @@ with converter_train.make_tf_dataset(workers_count=4, batch_size=BATCH_SIZE, num
 # MAGIC %md
 # MAGIC ## Horovod
 # MAGIC 
-# MAGIC We will take the code from above and scale the `steps_per_epoch` and the `optimizer` by `hvd.size()`.
+# MAGIC We will take the code from above and scale the **`steps_per_epoch`** and the **`optimizer`** by **`hvd.size()`**.
 
 # COMMAND ----------
 
@@ -211,7 +211,7 @@ trained_model.evaluate(X_test, y_test)
 
 # COMMAND ----------
 
-# MAGIC %md Let's [delete](https://petastorm.readthedocs.io/en/latest/api.html#petastorm.spark.spark_dataset_converter.SparkDatasetConverter.delete) the cached files
+# MAGIC %md Let's <a href="https://petastorm.readthedocs.io/en/latest/api.html#petastorm.spark.spark_dataset_converter.SparkDatasetConverter.delete" target="_blank">delete</a> the cached files
 
 # COMMAND ----------
 

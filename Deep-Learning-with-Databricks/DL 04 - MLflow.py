@@ -10,9 +10,9 @@
 # MAGIC %md
 # MAGIC # MLflow
 # MAGIC 
-# MAGIC How do you remember which network architecture and hyperparameters performed the worked best? That's where [MLflow](https://mlflow.org/) comes into play!
+# MAGIC How do you remember which network architecture and hyperparameters performed the worked best? That's where <a href="https://mlflow.org/" target="_blank">MLflow</a> comes into play!
 # MAGIC 
-# MAGIC [MLflow](https://mlflow.org/docs/latest/concepts.html) seeks to address these three core issues:
+# MAGIC <a href="https://mlflow.org/docs/latest/concepts.html" target="_blank">MLflow</a> seeks to address these three core issues:
 # MAGIC 
 # MAGIC * It’s difficult to keep track of experiments
 # MAGIC * It’s difficult to reproduce code
@@ -94,17 +94,17 @@ def view_model_loss(history):
 # MAGIC %md
 # MAGIC ### Track experiments!
 # MAGIC 
-# MAGIC When traking an experiment, you can use [mlflow.set_experiment()](https://mlflow.org/docs/latest/python_api/mlflow.html#mlflow.set_experiment) to set an experiment, but if you do not specify an experiment, it will automatically be scoped to this notebook.
+# MAGIC When traking an experiment, you can use <a href="https://mlflow.org/docs/latest/python_api/mlflow.html#mlflow.set_experiment" target="_blank">**`mlflow.set_experiment()`**</a> to set an experiment, but if you do not specify an experiment, it will automatically be scoped to this notebook.
 # MAGIC 
-# MAGIC Additionally, when training a model you can log to MLflow using [autologging](https://docs.databricks.com/applications/mlflow/databricks-autologging.html). Autologging allows you to log metrics, parameters, and models without the need for explicit log statements.
+# MAGIC Additionally, when training a model you can log to MLflow using <a href="https://docs.databricks.com/applications/mlflow/databricks-autologging.html" target="_blank">autologging</a>. Autologging allows you to log metrics, parameters, and models without the need for explicit log statements.
 # MAGIC 
 # MAGIC There are a few ways to use autologging:
 # MAGIC 
-# MAGIC   1. Call `mlflow.autolog()` before your training code. This will enable autologging for each supported library you have installed as soon as you import it.
+# MAGIC   1. Call **`mlflow.autolog()`** before your training code. This will enable autologging for each supported library you have installed as soon as you import it.
 # MAGIC 
 # MAGIC   2. Enable autologging at the workspace level from the admin console
 # MAGIC 
-# MAGIC   3. Use library-specific autolog calls for each library you use in your code. (e.g. `mlflow.tensorflow.autolog()`)
+# MAGIC   3. Use library-specific autolog calls for each library you use in your code. (e.g. **`mlflow.tensorflow.autolog()`**)
 # MAGIC 
 # MAGIC Here we are only using numeric features for simplicity of building the random forest.
 
@@ -187,7 +187,7 @@ run = track_experiments(run_name, build_model, compile_kwargs, fit_kwargs, optio
 
 # MAGIC %md ### Querying Past Runs
 # MAGIC 
-# MAGIC You can query past runs programatically in order to use this data back in Python.  The pathway to doing this is an `MlflowClient` object. 
+# MAGIC You can query past runs programatically in order to use this data back in Python.  The pathway to doing this is an **`MlflowClient`** object. 
 
 # COMMAND ----------
 
@@ -199,7 +199,7 @@ client.list_experiments()
 
 # COMMAND ----------
 
-# MAGIC %md You can also use [search_runs](https://mlflow.org/docs/latest/search-syntax.html) to find all runs for a given experiment.
+# MAGIC %md You can also use <a href="https://mlflow.org/docs/latest/search-syntax.html" target="_blank">search_runs</a> to find all runs for a given experiment.
 
 # COMMAND ----------
 
@@ -235,7 +235,7 @@ display(X_test_df.withColumn("prediction", predict(*cal_housing.feature_names)))
 
 # COMMAND ----------
 
-# MAGIC %md Register the Vectorized UDF `predict` into the SQL namespace.
+# MAGIC %md Register the Vectorized UDF **`predict`** into the SQL namespace.
 
 # COMMAND ----------
 

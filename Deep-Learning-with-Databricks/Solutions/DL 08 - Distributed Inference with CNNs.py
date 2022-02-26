@@ -9,7 +9,7 @@
 
 # MAGIC %md # Distributed Inference with Convolutional Neural Networks
 # MAGIC 
-# MAGIC We will use pre-trained Convolutional Neural Networks (CNNs), trained with the image dataset from [ImageNet](http://www.image-net.org/), to make scalable predictions with Pandas Scalar Iterator UDFs.
+# MAGIC We will use pre-trained Convolutional Neural Networks (CNNs), trained with the image dataset from <a href="http://www.image-net.org/" target="_blank">ImageNet</a>, to make scalable predictions with Pandas Scalar Iterator UDFs.
 # MAGIC 
 # MAGIC 
 # MAGIC ## ![Spark Logo Tiny](https://files.training.databricks.com/images/105/logo_spark_tiny.png) In this lesson you:<br>
@@ -26,7 +26,7 @@
 # MAGIC ## VGG16
 # MAGIC ![vgg16](https://neurohive.io/wp-content/uploads/2018/11/vgg16-neural-network.jpg)
 # MAGIC 
-# MAGIC We are going to start with the VGG16 model, which was introduced by Simonyan and Zisserman in their 2014 paper [Very Deep Convolutional Networks for Large Scale Image Recognition](https://arxiv.org/abs/1409.1556).
+# MAGIC We are going to start with the VGG16 model, which was introduced by Simonyan and Zisserman in their 2014 paper <a href="https://arxiv.org/abs/1409.1556" target="_blank">Very Deep Convolutional Networks for Large Scale Image Recognition</a>.
 # MAGIC 
 # MAGIC Let's start by downloading VGG's weights and model architecture.
 
@@ -59,7 +59,7 @@ vgg16_model.summary()
 # MAGIC %md
 # MAGIC ## Inception-V3 + Batch Normalization
 # MAGIC 
-# MAGIC In 2016, developers from [Google published a paper](https://www.cv-foundation.org/openaccess/content_cvpr_2016/papers/Szegedy_Rethinking_the_Inception_CVPR_2016_paper.pdf) updating their Inception architecture with a number of optimizations.  This included a technique known as batch normalization.
+# MAGIC In 2016, developers from <a href="https://www.cv-foundation.org/openaccess/content_cvpr_2016/papers/Szegedy_Rethinking_the_Inception_CVPR_2016_paper.pdf" target="_blank">Google published a paper</a> updating their Inception architecture with a number of optimizations.  This included a technique known as batch normalization.
 # MAGIC 
 # MAGIC 
 # MAGIC **Batch normalization is a technique that applies to very deep neural networks (especially CNNs) that standardizes the inputs to a layer for each mini-batch.** Generally speaking, this reduces the number of training epochs needed by stabilizing the learning process.
@@ -69,7 +69,7 @@ vgg16_model.summary()
 # MAGIC - Each layer in a deep neural network (with 10+ layers, for instance) expects the inputs from the previous layer to come from the same distribution.  However, in practice each layer is being updated, changing the distribution of its output to the next layer.  This is called "internal covariate shift" and can result in an unstable learning process since each layer is effectively learning a moving target. 
 # MAGIC - This technique smoothes objective function and thereby improves the learning process.
 # MAGIC 
-# MAGIC Batch normalization should generally not be used with dropout, another regularization technique (discussed in the GANs notebook).  While there's some contention over which is a more effective method ([see this paper for details](https://link.springer.com/article/10.1007/s11042-019-08453-9)), batch normalization is generally preferred over dropout for deep neural networks.
+# MAGIC Batch normalization should generally not be used with dropout, another regularization technique (discussed in the GANs notebook).  While there's some contention over which is a more effective method <a href="https://link.springer.com/article/10.1007/s11042-019-08453-9" target="_blank">see this paper for details</a>, batch normalization is generally preferred over dropout for deep neural networks.
 # MAGIC 
 # MAGIC Let's load the Inception V3 model to compare architectures with VGG16.
 
@@ -89,7 +89,7 @@ inception_model.summary()
 
 # COMMAND ----------
 
-# MAGIC %md Looking for more reference architectures?  Check out [`tf.keras.applications` for what's available out of the box.](https://www.tensorflow.org/api_docs/python/tf/keras/applications)
+# MAGIC %md Looking for more reference architectures?  Check out <a href="https://www.tensorflow.org/api_docs/python/tf/keras/applications" target="_blank">**`tf.keras.applications`** for what's available out of the box.</a>
 
 # COMMAND ----------
 
@@ -139,14 +139,14 @@ predict_images(img_paths, vgg16_model)
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC The network did so well with the pug and strawberry! What happened with the rose? Well, it turns out that `rose` was not one of the 1000 categories that VGG16 had to predict. But it is quite interesting it predicted `sea_anemone` and `vase`.
+# MAGIC The network did so well with the pug and strawberry! What happened with the rose? Well, it turns out that **`rose`** was not one of the 1000 categories that VGG16 had to predict. But it is quite interesting it predicted **`sea_anemone`** and **`vase`**.
 
 # COMMAND ----------
 
 # MAGIC %md
 # MAGIC You can play around with this with your own images by doing:
 # MAGIC 
-# MAGIC `%sh wget <image_url>/<image_name.jpg> -P /dbfs/tmp/`
+# MAGIC **`%sh wget <image_url>/<image_name.jpg> -P /dbfs/tmp/`**
 
 # COMMAND ----------
 
@@ -197,10 +197,10 @@ display(results_df)
 
 # MAGIC %md ### Pandas/Vectorized UDF
 # MAGIC 
-# MAGIC Pandas/Vectorized UDFs are available in Python to help speed up the computation by leveraging Apache Arrow. [Apache Arrow](https://arrow.apache.org/) is an in-memory columnar data format that is used in Spark to efficiently transfer data between JVM and Python processes with near-zero (de)serialization cost. See more [here](https://spark.apache.org/docs/latest/sql-pyspark-pandas-with-arrow.html).
+# MAGIC Pandas/Vectorized UDFs are available in Python to help speed up the computation by leveraging Apache Arrow. <a href="https://arrow.apache.org/" target="_blank">Apache Arrow</a> is an in-memory columnar data format that is used in Spark to efficiently transfer data between JVM and Python processes with near-zero (de)serialization cost. See more <a href="https://spark.apache.org/docs/latest/sql-pyspark-pandas-with-arrow.html" target="_blank">here</a>.
 # MAGIC 
-# MAGIC * [Blog post](https://databricks.com/blog/2017/10/30/introducing-vectorized-udfs-for-pyspark.html)
-# MAGIC * [Documentation](https://spark.apache.org/docs/latest/sql-programming-guide.html#pyspark-usage-guide-for-pandas-with-apache-arrow)
+# MAGIC * <a href="https://databricks.com/blog/2017/10/30/introducing-vectorized-udfs-for-pyspark.html" target="_blank">Blog post</a>
+# MAGIC * <a href="https://spark.apache.org/docs/latest/sql-programming-guide.html#pyspark-usage-guide-for-pandas-with-apache-arrow" target="_blank">Documentation</a>
 # MAGIC 
 # MAGIC <img src="https://databricks.com/wp-content/uploads/2017/10/image1-4.png" alt="Benchmark" width ="500" height="1500">
 
@@ -211,14 +211,14 @@ display(results_df)
 # MAGIC 
 # MAGIC If you define your own UDF to apply a model to each record of your DataFrame in Python, opt for pandas/vectorized UDFs for optimized serialization and deserialization. However, if your model is very large, then there is high overhead for the pandas UDF to repeatedly load the same model for every batch in the same Python worker process. In Spark 3.0, pandas UDFs can accept an iterator of pandas.Series or pandas.DataFrame so that you can load the model only once instead of loading it for every series in the iterator.
 # MAGIC 
-# MAGIC This way the cost of any set-up needed (like loading the VGG16 model in our case) will be incurred fewer times. When the number of images you’re working with is greater than `spark.conf.get("spark.sql.execution.arrow.maxRecordsPerBatch")`, which is 10,000 by default, you'll see significant speed ups over a pandas scalar UDF because it iterates through batches of pd.Series.
+# MAGIC This way the cost of any set-up needed (like loading the VGG16 model in our case) will be incurred fewer times. When the number of images you’re working with is greater than **`spark.conf.get("spark.sql.execution.arrow.maxRecordsPerBatch")`**, which is 10,000 by default, you'll see significant speed ups over a pandas scalar UDF because it iterates through batches of pd.Series.
 # MAGIC 
 # MAGIC It has the general syntax of: 
-# MAGIC ```@pandas_udf(...)
+# MAGIC **`@pandas_udf(...)
 # MAGIC def predict(iterator):
 # MAGIC     model = ... # load model
 # MAGIC     for features in iterator:
-# MAGIC         yield model.predict(features)```
+# MAGIC         yield model.predict(features)`**
 # MAGIC 
 # MAGIC 
 # MAGIC <img src="https://files.training.databricks.com/images/icon_note_24.png"/> If the workers cached the model weights after loading it for the first time, subsequent calls of the same UDF with the same model loading will become significantly faster. 
@@ -258,9 +258,9 @@ display(df.withColumn("predictions", vgg16_predict_pandas_udf("path")))
 # MAGIC 
 # MAGIC Instead of using a Pandas UDF, we can use a Pandas Function API. This new category in Apache Spark 3.0 enables you to directly apply a Python native function, which takes and outputs Pandas instances against a PySpark DataFrame. Pandas Functions APIs supported in Apache Spark 3.0 are: grouped map, map, and co-grouped map.
 # MAGIC 
-# MAGIC `mapInPandas()` takes an iterator of pandas.DataFrame as input, and outputs another iterator of pandas.DataFrame. It's flexible and easy to use if your model requires all of your columns as input, but it requires serialization/deserialization of the whole DataFrame (as it is passed to its input). You can control the size of each pandas.DataFrame with the `spark.sql.execution.arrow.maxRecordsPerBatch` config.
+# MAGIC **`mapInPandas()`** takes an iterator of pandas.DataFrame as input, and outputs another iterator of pandas.DataFrame. It's flexible and easy to use if your model requires all of your columns as input, but it requires serialization/deserialization of the whole DataFrame (as it is passed to its input). You can control the size of each pandas.DataFrame with the **`spark.sql.execution.arrow.maxRecordsPerBatch`** config.
 # MAGIC 
-# MAGIC Because mapInPandas requires deserializing all of your columns, we will only be selecting the `path` column prior to applying the model.
+# MAGIC Because mapInPandas requires deserializing all of your columns, we will only be selecting the **`path`** column prior to applying the model.
 
 # COMMAND ----------
 

@@ -27,11 +27,11 @@
 # MAGIC 
 # MAGIC ### GANs
 # MAGIC 
-# MAGIC <img src="https://miro.medium.com/max/3000/1*t82vgL9KcDVpT4JqCb9Q4Q.png", width=1000>
+# MAGIC <img src="https://miro.medium.com/max/3000/1*t82vgL9KcDVpT4JqCb9Q4Q.png" width=1000>
 
 # COMMAND ----------
 
-# MAGIC %md This was a very original architecture in deep learning when it was first released by [Ian Goodfellow et al in 2014](https://arxiv.org/pdf/1406.2661.pdf). It was the first network that contains a generator and a discriminator. The two models compete against each other during training of GANs. GANs eventually generates fairly realistic synthetic images as the discriminator becomes smarter at distinguishing between real and fake images. 
+# MAGIC %md This was a very original architecture in deep learning when it was first released by <a href="https://arxiv.org/pdf/1406.2661.pdf" target="_blank">Ian Goodfellow et al in 2014</a>. It was the first network that contains a generator and a discriminator. The two models compete against each other during training of GANs. GANs eventually generates fairly realistic synthetic images as the discriminator becomes smarter at distinguishing between real and fake images. 
 # MAGIC 
 # MAGIC The algorithm:
 # MAGIC - G takes noise as input, outputs a counterfeit
@@ -42,19 +42,19 @@
 # MAGIC - Start with k of at least 5
 # MAGIC - Use *log(1 - D(G(z)))* to provide stronger, non-saturated gradients
 # MAGIC 
-# MAGIC <img src="https://media-exp1.licdn.com/dms/image/C5112AQGWsO2ZFbKnYQ/article-inline_image-shrink_1000_1488/0/1520192659145?e=1647475200&v=beta&t=06VrAMeZgpmcvw0K-bQV892ecuBlWJggwv045e4Jz8Q", width=1000>
+# MAGIC <img src="https://media-exp1.licdn.com/dms/image/C5112AQGWsO2ZFbKnYQ/article-inline_image-shrink_1000_1488/0/1520192659145?e=1647475200&v=beta&t=06VrAMeZgpmcvw0K-bQV892ecuBlWJggwv045e4Jz8Q" width=1000>
 # MAGIC 
 # MAGIC GANs can be used in generating art, deep fakes, up-scaling graphics, and astronomy research. For example, we can use GANs to generate synthetic handwritten images, resembling the MNIST dataset. 
 # MAGIC 
-# MAGIC <img src = "https://tensorflow.org/images/gan/dcgan.gif", width=600>
+# MAGIC <img src = "https://tensorflow.org/images/gan/dcgan.gif" width=600>
 # MAGIC 
 # MAGIC 
-# MAGIC As a follow-up, we highly recommend this [GANs](https://www.coursera.org/specializations/generative-adversarial-networks-gans?) course from coursera. There are other very interesting applications of generative models, such as [Glow](https://openai.com/blog/glow/) from OpenAI and [speech recognition](https://ai.facebook.com/blog/wav2vec-unsupervised-speech-recognition-without-supervision/) from Facebook AI.
+# MAGIC As a follow-up, we highly recommend this <a href="https://www.coursera.org/specializations/generative-adversarial-networks-gans?" target="_blank">GANs</a> course from coursera. There are other very interesting applications of generative models, such as <a href="https://openai.com/blog/glow/" target="">Glow</a> from OpenAI and <a href="https://ai.facebook.com/blog/wav2vec-unsupervised-speech-recognition-without-supervision/" target="_blank">speech recognition</a> from Facebook AI.
 
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC Here, we will be using the [Fashion MNIST](https://github.com/zalandoresearch/fashion-mnist) dataset that you have seen before in the SHAP for CNNs lab! <br>
+# MAGIC Here, we will be using the <a href="https://github.com/zalandoresearch/fashion-mnist" target="_blank">Fashion MNIST</a> dataset that you have seen before in the SHAP for CNNs lab! <br>
 # MAGIC 
 # MAGIC Our goal is to create synthetic images of these clothing items using GANs.
 # MAGIC 
@@ -105,7 +105,7 @@ X_train = (X_train - 127.5) / 127.5
 # MAGIC 
 # MAGIC Let's first define a discriminator. 
 # MAGIC 
-# MAGIC It's a best practice to use `LeakyReLU` as opposed to `ReLU` for the discriminator. It’s similar to ReLU, but it relaxes sparsity constraints by allowing small negative activation values, rather than outputting zero activation values for negative inputs. Here is a [resource](https://ml-cheatsheet.readthedocs.io/en/latest/activation_functions.html#leakyrelu) that dives into different activation functions, including ReLU and Leaky ReLU. 
+# MAGIC It's a best practice to use **`LeakyReLU`** as opposed to **`ReLU`** for the discriminator. It’s similar to ReLU, but it relaxes sparsity constraints by allowing small negative activation values, rather than outputting zero activation values for negative inputs. Here is a <a href="https://ml-cheatsheet.readthedocs.io/en/latest/activation_functions.html#leakyrelu" target="_blank">resource</a> that dives into different activation functions, including ReLU and Leaky ReLU. 
 # MAGIC 
 # MAGIC <img src="https://miro.medium.com/max/2100/1*A_Bzn0CjUgOXtPCJKnKLqA.jpeg">
 
@@ -122,7 +122,7 @@ X_train = (X_train - 127.5) / 127.5
 # MAGIC Reduced checkerboard artifacts: <br>
 # MAGIC <img src="https://distill.pub/2016/deconv-checkerboard/assets/style_clean.png" width="500" height="300"> 
 # MAGIC 
-# MAGIC Head over to this [link](https://distill.pub/2016/deconv-checkerboard/) to see what "unequal coverage of the pixel space" means and play with the stride and kernel sizes! 
+# MAGIC Head over to this <a href="https://distill.pub/2016/deconv-checkerboard/" target="_blank">link</a> to see what "unequal coverage of the pixel space" means and play with the stride and kernel sizes! 
 
 # COMMAND ----------
 
@@ -167,13 +167,12 @@ def def_discriminator():
 # MAGIC 
 # MAGIC ![](https://files.training.databricks.com/images/nn_dropout.png)
 # MAGIC 
-# MAGIC <img src="https://files.training.databricks.com/images/icon_note_24.png"/> See the original paper here: [Dropout: A Simple Way to Prevent Neural Networks from
-# MAGIC Overfitting](http://jmlr.org/papers/volume15/srivastava14a/srivastava14a.pdf)
+# MAGIC <img src="https://files.training.databricks.com/images/icon_note_24.png"/> See the original paper here: <a href="http://jmlr.org/papers/volume15/srivastava14a/srivastava14a.pdf" target="_blank">Dropout: A Simple Way to Prevent Neural Networks from Overfitting</a>
 
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC Now, onto transposed convolutional layers. [Transposed convolutional layers](https://towardsdatascience.com/types-of-convolutions-in-deep-learning-717013397f4d), also known as fractionally-strided convolution, are commonly used in GANs.
+# MAGIC Now, onto transposed convolutional layers. <a href="https://towardsdatascience.com/types-of-convolutions-in-deep-learning-717013397f4d" target="_blank">Transposed convolutional layers</a>, also known as fractionally-strided convolution, are commonly used in GANs.
 # MAGIC 
 # MAGIC Transposed convolution helps us to:
 # MAGIC * Accept an input from a previous layer in the network
@@ -359,14 +358,14 @@ generate_images(generator, benchmark_noise)
 
 # MAGIC %md Additional interesting generator applications include:
 # MAGIC 
-# MAGIC - **[Style Transfer to create artistic images](https://arxiv.org/abs/1508.06576)**
+# MAGIC - <a href="https://arxiv.org/abs/1508.06576" target="_blank">**Style Transfer to create artistic images**</a>
 # MAGIC 
-# MAGIC <img src="https://tensorflow.org/tutorials/generative/images/stylized-image.png", width=600>
+# MAGIC <img src="https://tensorflow.org/tutorials/generative/images/stylized-image.png" width=600>
 # MAGIC 
 # MAGIC 
-# MAGIC - **[Deep Dream](https://deepdreamgenerator.com/)**
+# MAGIC - <a href="https://deepdreamgenerator.com/" target="_blank">**Deep Dream**</a>
 # MAGIC 
-# MAGIC <img src="https://b2h3x3f6.stackpathcdn.com/assets/landing/img/gallery/4.jpg", width=600>
+# MAGIC <img src="https://b2h3x3f6.stackpathcdn.com/assets/landing/img/gallery/4.jpg" width=600>
 
 # COMMAND ----------
 

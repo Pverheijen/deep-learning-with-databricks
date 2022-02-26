@@ -13,15 +13,15 @@
 # MAGIC ## ![Spark Logo Tiny](https://files.training.databricks.com/images/105/logo_spark_tiny.png) In this lesson you:<br>
 # MAGIC  - Use Horovod to train a distributed neural network
 # MAGIC   
-# MAGIC HorovodRunner is a general API to run distributed DL workloads on Databricks using Uber’s [Horovod](https://github.com/uber/horovod) framework. By integrating Horovod with Spark’s barrier mode, Databricks is able to provide higher stability for long-running deep learning training jobs on Spark. HorovodRunner takes a Python method that contains DL training code with Horovod hooks. This method gets pickled on the driver and sent to Spark workers. A Horovod MPI job is embedded as a Spark job using barrier execution mode. The first executor collects the IP addresses of all task executors using BarrierTaskContext and triggers a Horovod job using mpirun. Each Python MPI process loads the pickled program back, deserializes it, and runs it.
+# MAGIC HorovodRunner is a general API to run distributed DL workloads on Databricks using Uber’s <a href="https://github.com/uber/horovod" target="_blank">Horovod</a> framework. By integrating Horovod with Spark’s barrier mode, Databricks is able to provide higher stability for long-running deep learning training jobs on Spark. HorovodRunner takes a Python method that contains DL training code with Horovod hooks. This method gets pickled on the driver and sent to Spark workers. A Horovod MPI job is embedded as a Spark job using barrier execution mode. The first executor collects the IP addresses of all task executors using BarrierTaskContext and triggers a Horovod job using mpirun. Each Python MPI process loads the pickled program back, deserializes it, and runs it.
 # MAGIC 
 # MAGIC <br>
 # MAGIC 
 # MAGIC ![](https://files.training.databricks.com/images/horovod-runner.png)
 # MAGIC 
 # MAGIC For additional resources, see:
-# MAGIC * [Horovod Runner Docs](https://docs.microsoft.com/en-us/azure/databricks/applications/deep-learning/distributed-training/horovod-runner)
-# MAGIC * [Horovod Runner webinar](https://vimeo.com/316872704/e79235f62c)  
+# MAGIC * <a href="https://docs.microsoft.com/en-us/azure/databricks/applications/deep-learning/distributed-training/horovod-runner" target="_blank">Horovod Runner Docs</a>
+# MAGIC * <a href="https://vimeo.com/316872704/e79235f62c" target="_blank">Horovod Runner webinar</a>  
 
 # COMMAND ----------
 
@@ -49,7 +49,7 @@ def build_model():
 # MAGIC %md
 # MAGIC ## Shard Data
 # MAGIC 
-# MAGIC From the [Horovod docs](https://github.com/horovod/horovod/blob/master/docs/concepts.rst):
+# MAGIC From the <a href="https://github.com/horovod/horovod/blob/master/docs/concepts.rst" target="_blank">Horovod docs</a>:
 # MAGIC 
 # MAGIC Horovod core principles are based on the MPI concepts size, rank, local rank, allreduce, allgather, and broadcast. These are best explained by example. Say we launched a training script on 4 VMs, each having 4 GPUs. If we launched one copy of the script per GPU:
 # MAGIC 

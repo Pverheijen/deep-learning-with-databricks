@@ -11,8 +11,8 @@
 # MAGIC # Sentiment Analysis with LSTM and MLflow
 # MAGIC 
 # MAGIC ## ![Spark Logo Tiny](https://files.training.databricks.com/images/105/logo_spark_tiny.png) In this lesson you:<br>
-# MAGIC - Build a bi-directional Long Short Term Memory (LSTM) model using [tensorflow.keras](https://www.tensorflow.org/api_docs/python/tf/keras) to classify the sentiment of text reviews
-# MAGIC - Log model inputs and outputs using [MLflow](https://www.mlflow.org/docs/latest/index.html)
+# MAGIC - Build a bi-directional Long Short Term Memory (LSTM) model using <a href="https://www.tensorflow.org/api_docs/python/tf/keras" target="_blank">tensorflow.keras</a> to classify the sentiment of text reviews
+# MAGIC - Log model inputs and outputs using <a href="https://www.mlflow.org/docs/latest/index.html" target="_blank">MLflow</a>
 
 # COMMAND ----------
 
@@ -126,9 +126,9 @@ X_train_seq_padded = pad_sequences(X_train_seq, maxlen=max_length)
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ### Repeat the process of tokenization and padding for `test_df`
+# MAGIC ### Repeat the process of tokenization and padding for **`test_df`**
 # MAGIC 
-# MAGIC The same processing should also be applied to the `test_df` as well.
+# MAGIC The same processing should also be applied to the **`test_df`** as well.
 
 # COMMAND ----------
 
@@ -147,8 +147,8 @@ X_test_seq_padded = pad_sequences(X_test_seq, maxlen=max_length)
 # MAGIC 
 # MAGIC There are a couple hyperparameters within the LSTM architecture itself that can be tuned:
 # MAGIC 
-# MAGIC - `embedding_dim` : The embedding layer encodes the input sequence into a sequence of dense vectors of dimension `embedding_dim`.
-# MAGIC - `lstm_out` : The LSTM transforms the vector sequence into a single vector of size `lstm_out`, containing information about the entire sequence.
+# MAGIC - **`embedding_dim`** : The embedding layer encodes the input sequence into a sequence of dense vectors of dimension **`embedding_dim`**.
+# MAGIC - **`lstm_out`** : The LSTM transforms the vector sequence into a single vector of size **`lstm_out`**, containing information about the entire sequence.
 # MAGIC 
 # MAGIC <img src="https://www.researchgate.net/profile/Latifa-Nabila-Harfiya/publication/344751031/figure/fig2/AS:948365760155651@1603119425682/The-unfolded-architecture-of-Bidirectional-LSTM-BiLSTM-with-three-consecutive-steps.png" width=500>
 
@@ -198,9 +198,9 @@ with mlflow.start_run() as run:
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ### Apply inference at scale using `mlflow.pyfunc.spark_udf`
+# MAGIC ### Apply inference at scale using **`mlflow.pyfunc.spark_udf`**
 # MAGIC 
-# MAGIC You can read more about Spark UDFs with MLflow [here](https://mlflow.org/docs/latest/python_api/mlflow.pyfunc.html#mlflow.pyfunc.spark_udf).
+# MAGIC You can read more about Spark UDFs with MLflow <a href="https://mlflow.org/docs/latest/python_api/mlflow.pyfunc.html#mlflow.pyfunc.spark_udf" target="_blank">here</a>.
 
 # COMMAND ----------
 

@@ -8,9 +8,9 @@
 # COMMAND ----------
 
 # MAGIC %md # Keras Lab: Wine Quality Dataset
-# MAGIC Let's build a Keras model to predict the quality rating on the [Wine Quality Dataset](https://www.tensorflow.org/datasets/catalog/wine_quality).
+# MAGIC Let's build a Keras model to predict the quality rating on the <a href="https://www.tensorflow.org/datasets/catalog/wine_quality" target="_blank">Wine Quality Dataset</a>.
 # MAGIC 
-# MAGIC This dataset contains features based on the physicochemical tests of a wine, and the label you will try to predict is the `quality`, the rating of the wine out of 10. 
+# MAGIC This dataset contains features based on the physicochemical tests of a wine, and the label you will try to predict is the **`quality`**, the rating of the wine out of 10. 
 # MAGIC 
 # MAGIC ![](https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Wine_grapes03.jpg/340px-Wine_grapes03.jpg)
 # MAGIC 
@@ -56,9 +56,9 @@ X_train.describe()
 
 # MAGIC %md # 1. Define a Network
 # MAGIC 
-# MAGIC We need to specify our [dense layers](https://www.tensorflow.org/api_docs/python/tf/keras/layers/Dense).
+# MAGIC We need to specify our <a href="https://www.tensorflow.org/api_docs/python/tf/keras/layers/Dense" target="_blank">dense layers</a>.
 # MAGIC 
-# MAGIC The first layer should have 50 units, the second layer, 20 units, and the last layer 1 unit. For all of the layers, make the activation function `relu` except for the last layer, as that activation function should be `linear`.
+# MAGIC The first layer should have 50 units, the second layer, 20 units, and the last layer 1 unit. For all of the layers, make the activation function **`relu`** except for the last layer, as that activation function should be **`linear`**.
 
 # COMMAND ----------
 
@@ -77,7 +77,7 @@ model = <FILL_IN>
 # MAGIC 
 # MAGIC If you did the previous cell correctly, you should see there are 700 parameters for the first layer. Why are there 700?
 # MAGIC 
-# MAGIC **HINT**: Add in `use_bias=False` in the Dense layer, and you should see a difference in the number of parameters (don't forget to set this back to `True` before moving on)
+# MAGIC **HINT**: Add in **`use_bias=False`** in the Dense layer, and you should see a difference in the number of parameters (don't forget to set this back to **`True`** before moving on)
 
 # COMMAND ----------
 
@@ -87,9 +87,9 @@ model = <FILL_IN>
 
 # MAGIC %md # 2. Compile a Network
 # MAGIC 
-# MAGIC To [compile](https://www.tensorflow.org/api_docs/python/tf/keras/Model#compile) the network, we need to specify the loss function, which optimizer to use, and a metric to evaluate how well the model is performing.
+# MAGIC To <a href="https://www.tensorflow.org/api_docs/python/tf/keras/Model#compile" target="_blank">compile</a> the network, we need to specify the loss function, which optimizer to use, and a metric to evaluate how well the model is performing.
 # MAGIC 
-# MAGIC Use `mse` as the loss function, `adam` as the optimizer, and `mse` as the evaluation metric.
+# MAGIC Use **`mse`** as the loss function, **`adam`** as the optimizer, and **`mse`** as the evaluation metric.
 
 # COMMAND ----------
 
@@ -99,7 +99,7 @@ model = <FILL_IN>
 
 # MAGIC %md # 3. Fit a Network
 # MAGIC 
-# MAGIC Now we are going to [fit](https://www.tensorflow.org/api_docs/python/tf/keras/Model#fit) our model to our training data. Set `epochs` to 30 and `batch_size` to 32, `verbose` to 2.
+# MAGIC Now we are going to <a href="https://www.tensorflow.org/api_docs/python/tf/keras/Model#fit" target="_blank">fit</a> our model to our training data. Set **`epochs`** to 30 and **`batch_size`** to 32, **`verbose`** to 2.
 
 # COMMAND ----------
 

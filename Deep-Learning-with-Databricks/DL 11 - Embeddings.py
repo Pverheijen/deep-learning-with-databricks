@@ -66,7 +66,7 @@
 # MAGIC * <a href="https://nlp.stanford.edu/projects/glove/" target="_blank"> GloVe </a> by Stanford NLP
 # MAGIC * <a href="https://fasttext.cc/" target="_blank"> fastText </a> by Facebook
 # MAGIC * <a href="https://allennlp.org/elmo" target="_blank"> ELMO </a> by Allen NLP
-# MAGIC * <a href="https://bert-embedding.readthedocs.io/en/latest/"> BERT </a> by Google
+# MAGIC * <a href="https://bert-embedding.readthedocs.io/en/latest/" target="_blank"> BERT </a> by Google
 # MAGIC 
 # MAGIC There are also different libraries which we can easily train/load word embeddings with:
 # MAGIC * <a href="https://spacy.io/api/vectors" target="_blank"> spaCy </a> has built in vectors
@@ -75,9 +75,9 @@
 # MAGIC 
 # MAGIC In this section we will focus on using SparkML to train a custom embedding model specific to our reviews dataset.
 # MAGIC 
-# MAGIC Within SparkML, there is built-in functionality to learn a distributed vector representation of words using the Word2Vec approach. Given a column of text, the `Word2Vec` function will assign to each row its respective word embedding. For our reviews DataFrame, this means each review will be given one vector representation, the average embedding of all words in the review. More details about this training process can be found at this <a href="https://spark.apache.org/docs/latest/ml-features.html#word2vec" target="_blank"> SparkML Word2Vec </a> documentation page.
+# MAGIC Within SparkML, there is built-in functionality to learn a distributed vector representation of words using the Word2Vec approach. Given a column of text, the **`Word2Vec`** function will assign to each row its respective word embedding. For our reviews DataFrame, this means each review will be given one vector representation, the average embedding of all words in the review. More details about this training process can be found at this <a href="https://spark.apache.org/docs/latest/ml-features.html#word2vec" target="_blank"> SparkML Word2Vec </a> documentation page.
 # MAGIC 
-# MAGIC Run the following cell to obtain Word2Vec embeddings of `Text` in our reviews dataframe.
+# MAGIC Run the following cell to obtain Word2Vec embeddings of **`Text`** in our reviews dataframe.
 
 # COMMAND ----------
 
@@ -89,9 +89,9 @@ display(processed_df.limit(2))
 # MAGIC %md
 # MAGIC ### Word2Vec: SparkML
 # MAGIC 
-# MAGIC When training our embeddings, in SparkML's Word2Vec function we can specify two hyperparameters, `vectorSize` and `minCount`.
-# MAGIC * `vectorSize` is the dimension of the embeddings that we want to learn and typically we want this dimension to be lot smaller than the number of unique words in our dataset (benefit over TFIDF and one-hot encoded vectors).
-# MAGIC * `minCount` is the minimum number of times a unique word must appear to be included in the Word2Vec model's vocabulary. This hyperparameter can be used to reduce the amount of computation done by not training our model on every single word that appears.
+# MAGIC When training our embeddings, in SparkML's Word2Vec function we can specify two hyperparameters, **`vectorSize`** and **`minCount`**.
+# MAGIC * **`vectorSize`** is the dimension of the embeddings that we want to learn and typically we want this dimension to be lot smaller than the number of unique words in our dataset (benefit over TFIDF and one-hot encoded vectors).
+# MAGIC * **`minCount`** is the minimum number of times a unique word must appear to be included in the Word2Vec model's vocabulary. This hyperparameter can be used to reduce the amount of computation done by not training our model on every single word that appears.
 # MAGIC 
 # MAGIC Run this cell to train our Word2Vec model and obtain embeddings for each row of text in our DataFrame. The SparkML model will learn a vector representation for each unique token in our dataset so the single vector that represents each row of text is simply the average of all the word embeddings in the text.
 # MAGIC 
@@ -129,7 +129,7 @@ word_vectors = api.load("glove-wiki-gigaword-100")
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC Let's take a look at the embedding of the word `california`.
+# MAGIC Let's take a look at the embedding of the word **`california`**.
 
 # COMMAND ----------
 
@@ -150,7 +150,7 @@ print("Vector embedding for the token 'california':\n", california_vec)
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC Using vector arithmetic and the cosine similarities between the 400,000 tokens, Gensim will give us word suggestions. It looks through all 400,000 tokens of the model and returns those whose embeddings have the closest cosine similarity to the embedding of `california`.
+# MAGIC Using vector arithmetic and the cosine similarities between the 400,000 tokens, Gensim will give us word suggestions. It looks through all 400,000 tokens of the model and returns those whose embeddings have the closest cosine similarity to the embedding of **`california`**.
 
 # COMMAND ----------
 
@@ -160,7 +160,7 @@ word_vectors.most_similar("california")
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC Using the `positive` and `negative` parameters of the `.most_similar()` function, we will get words with embeddings that are most similar to the `positive` embeddings while having the `negative` embeddings subtracted from it.
+# MAGIC Using the **`positive`** and **`negative`** parameters of the **`.most_similar()`** function, we will get words with embeddings that are most similar to the **`positive`** embeddings while having the **`negative`** embeddings subtracted from it.
 # MAGIC 
 # MAGIC Since these embeddings are trying to capture the semantic meaning behind tokens, we can think of the following command as combining the concepts of "woman" and "king" and subtracting from that resulting combination the concept of a "man".
 
@@ -187,9 +187,9 @@ result
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC Let's try to get a better understanding of how the embeddings work by visualizing the embeddings of `woman`, `king`,  `man`, and `queen`.
+# MAGIC Let's try to get a better understanding of how the embeddings work by visualizing the embeddings of **`woman`**, **`king`**,  **`man`**, and **`queen`**.
 # MAGIC 
-# MAGIC Run the cell below to create a DataFrame containing the 100D embeddings generated by GloVE and mapped 2D embeddings of the words `woman`, `king`,  `man`, `queen`, and `object`. Let's graph the PCA results of our 4 vectors, `woman`, `king`,  `man`, and `queen`, in a 2D graph.
+# MAGIC Run the cell below to create a DataFrame containing the 100D embeddings generated by GloVE and mapped 2D embeddings of the words **`woman`**, **`king`**,  **`man`**, **`queen`**, and **`object`**. Let's graph the PCA results of our 4 vectors, **`woman`**, **`king`**,  **`man`**, and **`queen`**, in a 2D graph.
 
 # COMMAND ----------
 
@@ -264,7 +264,7 @@ for start, neg, pos in examples:
 # MAGIC 
 # MAGIC Word embeddings are trained on very large corpora of text, usually taken from the public internet (the GloVE model was trained on Wikipedia articles). Unfortunately, there is still a fair bit of bias in the world around issues such as gender and race, and these biases will be present in the language for some of these articles. The neural networks that learn the word embeddings will pick up this bias in just the same way they pick up on all of other ways in which humans make distinctions between words and meanings. Thus, in addition to pure semantic meaning, the model also learns and applies the biases and stereotypes present within the training data. Some of these biases may be idiosyncratic and culture-specific (such as identifying dogs as masculine and cats as feminine), but others can be quite harmful.
 # MAGIC 
-# MAGIC Researchers are continuing to develop ways of identifying and "de-biasing" or correcting for such biases in language models, and this remains an area of active research (see [here](https://papers.nips.cc/paper/6228-man-is-to-computer-programmer-as-woman-is-to-homemaker-debiasing-word-embeddings.pdf)). It is important to be aware of these implicit biases in our data, and try to correct them, because otherwise A.I. systems we build on it will simply continue perpetuate these biases in future decisions that they make. This can be both embarrassing and costly to companies that deploy such models for real-world use.
+# MAGIC Researchers are continuing to develop ways of identifying and "de-biasing" or correcting for such biases in language models, and this remains an area of active research see <a href="https://papers.nips.cc/paper/6228-man-is-to-computer-programmer-as-woman-is-to-homemaker-debiasing-word-embeddings.pdf" target="_blank">here</a>. It is important to be aware of these implicit biases in our data, and try to correct them, because otherwise A.I. systems we build on it will simply continue perpetuate these biases in future decisions that they make. This can be both embarrassing and costly to companies that deploy such models for real-world use.
 
 # COMMAND ----------
 
@@ -301,7 +301,7 @@ display(processed_df.limit(2))
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC Now build a vector of the words in the description. Since `pandas_udf` does not currently support `VectorUDT` type, we will be using regular `udf`.
+# MAGIC Now build a vector of the words in the description. Since **`pandas_udf`** does not currently support **`VectorUDT`** type, we will be using regular **`udf`**.
 
 # COMMAND ----------
 

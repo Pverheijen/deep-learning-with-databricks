@@ -9,9 +9,9 @@
 
 # MAGIC %md # Project Information
 # MAGIC 
-# MAGIC * Name: **Scalable Deep Learning with Tensorflow and Apache Spark**
-# MAGIC * Version:  **5.0.0**
-# MAGIC * Built On: **Jan 28, 2022 at 20:21:44 UTC**
+# MAGIC * Name: **Deep Learning with Databricks**
+# MAGIC * Version:  **5.1.0**
+# MAGIC * Built On: **Feb 26, 2022 at 19:12:37 UTC**
 
 # COMMAND ----------
 

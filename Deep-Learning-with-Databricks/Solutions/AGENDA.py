@@ -9,7 +9,7 @@
 
 # MAGIC %md
 # MAGIC # Agenda
-# MAGIC ## Scalable Deep Learning with TensorFlow and Apache Spark™
+# MAGIC ## Deep Learning with Databricks
 
 # COMMAND ----------
 

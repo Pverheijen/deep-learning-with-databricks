@@ -18,22 +18,22 @@
 # MAGIC - Need groups of words as a single entity rather than single words
 # MAGIC - Detect named entities and their types 
 # MAGIC   - people, locations, organizations 
-# MAGIC - Use SparkNLP - an open source library created by [John Snow Labs](https://nlp.johnsnowlabs.com/api/python/reference/index.html)
+# MAGIC - Use SparkNLP - an open source library created by <a href="https://nlp.johnsnowlabs.com/api/python/reference/index.html" target="_blank">John Snow Labs</a>
 # MAGIC 
 # MAGIC 
 # MAGIC <img src="https://tse4.mm.bing.net/th?id=OIP.VIsqw-pcH4m6rMKvFteEaQAAAA&pid=Api" width="250px" height="50px">
 # MAGIC 
 # MAGIC Library Prerequisites: 
-# MAGIC - `spark-nlp-display==1.8` 
-# MAGIC - `spark-nlp==3.4.0`
+# MAGIC - **`spark-nlp-display==1.8`** 
+# MAGIC - **`spark-nlp==3.4.0`**
 # MAGIC 
-# MAGIC You need to additionally install a [Maven package on the cluster](https://docs.databricks.com/libraries/cluster-libraries.html) as well. Refer to the [package cheatsheet released by SparkNLP](https://github.com/JohnSnowLabs/spark-nlp#packages-cheatsheet) so that you know which Maven package version you should use. 
+# MAGIC You need to additionally install a <a href="https://docs.databricks.com/libraries/cluster-libraries.html) as well. Refer to the [package cheatsheet released by SparkNLP](https://github.com/JohnSnowLabs/spark-nlp#packages-cheatsheet" target="_blank">Maven package on the cluster</a> so that you know which Maven package version you should use. 
 # MAGIC 
 # MAGIC When on 9.x runtime, use: 
-# MAGIC - `com.johnsnowlabs.nlp:spark-nlp_2.12:3.4.0`
+# MAGIC - **`com.johnsnowlabs.nlp:spark-nlp_2.12:3.4.0`**
 # MAGIC 
 # MAGIC When on 10.x runtime, use: 
-# MAGIC - `com.johnsnowlabs.nlp:spark-nlp-spark32_2.12:3.4.0`
+# MAGIC - **`com.johnsnowlabs.nlp:spark-nlp-spark32_2.12:3.4.0`**
 
 # COMMAND ----------
 
@@ -54,8 +54,8 @@
 # MAGIC - Goal:
 # MAGIC   - assess loan agreement, loan amount, value of collateral
 # MAGIC   - perform risk assessment
-# MAGIC - Research paper published [here](https://aclanthology.org/U15-1010.pdf) by a group of researchers at the University of Melbourne, Australia. 
-# MAGIC - Data can be downloaded [here](https://people.eng.unimelb.edu.au/tbaldwin/#resources)
+# MAGIC - Research paper published <a href="https://aclanthology.org/U15-1010.pdf" target="_blank">here</a> by a group of researchers at the University of Melbourne, Australia. 
+# MAGIC - Data can be downloaded <a href="https://people.eng.unimelb.edu.au/tbaldwin/#resources" target="_blank">here</a>
 
 # COMMAND ----------
 
@@ -65,12 +65,12 @@
 
 # MAGIC %md
 # MAGIC CoNLL is the conventional name for TSV data in NLP. It originally refers to the shared NLP tasks organized by the Conferences of Natural Language Learning (CoNLL). 
-# MAGIC You can [go to this page](https://raw.githubusercontent.com/patverga/torch-ner-nlp-from-scratch/master/data/conll2003/eng.train) to look at how the data looks like: this particular dataset - that contains Reuter stories - is one of the most widely used NER datasets in the CoNLL format. But we will be using financial data for this notebook! 
+# MAGIC You can <a href="https://raw.githubusercontent.com/patverga/torch-ner-nlp-from-scratch/master/data/conll2003/eng.train" target="_blank">go to this page</a> to look at how the data looks like: this particular dataset - that contains Reuter stories - is one of the most widely used NER datasets in the CoNLL format. But we will be using financial data for this notebook! 
 # MAGIC 
 # MAGIC <img src="https://files.training.databricks.com/images/conll_sample.png" height="1px" width="300px">
 # MAGIC <img src="https://www.researchgate.net/profile/Mitchell-Marcus-2/publication/2873803/figure/tbl1/AS:669991049392137@1536749722377/1-The-Penn-Treebank-POS-tagset.png" height="5px" width="500px">
 # MAGIC 
-# MAGIC [Here is the source for the image on the right.](https://www.researchgate.net/figure/1-The-Penn-Treebank-POS-tagset_tbl1_2873803)
+# MAGIC <a href="https://www.researchgate.net/figure/1-The-Penn-Treebank-POS-tagset_tbl1_2873803" target="_blank">Here is the source for the image on the right.</a>
 
 # COMMAND ----------
 
@@ -86,7 +86,7 @@ test_data = CoNLL().readDataset(spark, f"{datasets_dir}/nlp/sec-fillings/test-fi
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC Here are all the available pretrained [pipelines](https://nlp.johnsnowlabs.com/docs/en/pipelines) in SparkNLP. This `recognize_entities_dl` pipeline was trained on [Glove](https://nlp.johnsnowlabs.com/2020/01/22/glove_100d.html) embeddings and this [NER](https://nlp.johnsnowlabs.com/2020/03/19/ner_dl_en.html) model that was trained on the CoNLL 2003 Reuters text corpus.
+# MAGIC Here are all the available pretrained <a href="https://nlp.johnsnowlabs.com/docs/en/pipelines" target="_blank">pipelines</a> in SparkNLP. This **`recognize_entities_dl`** pipeline was trained on <a href="https://nlp.johnsnowlabs.com/2020/01/22/glove_100d.html" target="_blank">Glove</a> embeddings and this <a href="https://nlp.johnsnowlabs.com/2020/03/19/ner_dl_en.html" target="_blank">NER</a> model that was trained on the CoNLL 2003 Reuters text corpus.
 
 # COMMAND ----------
 
@@ -104,7 +104,7 @@ rec_entities_pipeline.model.stages
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC Visualizations are possible with the use of the library `spark-nlp-display`. Documentation is [here](https://github.com/JohnSnowLabs/spark-nlp-display/blob/main/tutorials/Spark_NLP_Display.ipynb).
+# MAGIC Visualizations are possible with the use of the library **`spark-nlp-display`**. Documentation is <a href="https://github.com/JohnSnowLabs/spark-nlp-display/blob/main/tutorials/Spark_NLP_Display.ipynb" target="_blank">here</a>.
 
 # COMMAND ----------
 
@@ -188,7 +188,7 @@ with mlflow.start_run() as run:
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC Load the model using `mlflow.spark.load_model`
+# MAGIC Load the model using **`mlflow.spark.load_model`**
 
 # COMMAND ----------
 
@@ -199,7 +199,7 @@ loaded_model = mlflow.spark.load_model(f"runs:/{run.info.run_id}/ner_model")
 # MAGIC %md
 # MAGIC ### Model Inference
 # MAGIC 
-# MAGIC Note that computing evaluation metrics is not available on the open-sourced version of SparkNLP. It's only available for the enterprise edition of SparkNLP. Refer to this [documentation](https://nlp.johnsnowlabs.com/docs/en/evaluation#evaluating-ner-dl).
+# MAGIC Note that computing evaluation metrics is not available on the open-sourced version of SparkNLP. It's only available for the enterprise edition of SparkNLP. Refer to this <a href="https://nlp.johnsnowlabs.com/docs/en/evaluation#evaluating-ner-dl" target="_blank">documentation</a>.
 
 # COMMAND ----------
 
@@ -226,7 +226,7 @@ ann_text.keys()
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC The error occurred because the visualization is expecting the column `document` in the data. However, the column is not present because our custom `ner_pipeline` only produced `bert` and `ner` as our output columns! To allow visualizations to work, we will need to construct the complete NLP pipeline, starting from assembling the text data, to tokenizing data, and then finally continue with the rest of the NER pipeline we have made above! 
+# MAGIC The error occurred because the visualization is expecting the column **`document`** in the data. However, the column is not present because our custom **`ner_pipeline`** only produced **`bert`** and **`ner`** as our output columns! To allow visualizations to work, we will need to construct the complete NLP pipeline, starting from assembling the text data, to tokenizing data, and then finally continue with the rest of the NER pipeline we have made above! 
 
 # COMMAND ----------
 
@@ -278,9 +278,9 @@ full_ner_pipeline = Pipeline(stages=[step1_document, step2_sentence,
 
 # MAGIC %md
 # MAGIC 
-# MAGIC According to the documentation, `LightPipeline` is equivalent to SparkML Pipeline but much faster with small amounts of data. 
+# MAGIC According to the documentation, **`LightPipeline`** is equivalent to SparkML Pipeline but much faster with small amounts of data. 
 # MAGIC 
-# MAGIC Refer to [documentation here](https://nlp.johnsnowlabs.com/api/python/reference/autosummary/sparknlp.base.LightPipeline.html).
+# MAGIC Refer to <a href="https://nlp.johnsnowlabs.com/api/python/reference/autosummary/sparknlp.base.LightPipeline.html" target="_blank">documentation here</a>.
 
 # COMMAND ----------
 
