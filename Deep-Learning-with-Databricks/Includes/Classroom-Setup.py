@@ -24,6 +24,10 @@ username = getUsername()
 userhome = getUserhome()
 course_dir = getCourseDir()
 datasets_dir = f"{course_dir}/datasets"
+
+#source_path = f"wasbs://courseware@dbacademy.blob.core.windows.net/scalable-deep-learning-with-tensorflow-and-apache-spark/v01"
+source_path = f"wasbs://courseware@dbacademy.blob.core.windows.net/deep-learning-with-databricks/v01"
+
 working_dir = getWorkingDir()
 
 dbutils.fs.mkdirs(userhome)
@@ -45,7 +49,6 @@ def install_datasets(reinstall=False):
 
     # You can swap out the source_path with an alternate version during development
     # source_path = f"dbfs:/mnt/work-xxx/{course_name}"
-    source_path = f"wasbs://courseware@dbacademy.blob.core.windows.net/scalable-deep-learning-with-tensorflow-and-apache-spark/v01"
     print(f"The source for this dataset is\n{source_path}/\n")
 
     # Change the final directory to another name if you like, e.g. from "datasets" to "raw"
@@ -73,11 +76,50 @@ def install_datasets(reinstall=False):
 
     print(f"""\nThe install of the datasets completed successfully.""")  
 
+def list_r(path, prefix=None, results=None):
+    if prefix is None: prefix = path
+    if results is None: results = list()
+    
+    files = dbutils.fs.ls(path)
+    for file in files:
+        data = file.path[len(prefix):]
+        results.append(data)
+        if file.isDir(): list_r(file.path, prefix, results)
+        
+    results.sort()
+    return results
+
+def validate_datasets():
+    import time
+    start = int(time.time())
+    print(f"\nValidating the local copy of the datsets", end="...")
+    
+    local_files = list_r(datasets_dir)
+    remote_files = list_r(source_path)
+
+    for file in local_files:
+        if file not in remote_files:
+            print(f"\n  - Found extra file: {file}")
+            print(f"  - This problem can be fixed by reinstalling the datasets")
+            raise Exception("Validation failed - see previous messages for more information.")
+
+    for file in remote_files:
+        if file not in local_files:
+            print(f"\n  - Missing file: {file}")
+            print(f"  - This problem can be fixed by reinstalling the datasets")
+            raise Exception("Validation failed - see previous messages for more information.")
+        
+    print(f"({int(time.time())-start} seconds)")
+
+# COMMAND ----------
+
 try:
     reinstall = dbutils.widgets.get("reinstall").lower() == "true"
     install_datasets(reinstall=reinstall)
 except:
     install_datasets(reinstall=False)
+    
+validate_datasets()
 
 None # Suppress output
 

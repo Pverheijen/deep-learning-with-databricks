@@ -27,7 +27,7 @@
 # MAGIC - **`spark-nlp-display==1.8`** 
 # MAGIC - **`spark-nlp==3.4.0`**
 # MAGIC 
-# MAGIC You need to additionally install a <a href="https://docs.databricks.com/libraries/cluster-libraries.html) as well. Refer to the [package cheatsheet released by SparkNLP](https://github.com/JohnSnowLabs/spark-nlp#packages-cheatsheet" target="_blank">Maven package on the cluster</a> so that you know which Maven package version you should use. 
+# MAGIC You need to additionally install a <a href="https://docs.databricks.com/libraries/cluster-libraries.html" target="_blank">Maven package on the cluster</a> as well. 
 # MAGIC 
 # MAGIC When on 9.x runtime, use: 
 # MAGIC - **`com.johnsnowlabs.nlp:spark-nlp_2.12:3.4.0`**

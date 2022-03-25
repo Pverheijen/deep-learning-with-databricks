@@ -25,8 +25,6 @@
 # COMMAND ----------
 
 # MAGIC %pip install lime==0.2.0.1
-# MAGIC %pip install tensorflow-datasets
-# MAGIC %pip install numba==0.53
 
 # COMMAND ----------
 
@@ -34,18 +32,17 @@
 
 # COMMAND ----------
 
-import tensorflow_datasets as tfds
+import pandas as pd
+from sklearn.datasets import load_wine
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 
-# Load dataset
-wine_quality_tfds = tfds.load("wine_quality", split="train", shuffle_files=False)
-wine_quality_pdf = tfds.as_dataframe(wine_quality_tfds)
-wine_quality_pdf.columns = wine_quality_pdf.columns.str.replace("features/", "")
+# Load Dataset
+wine_quality = load_wine(as_frame=True)
 
-# Split and scale dataset
-X_train, X_test, y_train, y_test = train_test_split(wine_quality_pdf.drop("quality", axis=1),
-                                                    wine_quality_pdf["quality"],
+# Split 80/20 train-test
+X_train, X_test, y_train, y_test = train_test_split(wine_quality.data,
+                                                    wine_quality.target,
                                                     test_size=0.2,
                                                     random_state=1)
 # Scale features
@@ -65,7 +62,7 @@ from tensorflow.keras.models import Sequential
 tf.random.set_seed(42)
 
 model = Sequential()
-model.add(Dense(50, input_dim=11, activation="relu"))
+model.add(Dense(50, input_dim=13, activation="relu"))
 model.add(Dense(20, activation="relu"))
 model.add(Dense(1))
 
@@ -104,7 +101,7 @@ def model_predict(input):
     return model.predict(input).flatten()
 
 # NOTE: In order to pass in categorical_features, they all need to be ints
-explainer = LimeTabularExplainer(X_train, feature_names=wine_quality_pdf.drop("quality", axis=1).columns, mode="regression")
+explainer = LimeTabularExplainer(X_train, feature_names=wine_quality.feature_names, mode="regression")
 
 # COMMAND ----------
 
@@ -186,7 +183,7 @@ file_path = "/tmp/shap.html"
 shap.save_html(file_path, shap.force_plot(base_value, 
                                           shap_values[0], 
                                           features=X_test[0:1],
-                                          feature_names=wine_quality_pdf.drop("quality", axis=1).columns, 
+                                          feature_names=wine_quality.feature_names, 
                                           show=False))
 
 # COMMAND ----------
@@ -219,7 +216,7 @@ displayHTML(f.read())
 
 import pandas as pd
 
-pd.DataFrame(X_test[0], wine_quality_pdf.drop("quality", axis=1).columns, ["features"])
+pd.DataFrame(X_test[0], wine_quality.feature_names, ["features"])
 
 # COMMAND ----------
 
@@ -230,7 +227,7 @@ pd.DataFrame(X_test[0], wine_quality_pdf.drop("quality", axis=1).columns, ["feat
 
 # COMMAND ----------
 
-shap_features = pd.DataFrame(shap_values[0][0], wine_quality_pdf.drop("quality", axis=1).columns, ["features"])
+shap_features = pd.DataFrame(shap_values[0][0], wine_quality.feature_names, ["features"])
 shap_features.sort_values("features")
 
 # COMMAND ----------
@@ -242,7 +239,7 @@ shap_features.sort_values("features")
 
 shap.summary_plot(shap_explainer.shap_values(X_train[0:200]), 
                   features=X_train[0:200],
-                  feature_names=wine_quality_pdf.drop("quality", axis=1).columns)
+                  feature_names=wine_quality.feature_names)
 
 # COMMAND ----------
 

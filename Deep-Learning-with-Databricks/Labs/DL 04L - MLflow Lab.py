@@ -127,10 +127,10 @@ import pandas as pd
 
 predict = mlflow.pyfunc.spark_udf(FILL_IN)
 
-X_test_df = spark.createDataFrame(pd.concat([pd.DataFrame(X_test, columns=wine_quality_pdf.drop("quality", axis=1).columns), 
+X_test_df = spark.createDataFrame(pd.concat([pd.DataFrame(X_test, columns=wine_quality.feature_names), 
                                              pd.DataFrame(y_test, columns=["label"])], axis=1))
 
-display(X_test_df.withColumn("prediction", predict(*wine_quality_pdf.drop("quality", axis=1).columns)))
+display(X_test_df.withColumn("prediction", predict(*wine_quality.feature_names)))
 
 # COMMAND ----------
 

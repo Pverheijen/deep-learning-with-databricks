@@ -42,14 +42,14 @@
 # MAGIC - Start with k of at least 5
 # MAGIC - Use *log(1 - D(G(z)))* to provide stronger, non-saturated gradients
 # MAGIC 
-# MAGIC <img src="https://media-exp1.licdn.com/dms/image/C5112AQGWsO2ZFbKnYQ/article-inline_image-shrink_1000_1488/0/1520192659145?e=1647475200&v=beta&t=06VrAMeZgpmcvw0K-bQV892ecuBlWJggwv045e4Jz8Q" width=1000>
+# MAGIC <img src="https://media-exp1.licdn.com/dms/image/C5112AQGWsO2ZFbKnYQ/article-inline_image-shrink_1000_1488/0/1520192659145?e=1647475200&v=beta&t=06VrAMeZgpmcvw0K-bQV892ecuBlWJggwv045e4Jz8Q" style="width:1000px">
 # MAGIC 
 # MAGIC GANs can be used in generating art, deep fakes, up-scaling graphics, and astronomy research. For example, we can use GANs to generate synthetic handwritten images, resembling the MNIST dataset. 
 # MAGIC 
 # MAGIC <img src = "https://tensorflow.org/images/gan/dcgan.gif" width=600>
 # MAGIC 
 # MAGIC 
-# MAGIC As a follow-up, we highly recommend this <a href="https://www.coursera.org/specializations/generative-adversarial-networks-gans?" target="_blank">GANs</a> course from coursera. There are other very interesting applications of generative models, such as <a href="https://openai.com/blog/glow/" target="">Glow</a> from OpenAI and <a href="https://ai.facebook.com/blog/wav2vec-unsupervised-speech-recognition-without-supervision/" target="_blank">speech recognition</a> from Facebook AI.
+# MAGIC As a follow-up, we highly recommend this <a href="https://www.coursera.org/specializations/generative-adversarial-networks-gans?" target="_blank">GANs</a> course from coursera. There are other very interesting applications of generative models, such as <a href="https://openai.com/blog/glow/" target="_blank">Glow</a> from OpenAI and <a href="https://ai.facebook.com/blog/wav2vec-unsupervised-speech-recognition-without-supervision/" target="_blank">speech recognition</a> from Facebook AI.
 
 # COMMAND ----------
 

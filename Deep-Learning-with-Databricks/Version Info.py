@@ -10,8 +10,8 @@
 # MAGIC %md # Project Information
 # MAGIC 
 # MAGIC * Name: **Deep Learning with Databricks**
-# MAGIC * Version:  **5.1.0**
-# MAGIC * Built On: **Feb 26, 2022 at 19:12:37 UTC**
+# MAGIC * Version:  **5.1.1**
+# MAGIC * Built On: **Mar 25, 2022 at 21:05:02 UTC**
 
 # COMMAND ----------
 

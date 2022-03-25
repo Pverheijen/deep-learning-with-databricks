@@ -24,7 +24,7 @@
 
 # MAGIC %md
 # MAGIC ## VGG16
-# MAGIC ![vgg16](https://neurohive.io/wp-content/uploads/2018/11/vgg16-neural-network.jpg)
+# MAGIC ![vgg16](https://miro.medium.com/max/940/1*3-TqqkRQ4rWLOMX-gvkYwA.png)
 # MAGIC 
 # MAGIC We are going to start with the VGG16 model, which was introduced by Simonyan and Zisserman in their 2014 paper <a href="https://arxiv.org/abs/1409.1556" target="_blank">Very Deep Convolutional Networks for Large Scale Image Recognition</a>.
 # MAGIC 
@@ -197,7 +197,7 @@ display(results_df)
 
 # MAGIC %md ### Pandas/Vectorized UDF
 # MAGIC 
-# MAGIC Pandas/Vectorized UDFs are available in Python to help speed up the computation by leveraging Apache Arrow. <a href="https://arrow.apache.org/" target="_blank">Apache Arrow</a> is an in-memory columnar data format that is used in Spark to efficiently transfer data between JVM and Python processes with near-zero (de)serialization cost. See more <a href="https://spark.apache.org/docs/latest/sql-pyspark-pandas-with-arrow.html" target="_blank">here</a>.
+# MAGIC Pandas/Vectorized UDFs are available in Python to help speed up the computation by leveraging Apache Arrow. <a href="https://arrow.apache.org/" target="_blank">Apache Arrow</a> is an in-memory columnar data format that is used in Spark to efficiently transfer data between JVM and Python processes with near-zero (de)serialization cost. See more <a href="https://spark.apache.org/docs/latest/api/python/user_guide/sql/arrow_pandas.html" target="_blank">here</a>.
 # MAGIC 
 # MAGIC * <a href="https://databricks.com/blog/2017/10/30/introducing-vectorized-udfs-for-pyspark.html" target="_blank">Blog post</a>
 # MAGIC * <a href="https://spark.apache.org/docs/latest/sql-programming-guide.html#pyspark-usage-guide-for-pandas-with-apache-arrow" target="_blank">Documentation</a>
