@@ -1,7 +1,4 @@
 # Databricks notebook source
-spark.conf.set("com.databricks.training.module-name", "deep-learning")
-spark.conf.set("com.databricks.training.expected-dbr", "9.1")
-
 import warnings
 warnings.filterwarnings("ignore")
 
@@ -16,21 +13,22 @@ None # Suppress output
 
 # COMMAND ----------
 
-# MAGIC %run "./Class-Utility-Methods"
+import re
 
-# COMMAND ----------
+course_code = "dl"
+username = spark.sql("SELECT current_user()").first()[0]
+user_home = f"dbfs:/user/{username}/dbacademy"
+course_dir = f"{user_home}/{course_code}"
+  
+notebook_name = dbutils.entry_point.getDbutils().notebook().getContext().notebookPath().getOrElse(None).split("/")[-1]
+lesson_name = re.sub(r"[^a-zA-Z0-9]", "_", notebook_name).lower()
+working_dir = f"{course_dir}/{lesson_name}".replace("__", "_").replace("__", "_").replace("__", "_").replace("__", "_")
 
-username = getUsername()
-userhome = getUserhome()
-course_dir = getCourseDir()
 datasets_dir = f"{course_dir}/datasets"
 
-#source_path = f"wasbs://courseware@dbacademy.blob.core.windows.net/scalable-deep-learning-with-tensorflow-and-apache-spark/v01"
 source_path = f"wasbs://courseware@dbacademy.blob.core.windows.net/deep-learning-with-databricks/v01"
 
-working_dir = getWorkingDir()
-
-dbutils.fs.mkdirs(userhome)
+dbutils.fs.mkdirs(user_home)
 dbutils.fs.mkdirs(course_dir)
 dbutils.fs.mkdirs(working_dir)
 None # Suppress output
@@ -48,7 +46,7 @@ def install_datasets(reinstall=False):
     max_time = "10 min"
 
     # You can swap out the source_path with an alternate version during development
-    # source_path = f"dbfs:/mnt/work-xxx/{course_name}"
+    # source_path = f"dbfs:/mnt/work-xxx/{course_code}"
     print(f"The source for this dataset is\n{source_path}/\n")
 
     # Change the final directory to another name if you like, e.g. from "datasets" to "raw"
@@ -141,9 +139,68 @@ None # Suppress output
 
 # COMMAND ----------
 
+# ****************************************************************************
+# Facility for advertising functions, variables and databases to the student
+# ****************************************************************************
+def allDone(advertisements):
+  
+  functions = dict()
+  variables = dict()
+  databases = dict()
+  
+  for key in advertisements:
+    if advertisements[key][0] == "f" and spark.conf.get(f"com.databricks.training.suppress.{key}", None) != "true":
+      functions[key] = advertisements[key]
+  
+  for key in advertisements:
+    if advertisements[key][0] == "v" and spark.conf.get(f"com.databricks.training.suppress.{key}", None) != "true":
+      variables[key] = advertisements[key]
+  
+  for key in advertisements:
+    if advertisements[key][0] == "d" and spark.conf.get(f"com.databricks.training.suppress.{key}", None) != "true":
+      databases[key] = advertisements[key]
+  
+  html = ""
+  if len(functions) > 0:
+    html += "The following functions were defined for you:<ul style='margin-top:0'>"
+    for key in functions:
+      value = functions[key]
+      html += f"""<li style="cursor:help" onclick="document.getElementById('{key}').style.display='block'">
+        <span style="color: green; font-weight:bold">{key}</span>
+        <span style="font-weight:bold">(</span>
+        <span style="color: green; font-weight:bold; font-style:italic">{value[1]}</span>
+        <span style="font-weight:bold">)</span>
+        <div id="{key}" style="display:none; margin:0.5em 0; border-left: 3px solid grey; padding-left: 0.5em">{value[2]}</div>
+        </li>"""
+    html += "</ul>"
+
+  if len(variables) > 0:
+    html += "The following variables were defined for you:<ul style='margin-top:0'>"
+    for key in variables:
+      value = variables[key]
+      html += f"""<li style="cursor:help" onclick="document.getElementById('{key}').style.display='block'">
+        <span style="color: green; font-weight:bold">{key}</span>: <span style="font-style:italic; font-weight:bold">{value[1]} </span>
+        <div id="{key}" style="display:none; margin:0.5em 0; border-left: 3px solid grey; padding-left: 0.5em">{value[2]}</div>
+        </li>"""
+    html += "</ul>"
+
+  if len(databases) > 0:
+    html += "The following database were created for you:<ul style='margin-top:0'>"
+    for key in databases:
+      value = databases[key]
+      html += f"""<li style="cursor:help" onclick="document.getElementById('{key}').style.display='block'">
+        Now using the database identified by <span style="color: green; font-weight:bold">{key}</span>: 
+        <div style="font-style:italic; font-weight:bold">{value[1]}</div>
+        <div id="{key}" style="display:none; margin:0.5em 0; border-left: 3px solid grey; padding-left: 0.5em">{value[2]}</div>
+        </li>"""
+    html += "</ul>"
+
+  html += "All done!"
+  displayHTML(html)
+
 courseAdvertisements = dict()
 courseAdvertisements["username"] =     ("v", username,     "No additional information was provided.")
-courseAdvertisements["userhome"] =     ("v", userhome,     "No additional information was provided.")
+# courseAdvertisements["userhome"] =     ("v", user_home,    "No additional information was provided.")
 courseAdvertisements["working_dir"] =  ("v", working_dir,  "No additional information was provided.")
 allDone(courseAdvertisements)
 None # Suppress output

@@ -293,27 +293,26 @@ model_version_1.predict(data) # Test on sample data
 
 # COMMAND ----------
 
-# MAGIC %md Enable cluster serving.  **This will create a dedicated VM to serve this model** so be sure to shut it down when you're done. 
+# MAGIC %md Enable cluster serving.  
+# MAGIC 
+# MAGIC **This will create a dedicated VM to serve this model** so be sure to shut it down when you're done. 
 
 # COMMAND ----------
 
-# We need both a token for the API, which we can get from the notebook.
+# We need an enpoint at which to execute our requests which we can get from the notebook's API URL
+api_url = dbutils.notebook.entry_point.getDbutils().notebook().getContext().apiUrl().getOrElse(None)
+
+# We need a token for the API, which we can get from the notebook as well
 token = dbutils.notebook.entry_point.getDbutils().notebook().getContext().apiToken().getOrElse(None)
+
 # With the token, we can create our authorization header for our subsequent REST calls
 headers = {"Authorization": f"Bearer {token}"}
-
-# Next we need an enpoint at which to execute our request which we can get from the Notebook's tags collection
-java_tags = dbutils.notebook.entry_point.getDbutils().notebook().getContext().tags()
-# This ojbect comes from the Java CM - Convert the Java Map opject to a Python dictionary
-tags = sc._jvm.scala.collection.JavaConversions.mapAsJavaMap(java_tags)
-# Lastly, extract the databricks instance (domain name) from the dictionary
-instance = tags["browserHostName"]
 
 # COMMAND ----------
 
 import requests
 
-url = f"https://{instance}/api/2.0/mlflow/endpoints/enable"
+url = f"{api_url}/api/2.0/mlflow/endpoints/enable"
 
 r = requests.post(url, headers=headers, json={"registered_model_name": model_name})
 assert r.status_code == 200, f"Expected an HTTP 200 response, received {r.status_code}"
@@ -325,7 +324,7 @@ assert r.status_code == 200, f"Expected an HTTP 200 response, received {r.status
 # COMMAND ----------
 
 while True:
-    url = f"https://{instance}/api/2.0/mlflow/endpoints/get-status"
+    url = f"{api_url}/api/2.0/mlflow/endpoints/get-status"
     r = requests.get(url, headers=headers, json={"registered_model_name": model_name})
     assert r.status_code == 200, f"Expected an HTTP 200 response, received {r.status_code}"
 
@@ -352,7 +351,7 @@ import os
 import pandas as pd
 
 def score_model(data: pd.DataFrame, model_name: str):
-    url = f"https://{instance}/model/{model_name}/1/invocations"
+    url = f"{api_url}/model/{model_name}/1/invocations"
     data_json = data.to_dict(orient="split")
     r = requests.request(method="POST", headers=headers, url=url, json=data_json)
     assert r.status_code in [200, 404], f"Expected an HTTP 200 or 404 response, received {r.status_code}"
@@ -373,7 +372,7 @@ print(results)
 
 # COMMAND ----------
 
-url = f"https://{instance}/api/2.0/mlflow/endpoints/disable"
+url = f"{api_url}/api/2.0/mlflow/endpoints/disable"
 requests.post(url, headers=headers, json={"registered_model_name": model_name})
 
 # COMMAND ----------

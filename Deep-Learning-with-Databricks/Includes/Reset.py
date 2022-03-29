@@ -10,18 +10,10 @@
 # Does any work to reset the environment prior to testing.
 username = spark.sql("SELECT current_user()").first()[0]
 
-course_dir = f"dbfs:/user/{username}/dbacademy/deep_learning"
+course_dir = f"dbfs:/user/{username}/dbacademy/dl"
 
 print(f"Removing course directory: {course_dir}")
 dbutils.fs.rm(course_dir, True)
-
-# COMMAND ----------
-
-try: 
-    dbutils.fs.unmount("/mnt/training")
-    print("/mnt/training was unmouted")
-except: 
-    print("/mnt/training was not mounted")
 
 # COMMAND ----------
 
