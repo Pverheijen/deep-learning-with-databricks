@@ -59,7 +59,7 @@ def build_model():
 # MAGIC 
 # MAGIC * Local rank would be the unique process ID within the VM from 0 to 3.
 # MAGIC 
-# MAGIC We need to shard our data across our processes.  **NOTE:** We are using a Pandas DataFrame for demo purposes. In the next notebook we will use Parquet files with Petastorm for better scalability.
+# MAGIC We need to shard our data across our processes.  **NOTE:** We are using numpy for demo purposes. In the next notebook we will use Parquet files with Petastorm for better scalability.
 
 # COMMAND ----------
 
